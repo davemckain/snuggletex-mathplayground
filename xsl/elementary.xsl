@@ -1,3 +1,14 @@
+<!--
+
+$Id$
+
+This stylesheet attempts to convert core elementary functions and operators
+expressed as Presentation MathML to Content MathML.
+
+Copyright (c) 2008 The University of Edinburgh
+All Rights Reserved
+
+-->
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -9,23 +20,26 @@
 
   <xsl:strip-space elements="m:*"/>
 
-  <!--
-
-  TODO:
-
-  * logs to other bases?
-  * Sets via {a,b,c} ?
-
-  -->
-
   <xsl:output method="xml" indent="yes"/>
 
   <xsl:variable name="invertible-elementary-functions" as="xs:string+"
-    select="('sin','cos','tan')"/>
+    select="('sin', 'cos', 'tan',
+             'sec', 'csc' ,'cot',
+             'sinh', 'cosh', 'tanh',
+             'sech', 'csch', 'coth')"/>
 
   <xsl:variable name="elementary-functions" as="xs:string+"
     select="($invertible-elementary-functions,
+            'arcsin', 'arccos', 'arctan',
+            'arcsec', 'arccsc', 'arccot',
+            'arcsinh', 'arccosh', 'arctanh',
+            'arcsech', 'arccsch', 'arccoth',
             'ln', 'log', 'exp')"/>
+
+  <xsl:function name="s:is-equal" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and .='='])"/>
+  </xsl:function>
 
   <xsl:function name="s:is-addition" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
@@ -104,6 +118,13 @@
     </xsl:call-template>
   </xsl:template>
 
+  <xsl:template match="mfenced[@open='{' and @close='}']">
+    <!-- We treat this as a set of elements -->
+    <set>
+      <xsl:apply-templates/>
+    </set>
+  </xsl:template>
+
   <xsl:template match="mfenced">
     <!--
     No logic currently for other types of fences. It's not clear what to do anyway.
@@ -115,6 +136,12 @@
   <xsl:template name="process-group">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
+      <xsl:when test="$elements[s:is-equal(.)]">
+        <!-- Equals -->
+        <xsl:call-template name="handle-equals-group">
+          <xsl:with-param name="elements" select="$elements"/>
+        </xsl:call-template>
+      </xsl:when>
       <xsl:when test="$elements[s:is-addition(.)]">
         <!-- Addition -->
         <xsl:call-template name="handle-add-group">
@@ -146,7 +173,38 @@
       <xsl:when test="empty($elements)">
         <!-- Empty -> empty -->
       </xsl:when>
+      <xsl:otherwise>
+        <s:fail message="No logic for handling this group"/>
+      </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!--
+  Equals Group. This is nice and associative and easy, though we will disallow
+  things like 'a=' and '=a'
+  -->
+  <xsl:template name="handle-equals-group">
+    <xsl:param name="elements" as="element()+" required="yes"/>
+    <apply>
+      <eq/>
+      <xsl:for-each-group select="$elements" group-adjacent="s:is-equal(.)">
+        <xsl:choose>
+          <xsl:when test="current-grouping-key()">
+            <xsl:if test="not(following-sibling::*[1])">
+              <s:fail reason="Nothing following equals operator"/>
+            </xsl:if>
+            <xsl:if test="not(preceding-sibling::*[1])">
+              <s:fail reason="Nothing preceding equals operator"/>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="process-group">
+              <xsl:with-param name="elements" select="current-group()"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </apply>
   </xsl:template>
 
   <!--
@@ -285,6 +343,13 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <xsl:when test="$operand-element[self::msub and *[1][self::mi and .='log'] and *[2][self::mi or self::mn]]">
+        <!-- Log to a different base -->
+        <log/>
+        <logbase>
+          <xsl:apply-templates select="$operand-element/*[2]"/>
+        </logbase>
+      </xsl:when>
       <xsl:when test="$operand-element[self::mi]">
         <xsl:variable name="function" select="string($operand-element)" as="xs:string"/>
         <xsl:choose>
@@ -371,6 +436,20 @@
         <xsl:with-param name="elements" select="*[2]"/>
       </xsl:call-template>
     </apply>
+  </xsl:template>
+
+  <!-- Special constants. TODO: Maybe turn these on via parameters -->
+
+  <xsl:template match="mi[.='e']">
+    <exponentiale/>
+  </xsl:template>
+
+  <xsl:template match="mi[.='i']">
+    <imaginaryi/>
+  </xsl:template>
+
+  <xsl:template match="mi[.='&#x3c0;']">
+    <pi/>
   </xsl:template>
 
 

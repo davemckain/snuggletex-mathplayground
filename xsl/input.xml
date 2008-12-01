@@ -1,6 +1,33 @@
 <wrapper xmlns="http://www.w3.org/1998/Math/MathML">
   <math>
     <msup>
+      <mi>e</mi>
+      <mrow>
+        <mi>&#x3c0;</mi>
+        <mo>&#x2062;</mo>
+        <mi>i</mi>
+      </mrow>
+    </msup>
+    <mo>=</mo>
+    <mn>-1</mn>
+    <!--
+    <mi>e</mi>
+    <mo>+</mo>
+    <mfenced open='{' close='}'>
+      <mi>a</mi>
+      <mn>3</mn>
+    </mfenced>
+    -->
+    <!--
+    <msub>
+      <mi>log</mi>
+      <mi>a</mi>
+    </msub>
+    <mo>&#x2061;</mo>
+    <mi>x</mi>
+    -->
+    <!--
+    <msup>
       <mi>sin</mi>
       <mn>-1</mn>
     </msup>
@@ -8,6 +35,7 @@
     <mi>cos</mi>
     <mo>&#x2061;</mo>
     <mi>x</mi>
+    -->
     <!--
     <mi>sin</mi>
     <mo>&#x2061;</mo>
