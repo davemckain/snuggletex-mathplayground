@@ -2,11 +2,20 @@
 
 $Id$
 
-This stylesheet attempts to convert core elementary functions and operators
-expressed as Presentation MathML to Content MathML.
+
+This stylesheet attempts to convert a Presentation MathML <math/>
+element to Content MathML, under the core assumption that the mathematics
+represented is simple (i.e. elementary functions and operators, plus a
+few other things).
+
+Some semantic inference is also performed basic on common conventions,
+which can be turned off if required.
 
 TODO: Allow things like f(x)?
 TODO: Different sorts of numbers? (integers, floats, exp notation?)
+TODO: Alternative notations for multiplication?
+TODO: Need to trim whitespace from MathML elements when performing comparisons.
+
 
 Copyright (c) 2008 The University of Edinburgh
 All Rights Reserved
@@ -20,6 +29,19 @@ All Rights Reserved
   xmlns="http://www.w3.org/1998/Math/MathML"
   exclude-result-prefixes="xs s m"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
+
+  <!-- ************************************************************ -->
+
+  <!-- If true and stylesheet can't produce Content MathML, then reasons for
+  failure are appended to the Presentation MathML as annotations -->
+  <xsl:param name="append-failure-annotations" select="true()" as="xs:boolean"/>
+
+  <!-- If true, create Pres MathML as annotation of the Content MathML -->
+  <xsl:param name="pmathml-as-annotation" select="true()" as="xs:boolean"/>
+
+  <!-- If true (and $pmathml-as-annotation is false), then we create the
+  Content MathML as an annotation of the Presentation MathML -->
+  <xsl:param name="cmathml-as-annotation" select="false()" as="xs:boolean"/>
 
   <!-- ************************************************************ -->
 
@@ -77,60 +99,89 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <!-- TODO: Move these templates somewhere else -->
-
-  <xsl:template match="*">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="text()|comment()|processing-instruction()">
-    <xsl:copy-of select="."/>
-  </xsl:template>
-
-  <!-- ************************************************************ -->
-
-  <!-- TODO: This template might want to move to an importing stylesheet as well -->
   <xsl:template match="math">
     <!-- Deal with any existing <semantics/> element -->
     <xsl:variable name="presentation-mathml" select="if (semantics) then semantics/*[1] else *" as="element()*"/>
     <xsl:variable name="other-annotations" select="if (semantics) then semantics/*[position() != 1] else ()" as="element()*"/>
     <!-- Try to create Content MathML -->
-    <xsl:variable name="content-mathml" as="element()*">
+    <xsl:variable name="content-mathml" as="element()">
       <xsl:call-template name="process-group">
         <xsl:with-param name="elements" select="$presentation-mathml"/>
       </xsl:call-template>
     </xsl:variable>
-    <!-- If everything converted fine then output the Content MathML, otherwise leave as-is -->
-    <xsl:choose>
-      <xsl:when test="$content-mathml//s:fail">
-        <!-- Conversion failed. Output reason as a special annotation -->
-        <math>
-          <semantics>
-            <xsl:copy-of select="$presentation-mathml"/>
-            <xsl:copy-of select="$other-annotations"/>
-            <xsl:for-each select="$content-mathml//s:fail">
-              <annotation encoding="SnuggleTeX-to-Content-MathML-failure-reason">
-                <xsl:value-of select="@reason"/>
-              </annotation>
-            </xsl:for-each>
-          </semantics>
-        </math>
-      </xsl:when>
-      <xsl:otherwise>
-        <math>
-          <semantics>
-            <xsl:copy-of select="$content-mathml"/>
-            <annotation-xml encoding="MathML-Presentation">
-              <xsl:copy-of select="$presentation-mathml"/>
-            </annotation-xml>
-            <xsl:copy-of select="$other-annotations"/>
-          </semantics>
-        </math>
-      </xsl:otherwise>
-    </xsl:choose>
+    <!-- Produce resulting MathML element -->
+    <math>
+      <xsl:choose>
+        <xsl:when test="$content-mathml//s:fail">
+          <!-- Conversion failed. Maybe Output reason as a special annotation -->
+          <xsl:choose>
+            <xsl:when test="$append-failure-annotations">
+              <semantics>
+                <xsl:copy-of select="$presentation-mathml"/>
+                <xsl:copy-of select="$other-annotations"/>
+                <xsl:for-each select="$content-mathml//s:fail">
+                  <annotation-xml encoding="Presentation-to-Content-MathML-failure-message">
+                    <xsl:copy-of select="node()"/>
+                  </annotation-xml>
+                </xsl:for-each>
+              </semantics>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:copy-of select="*"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- Conversion succeeded. Output appropriate structure -->
+          <xsl:choose>
+            <xsl:when test="$pmathml-as-annotation">
+              <semantics>
+                <!-- (NB: $content-mathml is a single element, so the following is OK) -->
+                <xsl:copy-of select="$content-mathml"/>
+                <annotation-xml encoding="MathML-Presentation">
+                  <xsl:copy-of select="$presentation-mathml"/>
+                </annotation-xml>
+                <xsl:copy-of select="$other-annotations"/>
+              </semantics>
+            </xsl:when>
+            <xsl:when test="$cmathml-as-annotation">
+              <semantics>
+                <xsl:choose>
+                  <xsl:when test="count($presentation-mathml)=1">
+                    <xsl:copy-of select="$presentation-mathml"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <!-- (Need to wrap up) -->
+                    <mrow>
+                      <xsl:copy-of select="$presentation-mathml"/>
+                    </mrow>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <annotation-xml encoding="MathML-Content">
+                  <xsl:copy-of select="$content-mathml"/>
+                </annotation-xml>
+                <xsl:copy-of select="$other-annotations"/>
+              </semantics>
+            </xsl:when>
+            <xsl:otherwise>
+              <!-- No new annotation, but keep existing if found -->
+              <xsl:choose>
+                <xsl:when test="exists($other-annotations)">
+                  <semantics>
+                    <xsl:copy-of select="$content-mathml"/>
+                    <xsl:copy-of select="$other-annotations"/>
+                  </semantics>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="$content-mathml"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:otherwise>
+          </xsl:choose>
+
+        </xsl:otherwise>
+      </xsl:choose>
+    </math>
   </xsl:template>
 
   <!-- ************************************************************ -->
@@ -174,14 +225,7 @@ All Rights Reserved
 
   <!-- Failure fallback for other types of fences -->
   <xsl:template match="mfenced">
-    <!--
-    No logic currently for other types of fences. It's not clear what to do anyway.
-    For example, something like (1,2) could be a 2-dimensional vector or an open interval!
-
-    TODO: Could always allow caller to specify something here?!
-
-    -->
-    <s:fail reason="Can't handle fence with opener {@opener}, closer {@closer} and {count(*)} children"/>
+    <s:fail>Can't handle fence: <xsl:copy-of select="."/></s:fail>
   </xsl:template>
 
   <!-- Numbers. TODO: Different notations? -->
@@ -325,7 +369,7 @@ All Rights Reserved
         <!-- Empty -> empty -->
       </xsl:when>
       <xsl:otherwise>
-        <s:fail reason="No logic for handling group {$elements}"/>
+        <s:fail>Could not process group <xsl:copy-of select="$elements"/></s:fail>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -342,10 +386,10 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail reason="Nothing following equals operator"/>
+              <s:fail>Nothing following equals operator in group <xsl:copy-of select="$elements"/></s:fail>
             </xsl:if>
             <xsl:if test="not(preceding-sibling::*[1])">
-              <s:fail reason="Nothing preceding equals operator"/>
+              <s:fail>Nothing preceding equals operator in group <xsl:copy-of select="$elements"/></s:fail>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -370,7 +414,7 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail reason="Nothing following addition operator"/>
+              <s:fail>Nothing following addition operator in group <xsl:copy-of select="$elements"/></s:fail>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -410,7 +454,7 @@ All Rights Reserved
         <xsl:variable name="right-operand" select="$elements[. &gt;&gt; $minus]" as="element()*"/>
         <xsl:choose>
           <xsl:when test="empty($right-operand)">
-            <s:fail reason="Nothing following subtraction operator"/>
+            <s:fail>Nothing following subtraction operator in group <xsl:copy-of select="$elements"/></s:fail>
           </xsl:when>
           <xsl:otherwise>
             <apply>
@@ -437,7 +481,7 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail reason="Nothing following multiplication operator"/>
+              <s:fail>Nothing following multiplcation operator in group <xsl:copy-of select="$elements"/></s:fail>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -461,10 +505,10 @@ All Rights Reserved
     <xsl:variable name="after-first-apply" select="$elements[. &gt;&gt; $first-apply]" as="element()*"/>
     <xsl:choose>
       <xsl:when test="count($left-operand)!=1">
-        <s:fail reason="Expected single element preceding function application"/>
+        <s:fail>Expected single element preceding function application in group <xsl:copy-of select="$elements"/></s:fail>
       </xsl:when>
       <xsl:when test="empty($after-first-apply)">
-        <s:fail reason="Expected something after the function application"/>
+        <s:fail>Expected element after function application in group <xsl:copy-of select="$elements"/></s:fail>
       </xsl:when>
       <xsl:otherwise>
         <apply>
@@ -490,7 +534,7 @@ All Rights Reserved
             <xsl:element name="arc{$function}"/>
           </xsl:when>
           <xsl:otherwise>
-            <s:fail reason="Unknown inverse function {$function}"/>
+            <s:fail>Unknown inverse function <xsl:value-of select="$function"/></s:fail>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
@@ -509,12 +553,12 @@ All Rights Reserved
             <xsl:element name="{$function}"/>
           </xsl:when>
           <xsl:otherwise>
-            <s:fail reason="Unknown function {$function}"/>
+            <s:fail>Unknown function <xsl:value-of select="$function"/></s:fail>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <s:fail reason="Unhandled operand element {$operand-element/local-name()}"/>
+        <s:fail>Unhandled operand element <xsl:value-of select="$operand-element/local-name()"/></s:fail>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
