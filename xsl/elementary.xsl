@@ -5,6 +5,9 @@ $Id$
 This stylesheet attempts to convert core elementary functions and operators
 expressed as Presentation MathML to Content MathML.
 
+TODO: Allow things like f(x)?
+TODO: Different sorts of numbers? (integers, floats, exp notation?)
+
 Copyright (c) 2008 The University of Edinburgh
 All Rights Reserved
 
@@ -17,6 +20,17 @@ All Rights Reserved
   xmlns="http://www.w3.org/1998/Math/MathML"
   exclude-result-prefixes="xs s m"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
+
+  <!-- ************************************************************ -->
+
+  <xsl:param name="assume-exponential-e" select="true()" as="xs:boolean"/>
+  <xsl:param name="assume-imaginary-i" select="true()" as="xs:boolean"/>
+  <xsl:param name="assume-constant-pi" select="true()" as="xs:boolean"/>
+  <xsl:param name="assume-braces-set" select="true()" as="xs:boolean"/>
+  <xsl:param name="assume-square-list" select="true()" as="xs:boolean"/>
+  <xsl:param name="assume-pair-interval" select="true()" as="xs:boolean"/>
+
+  <!-- ************************************************************ -->
 
   <xsl:strip-space elements="m:*"/>
 
@@ -61,10 +75,24 @@ All Rights Reserved
     <xsl:sequence select="boolean($element[self::mo and .='&#x2061;'])"/>
   </xsl:function>
 
-  <xsl:template match="wrapper">
-    <xsl:apply-templates select="math[1]"/>
+  <!-- ************************************************************ -->
+
+  <!-- TODO: Move these templates somewhere else -->
+
+  <xsl:template match="*">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates/>
+    </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="text()|comment()|processing-instruction()">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <!-- TODO: This template might want to move to an importing stylesheet as well -->
   <xsl:template match="math">
     <!-- Deal with any existing <semantics/> element -->
     <xsl:variable name="presentation-mathml" select="if (semantics) then semantics/*[1] else *" as="element()*"/>
@@ -105,6 +133,8 @@ All Rights Reserved
     </xsl:choose>
   </xsl:template>
 
+  <!-- ************************************************************ -->
+
   <xsl:template match="mrow">
     <xsl:call-template name="process-group">
       <xsl:with-param name="elements" select="*"/>
@@ -118,21 +148,142 @@ All Rights Reserved
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="mfenced[@open='{' and @close='}']">
+  <!-- (Optional) Something like (a,b), [a,b), (a,b] or [a,b] is treated as an interval -->
+  <xsl:template match="mfenced[$assume-pair-interval and count(*)=2
+      and @open=('(', '[') and @close=(')',']')]">
+    <interval closure="{if (@open='[') then (if (@close=']') then 'closed' else 'closed-open')
+        else (if (@close=']') then 'open-closed' else 'open')}">
+      <xsl:apply-templates/>
+    </interval>
+  </xsl:template>
+
+  <!-- (Optional) Treat [a,b,c,...] as a list -->
+  <xsl:template match="mfenced[$assume-square-list and @open='[' and @close=']']">
+    <list>
+      <xsl:apply-templates/>
+    </list>
+  </xsl:template>
+
+  <!-- (Optional) Treat {a,b,c,...} as a set -->
+  <xsl:template match="mfenced[$assume-braces-set and @open='{' and @close='}']">
     <!-- We treat this as a set of elements -->
     <set>
       <xsl:apply-templates/>
     </set>
   </xsl:template>
 
+  <!-- Failure fallback for other types of fences -->
   <xsl:template match="mfenced">
     <!--
     No logic currently for other types of fences. It's not clear what to do anyway.
     For example, something like (1,2) could be a 2-dimensional vector or an open interval!
+
+    TODO: Could always allow caller to specify something here?!
+
     -->
-    <s:fail reason="Can't handle this type of fence"/>
+    <s:fail reason="Can't handle fence with opener {@opener}, closer {@closer} and {count(*)} children"/>
   </xsl:template>
 
+  <!-- Numbers. TODO: Different notations? -->
+  <xsl:template match="mn">
+    <cn><xsl:value-of select="."/></cn>
+  </xsl:template>
+
+  <!-- Identifiers -->
+  <xsl:template match="mi">
+    <ci><xsl:value-of select="."/></ci>
+  </xsl:template>
+
+  <!-- Fractions -->
+  <xsl:template match="mfrac">
+    <!-- Fractions are relatively easy to cope with here! -->
+    <apply>
+      <divide/>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[1]"/>
+      </xsl:call-template>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[2]"/>
+      </xsl:call-template>
+    </apply>
+  </xsl:template>
+
+  <!-- (Optional) Treat $e^x$ as exponential -->
+  <xsl:template match="msup[*[1][self::mi and .='e' and $assume-exponential-e]]">
+    <apply>
+      <exp/>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[2]"/>
+      </xsl:call-template>
+    </apply>
+  </xsl:template>
+
+  <!-- We interpret <msup/> as a power -->
+  <xsl:template match="msup">
+    <apply>
+      <power/>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[1]"/>
+      </xsl:call-template>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[2]"/>
+      </xsl:call-template>
+    </apply>
+  </xsl:template>
+
+  <!-- Square roots -->
+  <xsl:template match="msqrt">
+    <apply>
+      <root/>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[1]"/>
+      </xsl:call-template>
+    </apply>
+  </xsl:template>
+
+  <!-- nth roots -->
+  <xsl:template match="mroot">
+    <apply>
+      <root/>
+      <degree>
+        <xsl:call-template name="process-group">
+          <xsl:with-param name="elements" select="*[1]"/>
+        </xsl:call-template>
+      </degree>
+      <xsl:call-template name="process-group">
+        <xsl:with-param name="elements" select="*[2]"/>
+      </xsl:call-template>
+    </apply>
+  </xsl:template>
+
+  <!-- Optional Special constants. -->
+
+  <xsl:template match="mi[.='e' and $assume-exponential-e]">
+    <exponentiale/>
+  </xsl:template>
+
+  <xsl:template match="mi[.='i' and $assume-imaginary-i]">
+    <imaginaryi/>
+  </xsl:template>
+
+  <xsl:template match="mi[.='&#x3c0;' and $assume-constant-pi]">
+    <pi/>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <!--
+  This is the main template for handling a sequence of sibling Nodes.
+
+  We group this to reflect (reverse) implicit precedence as following:
+
+  1. =
+  2. +
+  3. -
+  4. *
+  5. function applications
+
+  -->
   <xsl:template name="process-group">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
@@ -174,7 +325,7 @@ All Rights Reserved
         <!-- Empty -> empty -->
       </xsl:when>
       <xsl:otherwise>
-        <s:fail message="No logic for handling this group"/>
+        <s:fail reason="No logic for handling group {$elements}"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -367,90 +518,5 @@ All Rights Reserved
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-
-  <!-- ************************************************************ -->
-
-  <xsl:template match="mn">
-    <cn><xsl:value-of select="."/></cn>
-  </xsl:template>
-
-  <xsl:template match="mi">
-    <ci><xsl:value-of select="."/></ci>
-  </xsl:template>
-
-  <xsl:template match="mfrac">
-    <!-- Fractions are relatively easy to cope with here! -->
-    <apply>
-      <divide/>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[1]"/>
-      </xsl:call-template>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[2]"/>
-      </xsl:call-template>
-    </apply>
-  </xsl:template>
-
-  <!-- TODO: Should this be activated via a parameter? -->
-  <xsl:template match="msup[*[1][self::mi and .='e']]">
-    <!-- Treat as exponential -->
-    <apply>
-      <exp/>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[2]"/>
-      </xsl:call-template>
-    </apply>
-  </xsl:template>
-
-  <xsl:template match="msup">
-    <!-- We interpret these as powers -->
-    <apply>
-      <power/>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[1]"/>
-      </xsl:call-template>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[2]"/>
-      </xsl:call-template>
-    </apply>
-  </xsl:template>
-
-  <xsl:template match="msqrt">
-    <apply>
-      <root/>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[1]"/>
-      </xsl:call-template>
-    </apply>
-  </xsl:template>
-
-  <xsl:template match="mroot">
-    <apply>
-      <root/>
-      <degree>
-        <xsl:call-template name="process-group">
-          <xsl:with-param name="elements" select="*[1]"/>
-        </xsl:call-template>
-      </degree>
-      <xsl:call-template name="process-group">
-        <xsl:with-param name="elements" select="*[2]"/>
-      </xsl:call-template>
-    </apply>
-  </xsl:template>
-
-  <!-- Special constants. TODO: Maybe turn these on via parameters -->
-
-  <xsl:template match="mi[.='e']">
-    <exponentiale/>
-  </xsl:template>
-
-  <xsl:template match="mi[.='i']">
-    <imaginaryi/>
-  </xsl:template>
-
-  <xsl:template match="mi[.='&#x3c0;']">
-    <pi/>
-  </xsl:template>
-
 
 </xsl:stylesheet>
