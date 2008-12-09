@@ -27,7 +27,7 @@ All Rights Reserved
   xmlns:s="http://www.ph.ed.ac.uk/snuggletex"
   xmlns:m="http://www.w3.org/1998/Math/MathML"
   xmlns="http://www.w3.org/1998/Math/MathML"
-  exclude-result-prefixes="xs s m"
+  exclude-result-prefixes="xs m s"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
 
   <!-- ************************************************************ -->
@@ -112,18 +112,16 @@ All Rights Reserved
     <!-- Produce resulting MathML element -->
     <math>
       <xsl:choose>
-        <xsl:when test="$content-mathml//s:fail">
+        <xsl:when test="$content-mathml//merror">
           <!-- Conversion failed. Maybe Output reason as a special annotation -->
           <xsl:choose>
             <xsl:when test="$append-failure-annotations">
               <semantics>
                 <xsl:copy-of select="$presentation-mathml"/>
                 <xsl:copy-of select="$other-annotations"/>
-                <xsl:for-each select="$content-mathml//s:fail">
-                  <annotation-xml encoding="Presentation-to-Content-MathML-failure-message">
-                    <xsl:copy-of select="node()"/>
-                  </annotation-xml>
-                </xsl:for-each>
+                <annotation-xml encoding="Presentation-to-Content-MathML-failure">
+                  <xsl:copy-of select="$content-mathml"/>
+                </annotation-xml>
               </semantics>
             </xsl:when>
             <xsl:otherwise>
@@ -225,7 +223,7 @@ All Rights Reserved
 
   <!-- Failure fallback for other types of fences -->
   <xsl:template match="mfenced">
-    <s:fail>Can't handle fence: <xsl:copy-of select="."/></s:fail>
+    <merror>Can't handle fence: <xsl:copy-of select="."/></merror>
   </xsl:template>
 
   <!-- Numbers. TODO: Different notations? -->
@@ -369,7 +367,7 @@ All Rights Reserved
         <!-- Empty -> empty -->
       </xsl:when>
       <xsl:otherwise>
-        <s:fail>Could not process group <xsl:copy-of select="$elements"/></s:fail>
+        <merror>Could not process group <xsl:copy-of select="$elements"/></merror>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -386,10 +384,10 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail>Nothing following equals operator in group <xsl:copy-of select="$elements"/></s:fail>
+              <merror>Nothing following equals operator in group <xsl:copy-of select="$elements"/></merror>
             </xsl:if>
             <xsl:if test="not(preceding-sibling::*[1])">
-              <s:fail>Nothing preceding equals operator in group <xsl:copy-of select="$elements"/></s:fail>
+              <merror>Nothing preceding equals operator in group <xsl:copy-of select="$elements"/></merror>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -414,7 +412,7 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail>Nothing following addition operator in group <xsl:copy-of select="$elements"/></s:fail>
+              <merror>Nothing following addition operator in group <xsl:copy-of select="$elements"/></merror>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -454,7 +452,7 @@ All Rights Reserved
         <xsl:variable name="right-operand" select="$elements[. &gt;&gt; $minus]" as="element()*"/>
         <xsl:choose>
           <xsl:when test="empty($right-operand)">
-            <s:fail>Nothing following subtraction operator in group <xsl:copy-of select="$elements"/></s:fail>
+            <merror>Nothing following subtraction operator in group <xsl:copy-of select="$elements"/></merror>
           </xsl:when>
           <xsl:otherwise>
             <apply>
@@ -481,7 +479,7 @@ All Rights Reserved
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
-              <s:fail>Nothing following multiplcation operator in group <xsl:copy-of select="$elements"/></s:fail>
+              <merror>Nothing following multiplcation operator in group <xsl:copy-of select="$elements"/></merror>
             </xsl:if>
           </xsl:when>
           <xsl:otherwise>
@@ -505,10 +503,10 @@ All Rights Reserved
     <xsl:variable name="after-first-apply" select="$elements[. &gt;&gt; $first-apply]" as="element()*"/>
     <xsl:choose>
       <xsl:when test="count($left-operand)!=1">
-        <s:fail>Expected single element preceding function application in group <xsl:copy-of select="$elements"/></s:fail>
+        <merror>Expected single element preceding function application in group <xsl:copy-of select="$elements"/></merror>
       </xsl:when>
       <xsl:when test="empty($after-first-apply)">
-        <s:fail>Expected element after function application in group <xsl:copy-of select="$elements"/></s:fail>
+        <merror>Expected element after function application in group <xsl:copy-of select="$elements"/></merror>
       </xsl:when>
       <xsl:otherwise>
         <apply>
@@ -534,7 +532,7 @@ All Rights Reserved
             <xsl:element name="arc{$function}"/>
           </xsl:when>
           <xsl:otherwise>
-            <s:fail>Unknown inverse function <xsl:value-of select="$function"/></s:fail>
+            <merror>Unknown inverse function <xsl:value-of select="$function"/></merror>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
@@ -553,12 +551,12 @@ All Rights Reserved
             <xsl:element name="{$function}"/>
           </xsl:when>
           <xsl:otherwise>
-            <s:fail>Unknown function <xsl:value-of select="$function"/></s:fail>
+            <merror>Unknown function <xsl:value-of select="$function"/></merror>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <s:fail>Unhandled operand element <xsl:value-of select="$operand-element/local-name()"/></s:fail>
+        <merror>Unhandled operand element <xsl:value-of select="$operand-element/local-name()"/></merror>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

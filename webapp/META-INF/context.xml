@@ -1,0 +1,13 @@
+<!--
+
+$Id$
+
+NOTE: This gets filtered to produce a version suitable for deploying
+into a running Tomcat, using the build/webapp as docBase and with
+reloadable='true'.
+
+The line below MUST contain the String 'Context path' so that this
+information can be added in safely (and once only)!
+
+-->
+<Context path="@uk.ac.ed.ph.mathplayground.tomcat.context.path@"/>

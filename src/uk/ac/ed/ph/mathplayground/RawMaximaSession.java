@@ -11,9 +11,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 /**
  * Simple (and somewhat experimental) facade over {@link Runtime#exec(String[]))} that makes
@@ -75,8 +76,7 @@ import java.util.regex.Pattern;
  */
 public final class RawMaximaSession {
 
-    /** TODO: Change to logging framework? If so, which? */
-    private static final Logger log = Logger.getLogger(RawMaximaSession.class.getName());
+    private static final Logger log = Logger.getLogger(RawMaximaSession.class);
     
     /**
      * Change this to point to your Maxima executable.
@@ -178,7 +178,7 @@ public final class RawMaximaSession {
             log.info("Closing Maxima");
             maximaInput.close();
             if (maximaInput.checkError()) {
-                log.warning("Forcibly terminating Maxima");
+                log.warn("Forcibly terminating Maxima");
                 maximaProcess.destroy();
                 return maximaProcess.exitValue();
             }
@@ -187,7 +187,7 @@ public final class RawMaximaSession {
                 return maximaProcess.waitFor();
             }
             catch (InterruptedException e) {
-                log.warning("Interrupted waiting for Maxima to close - forcibly terminating");
+                log.warn("Interrupted waiting for Maxima to close - forcibly terminating");
                 maximaProcess.destroy();
                 return maximaProcess.exitValue();
             }

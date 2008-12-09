@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Log4J Configuration for the MathPlayground Webapp.
+
+$Id$
+
+-->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <!-- Create usual appender sending messages to STDOUT -->
+  <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p [%d{ISO8601}] (%t) [%c{1}/%L#%M()] - %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="WARN"/>
+      <param name="LevelMax" value="FATAL"/>
+    </filter>
+  </appender>
+
+  <!-- Main file logger -->
+  <appender name="MATHPLAYGROUND"  class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="@uk.ac.ed.ph.mathplayground.log@"/>
+    <param name="MaxFileSize" value="500KB" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p [%d{ISO8601}] (%t) [%c{1}/%L#%M()] - %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="INFO"/>
+      <param name="LevelMax" value="FATAL"/>
+    </filter>
+  </appender>
+
+  <!-- Custom loggers to allow fine-grained logging level selection -->
+  <logger name="uk.ac.ed.ph.mathplayground">
+    <level value="INFO"/>
+  </logger>
+
+  <!-- Root logger -->
+  <root>
+    <level value="INFO"/>
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="MATHPLAYGROUND"/>
+  </root>
+
+</log4j:configuration>

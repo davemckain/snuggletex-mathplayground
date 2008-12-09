@@ -28,7 +28,7 @@ All Rights Reserved
   <xsl:template match="math">
     <xsl:choose>
       <xsl:when test="semantics">
-        <xsl:apply-templates select="*[1]"/>
+        <xsl:apply-templates select="semantics/*[1]"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="*"/>
