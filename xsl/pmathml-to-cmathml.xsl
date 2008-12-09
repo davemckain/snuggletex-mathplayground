@@ -13,9 +13,8 @@ which can be turned off if required.
 
 TODO: Allow things like f(x)?
 TODO: Different sorts of numbers? (integers, floats, exp notation?)
-TODO: Alternative notations for multiplication?
+TODO: Alternative notations for multiplication and division.
 TODO: Need to trim whitespace from MathML elements when performing comparisons.
-
 
 Copyright (c) 2008 The University of Edinburgh
 All Rights Reserved
@@ -50,7 +49,6 @@ All Rights Reserved
   <xsl:param name="assume-constant-pi" select="true()" as="xs:boolean"/>
   <xsl:param name="assume-braces-set" select="true()" as="xs:boolean"/>
   <xsl:param name="assume-square-list" select="true()" as="xs:boolean"/>
-  <xsl:param name="assume-pair-interval" select="true()" as="xs:boolean"/>
 
   <!-- ************************************************************ -->
 
@@ -195,15 +193,6 @@ All Rights Reserved
     <xsl:call-template name="process-group">
       <xsl:with-param name="elements" select="*[1]"/>
     </xsl:call-template>
-  </xsl:template>
-
-  <!-- (Optional) Something like (a,b), [a,b), (a,b] or [a,b] is treated as an interval -->
-  <xsl:template match="mfenced[$assume-pair-interval and count(*)=2
-      and @open=('(', '[') and @close=(')',']')]">
-    <interval closure="{if (@open='[') then (if (@close=']') then 'closed' else 'closed-open')
-        else (if (@close=']') then 'open-closed' else 'open')}">
-      <xsl:apply-templates/>
-    </interval>
   </xsl:template>
 
   <!-- (Optional) Treat [a,b,c,...] as a list -->
