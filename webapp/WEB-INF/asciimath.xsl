@@ -24,7 +24,8 @@ All Rights Reserved
   <xsl:param name="ascii-input" select="'-1+sinx'" as="xs:string"/>
 
   <!-- Various text outputs -->
-  <xsl:param name="pmathml" select="''" as="xs:string"/>
+  <xsl:param name="pmathml-raw" select="''" as="xs:string"/>
+  <xsl:param name="pmathml-fixed" select="''" as="xs:string"/>
 
   <!-- Override page ID -->
   <xsl:variable name="pageId" select="'asciimath'" as="xs:string"/>
@@ -66,13 +67,23 @@ All Rights Reserved
       Live Preview: <div id="preview"><xsl:text> </xsl:text></div>
     </div>
 
-    <xsl:if test="$pmathml!=''">
+    <xsl:if test="$pmathml-raw!=''">
       <h3>Raw Presentation MathML extracted from ASCIIMathML</h3>
       <p>
         (This is the raw MathML produced by ASCIIMathML.)
       </p>
       <pre class="result">
-        <xsl:value-of select="$pmathml"/>
+        <xsl:value-of select="$pmathml-raw"/>
+      </pre>
+
+      <h3>Fixed Presentation MathML</h3>
+      <p>
+        (This is after tidying and semantic inference. I've not done the
+        stylesheet for this yet but would imagine being able to get it into a form
+        similar to what SnuggleTeX can generate.)
+      </p>
+      <pre class="result">
+        <xsl:value-of select="$pmathml-fixed"/>
       </pre>
     </xsl:if>
 

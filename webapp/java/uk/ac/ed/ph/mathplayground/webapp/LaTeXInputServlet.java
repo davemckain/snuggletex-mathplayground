@@ -227,7 +227,6 @@ public final class LaTeXInputServlet extends BaseServlet {
             catch (Exception e) {
                 maximaOutput = "Exception occurred speaking to Maxima: " + e.toString();
             }
-
         }
         
         /* Return results */

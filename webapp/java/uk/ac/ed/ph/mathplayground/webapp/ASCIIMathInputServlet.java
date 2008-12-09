@@ -14,13 +14,18 @@ import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions.WebPageType;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
@@ -39,6 +44,8 @@ public final class ASCIIMathInputServlet extends BaseServlet {
     
     /** Location of XSLT controlling page layout */
     private static final String XSLT_LOCATION = "/WEB-INF/asciimath.xsl";
+    
+    public static final String FIXER_LOCATION = "/WEB-INF/asciimathml-fixer.xsl";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -52,14 +59,42 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         doRequest(request, response);
     }
     
+    private String[] processMathML(TransformerFactory transformerFactory, String pmathmlRaw)
+            throws TransformerException, ServletException {
+        StringWriter pmathmlFixedWriter = new StringWriter();
+        Transformer ptocStylesheet = compileStylesheet(transformerFactory, FIXER_LOCATION).newTransformer();
+        ptocStylesheet.transform(new StreamSource(new StringReader(pmathmlRaw)), new StreamResult(pmathmlFixedWriter));
+        
+        return new String[] { pmathmlFixedWriter.toString() };
+    }
+    
     private void doRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        TransformerFactory transformerFactory = createTransformerFactory();
+        
         /* Get inputs, if appropriate */
         String asciiMathInput = request.getParameter("asciimathinput");
-        String rawMathml = request.getParameter("mathml");
-        if (!StringUtilities.isNullOrEmpty(asciiMathInput) && !StringUtilities.isNullOrEmpty(rawMathml)) {
-            /* Something non-trivial was input, so do stuff */
-            rawMathml = rawMathml.trim();
+        String pmathmlRaw = request.getParameter("mathml");
+        String pmathmlFixed = null;
+        if (!StringUtilities.isNullOrEmpty(asciiMathInput) && !StringUtilities.isNullOrEmpty(pmathmlRaw)) {
+            /* Something non-trivial was input, so process the raw MathML */
+            pmathmlRaw = pmathmlRaw.trim();
+            
+            /* Fix the raw MathML */
+            String[] result;
+            try {
+                result = processMathML(transformerFactory, pmathmlRaw);
+            }
+            catch (TransformerException e) {
+                throw new ServletException(e);
+            }
+            pmathmlFixed = result[0];
+            
+            /* Log what was done */
+            log.info("ASCIIMath Input: " + asciiMathInput
+                    + "\nPMathML Raw: " + pmathmlRaw
+                    + "\nPMathML Fixed: " + pmathmlFixed
+                    + "\n======================================");
         }
         
         /* We'll cheat slightly and use SnuggleTeX to generate the resulting page */
@@ -80,13 +115,13 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         );
         
         /* Create XSLT to generate the resulting page */
-        TransformerFactory transformerFactory = createTransformerFactory();
         Transformer viewStylesheet;
         try {
             viewStylesheet = compileStylesheet(transformerFactory, XSLT_LOCATION).newTransformer();
             viewStylesheet.setParameter("context-path", request.getContextPath());
             viewStylesheet.setParameter("ascii-input", asciiMathInput);
-            viewStylesheet.setParameter("pmathml", rawMathml);
+            viewStylesheet.setParameter("pmathml-raw", pmathmlRaw);
+            viewStylesheet.setParameter("pmathml-fixed", pmathmlFixed);
         }
         catch (TransformerConfigurationException e) {
             throw new ServletException("Could not create stylesheet from Templates", e);
