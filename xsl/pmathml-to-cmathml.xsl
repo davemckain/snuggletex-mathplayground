@@ -102,7 +102,7 @@ All Rights Reserved
     <xsl:variable name="presentation-mathml" select="if (semantics) then semantics/*[1] else *" as="element()*"/>
     <xsl:variable name="other-annotations" select="if (semantics) then semantics/*[position() != 1] else ()" as="element()*"/>
     <!-- Try to create Content MathML -->
-    <xsl:variable name="content-mathml" as="element()">
+    <xsl:variable name="content-mathml" as="element()?">
       <xsl:call-template name="process-group">
         <xsl:with-param name="elements" select="$presentation-mathml"/>
       </xsl:call-template>
@@ -110,7 +110,7 @@ All Rights Reserved
     <!-- Produce resulting MathML element -->
     <math>
       <xsl:choose>
-        <xsl:when test="$content-mathml//merror">
+        <xsl:when test="$content-mathml/descendant-or-self::merror">
           <!-- Conversion failed. Maybe Output reason as a special annotation -->
           <xsl:choose>
             <xsl:when test="$append-failure-annotations">
@@ -299,6 +299,15 @@ All Rights Reserved
 
   <xsl:template match="mi[.='&#x3c0;' and $assume-constant-pi]">
     <pi/>
+  </xsl:template>
+
+  <!-- ************************************************************ -->
+
+  <!-- Fallback for unsupported MathML elements -->
+  <xsl:template match="*">
+    <merror>
+      No support for <xsl:copy-of select="."/>
+    </merror>
   </xsl:template>
 
   <!-- ************************************************************ -->
