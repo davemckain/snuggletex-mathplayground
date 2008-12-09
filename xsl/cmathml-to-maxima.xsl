@@ -13,16 +13,42 @@ All Rights Reserved
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:s="http://www.ph.ed.ac.uk/snuggletex"
   xmlns="http://www.w3.org/1998/Math/MathML"
-  exclude-result-prefixes="xs"
+  exclude-result-prefixes="xs s"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
 
   <xsl:output method="text"/>
 
   <xsl:variable name="elementary-functions">
-    <!-- Maps Content MathML element name to Maxima name -->
+    <!-- The resulting Maxima function name is encoded within an input Content MathML element -->
     <sin>sin</sin>
+    <cos>cos</cos>
+    <tan>tan</tan>
+    <sec>sec</sec>
+    <csc>csc</csc>
+    <cot>cot</cot>
     <arcsin>asin</arcsin>
+    <arccos>acos</arccos>
+    <arctan>atan</arctan>
+    <arcsec>asec</arcsec>
+    <arccsc>acsc</arccsc>
+    <arccot>acot</arccot>
+    <sinh>sinh</sinh>
+    <cosh>cosh</cosh>
+    <tanh>tanh</tanh>
+    <sech>sech</sech>
+    <csch>csch</csch>
+    <coth>coth</coth>
+    <arcsinh>asinh</arcsinh>
+    <arccosh>acosh</arccosh>
+    <arctanh>atanh</arctanh>
+    <arcsech>asech</arcsech>
+    <arccsch>acsch</arccsch>
+    <arccoth>acoth</arccoth>
+    <exp>exp</exp>
+    <ln>log</ln><!-- NB! -->
+    <log></log><!-- No Maxima built-in for this -->
   </xsl:variable>
 
   <xsl:template match="math">
@@ -132,12 +158,42 @@ All Rights Reserved
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="apply[*[1][$elementary-functions/*[local-name()=current()/*[1]/local-name()]]]">
-    <xsl:variable name="data" select="$elementary-functions/*[local-name()=current()/*[1]/local-name()]"/>
-    <xsl:value-of select="string($data)"/>
+  <xsl:function name="s:is-elementary-function" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($elementary-functions/*[local-name()=$element/local-name()])"/>
+  </xsl:function>
+
+  <xsl:function name="s:get-maxima-function" as="xs:string">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="string($elementary-functions/*[local-name()=$element/local-name()])"/>
+  </xsl:function>
+
+  <!-- Elementary Function -->
+  <xsl:template match="apply[*[1][s:is-elementary-function(current()/*[1])]]">
+    <xsl:value-of select="s:get-maxima-function(*[1])"/>
     <xsl:text>(</xsl:text>
     <xsl:apply-templates select="*[position() != 1]"/>
     <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <!-- Power of an Elementary Function. For example:
+
+  <apply>
+    <apply>
+      <power/>
+      <sin/>
+      <cn>2</cn>
+    </apply>
+    <ci>x</ci>
+  </apply>
+
+  -->
+  <xsl:template match="apply[*[1][self::apply and *[1][self::power] and s:is-elementary-function(*[2]) and *[3][self::cn]]]">
+    <xsl:value-of select="s:get-maxima-function(*[1]/*[2])"/>
+    <xsl:text>(</xsl:text>
+    <xsl:apply-templates select="*[position() != 1]"/>
+    <xsl:text>)^</xsl:text>
+    <xsl:apply-templates select="*[1]/*[3]"/>
   </xsl:template>
 
   <xsl:template match="apply">

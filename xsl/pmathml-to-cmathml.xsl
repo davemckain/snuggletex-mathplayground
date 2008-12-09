@@ -536,6 +536,22 @@ All Rights Reserved
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <xsl:when test="$operand-element[self::msup and *[1][self::mi] and *[2][self::mn and number(.) &gt;= 1]]">
+        <!-- This looks like sin^2, which we will interpret as such -->
+        <xsl:variable name="function" select="string($operand-element/*[1])" as="xs:string"/>
+        <xsl:choose>
+          <xsl:when test="$elementary-functions=$function">
+            <apply>
+              <power/>
+              <xsl:element name="{$function}"/>
+              <xsl:apply-templates select="$operand-element/*[2]"/>
+            </apply>
+          </xsl:when>
+          <xsl:otherwise>
+            <merror>Unknown function <xsl:value-of select="$function"/></merror>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
       <xsl:when test="$operand-element[self::msub and *[1][self::mi and .='log'] and *[2][self::mi or self::mn]]">
         <!-- Log to a different base -->
         <log/>
