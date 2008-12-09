@@ -51,6 +51,18 @@ All Rights Reserved
     <log></log><!-- No Maxima built-in for this -->
   </xsl:variable>
 
+  <xsl:function name="s:is-elementary-function" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($elementary-functions/*[local-name()=$element/local-name()])"/>
+  </xsl:function>
+
+  <xsl:function name="s:get-maxima-function" as="xs:string">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="string($elementary-functions/*[local-name()=$element/local-name()])"/>
+  </xsl:function>
+
+  <!-- ************************************************************ -->
+
   <xsl:template match="math">
     <xsl:choose>
       <xsl:when test="semantics">
@@ -157,16 +169,6 @@ All Rights Reserved
     <xsl:apply-templates select="degree/*"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
-
-  <xsl:function name="s:is-elementary-function" as="xs:boolean">
-    <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($elementary-functions/*[local-name()=$element/local-name()])"/>
-  </xsl:function>
-
-  <xsl:function name="s:get-maxima-function" as="xs:string">
-    <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="string($elementary-functions/*[local-name()=$element/local-name()])"/>
-  </xsl:function>
 
   <!-- Elementary Function -->
   <xsl:template match="apply[*[1][s:is-elementary-function(current()/*[1])]]">
