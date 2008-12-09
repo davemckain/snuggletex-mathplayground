@@ -182,7 +182,14 @@
     </copy>
     <!-- Copy in static files, being careful with filtering -->
     <copy todir="${build.webapp.dir}">
-      <fileset dir="${webapp.dir}"/>
+      <fileset dir="${webapp.dir}">
+        <include name="**/*.jpg"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.webapp.dir}">
+      <fileset dir="${webapp.dir}">
+        <exclude name="**/*.jpg"/>
+      </fileset>
       <filterset>
         <filtersfile file="deploy.properties"/>
         <filtersfile file="version.properties"/>
@@ -200,6 +207,7 @@
         <include name="snuggletex.jar"/>
         <include name="saxon9*.jar"/>
         <include name="log4j*.jar"/>
+        <include name="ph-commons-util.jar"/>
       </fileset>
     </copy>
   </target>
