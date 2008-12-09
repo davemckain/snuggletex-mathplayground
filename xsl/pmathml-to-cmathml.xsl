@@ -11,9 +11,6 @@ few other things).
 Some semantic inference is also performed basic on common conventions,
 which can be turned off if required.
 
-TODO: Allow things like f(x)?
-TODO: Different sorts of numbers? (integers, floats, exp notation?)
-TODO: Alternative notations for multiplication and division.
 TODO: Need to trim whitespace from MathML elements when performing comparisons.
 
 Copyright (c) 2008 The University of Edinburgh
