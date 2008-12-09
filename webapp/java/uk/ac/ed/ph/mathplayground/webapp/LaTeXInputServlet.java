@@ -118,12 +118,17 @@ public final class LaTeXInputServlet extends BaseServlet {
         }
         
         /* Log what was done */
-        log.info("Results:\nInput: " + resultingInputLaTeX
-                + "\nPMathML: " + resultArray[0]
-                + "\nCMathML: " + resultArray[1]
-                + "\nMaxima Input: " + resultArray[2]
-                + "\nMaxima Output: " + resultArray[3]
-                + "\n======================================");
+        if (resultArray!=null) {
+            log.info("Success Result:\nInput: " + resultingInputLaTeX
+                    + "\nPMathML: " + resultArray[0]
+                    + "\nCMathML: " + resultArray[1]
+                    + "\nMaxima Input: " + resultArray[2]
+                    + "\nMaxima Output: " + resultArray[3]
+                    + "\n======================================");
+        }
+        else {
+            log.warn("Failed on input " + resultingInputLaTeX);
+        }
         
         /* Create XSLT to generate the resulting page */
         Transformer viewStylesheet;
