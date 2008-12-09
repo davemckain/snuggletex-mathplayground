@@ -33,7 +33,7 @@ All Rights Reserved
   <xsl:variable name="pageId" select="'latexinput'" as="xs:string"/>
 
   <!-- Override title -->
-  <xsl:variable name="title" select="'LaTeX to Presentation MathML, Content MathML and Maxima'" as="xs:string"/>
+  <xsl:variable name="title" select="'LaTeX Conversion Demo'" as="xs:string"/>
 
   <xsl:template match="h:body" mode="make-content">
     <h2><xsl:value-of select="$title"/></h2>
@@ -45,10 +45,9 @@ All Rights Reserved
       into the box below and hit <tt>Go!</tt> to see the resulting outputs.
     </p>
     <form method="POST" id="inputForm">
-      \[ <input id="input" name="input" type="text" value="{$latex-input}"/> \]
-
-      <input type="submit" value="Go!" />
-      <input type="button" value="Clear" onclick="document.getElementById('input').value=''" />
+        LaTeX Math Mode Input: \[ <input id="input" name="input" type="text" value="{$latex-input}"/> \]
+        <input type="submit" value="Go!" />
+        <input type="button" value="Clear" onclick="document.getElementById('input').value=''" />
     </form>
 
     <!-- Output -->

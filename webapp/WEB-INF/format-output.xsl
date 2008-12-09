@@ -79,7 +79,7 @@ All Rights Reserved
           <div id="navinner">
             <h2>Demos</h2>
             <ul>
-              <li><a class="latexinput" href="{$context-path}/tryout.xhml">LaTeX Conversion Demo</a></li>
+              <li><a class="latexinput" href="{$context-path}/latexinput.xhtml">LaTeX Conversion Demo</a></li>
             </ul>
           </div>
         </div>
