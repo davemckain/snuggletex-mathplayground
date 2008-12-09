@@ -11,8 +11,10 @@ import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -45,21 +47,26 @@ abstract class BaseServlet extends HttpServlet {
         return result;
     }
     
+    protected TransformerFactory createTransformerFactory() {
+        TransformerFactory transformerFactory = XMLUtilities.createTransformerFactory();
+        
+        /* Create a cheap URIResolver to help with xsl:import and friends. */
+        transformerFactory.setURIResolver(new CheapoURIResolver());
+        return transformerFactory;
+    }
+    
     /**
      * Compiles the XSLT stylesheet at the given location within the webapp. This uses a
      * {@link CheapoURIResolver} to resolve any other stylesheets referenced using
      * <tt>xsl:import</tt> and friends.
-     * 
+     * @param transformerFactory
      * @param xsltPathInsideWebapp location of XSLT to compile.
+     * 
      * @return resulting {@link Templates} representing the compiled stylesheet.
      * @throws ServletException if XSLT could not be found or could not be compiled.
      */
-    protected Templates compileStylesheet(String xsltPathInsideWebapp) throws ServletException {
+    protected Templates compileStylesheet(TransformerFactory transformerFactory, String xsltPathInsideWebapp) throws ServletException {
         StreamSource xsltSource = new StreamSource(ensureReadResource(xsltPathInsideWebapp));
-        TransformerFactory transformerFactory = XMLUtilities.createTransformerFactory();
-
-        /* Create a cheap URIResolver to help with xsl:import and friends. */
-        transformerFactory.setURIResolver(new CheapoURIResolver());
         
         /* Then compile the XSLT */
         try {
@@ -68,6 +75,14 @@ abstract class BaseServlet extends HttpServlet {
         catch (TransformerConfigurationException e) {
             throw new ServletException("Could not compile stylesheet at " + xsltPathInsideWebapp);
         }
+    }
+
+    protected Transformer createSerializer(TransformerFactory factory) throws TransformerConfigurationException {
+        Transformer serializer = factory.newTransformer();
+        serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+        serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        serializer.setOutputProperty(OutputKeys.ENCODING, "US-ASCII");
+        return serializer;
     }
 
     /**

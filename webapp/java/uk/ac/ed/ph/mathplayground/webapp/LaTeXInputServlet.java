@@ -25,7 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -54,7 +53,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     private Logger log = Logger.getLogger(LaTeXInputServlet.class);
     
     /** Location of XSLT controlling page layout */
-    public static final String LATEX_INPUT_XSLT_LOCATION = "/WEB-INF/latexinput.xsl";
+    private static final String XSLT_LOCATION = "/WEB-INF/latexinput.xsl";
 
     public static final String PMATHML_TO_CMATHML_LOCATION = "/WEB-INF/pmathml-to-cmathml.xsl";
     public static final String CMATHML_TO_MAXIMA_LOCATION = "/WEB-INF/cmathml-to-maxima.xsl";
@@ -110,8 +109,9 @@ public final class LaTeXInputServlet extends BaseServlet {
         
         /* Get text results */
         String[] resultArray;
+        TransformerFactory transformerFactory = createTransformerFactory();
         try {
-            resultArray = createOutputXMLStrings(session, options);
+            resultArray = createOutputXMLStrings(transformerFactory, session, options);
         }
         catch (Exception e) {
             throw new ServletException(e);
@@ -133,7 +133,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         /* Create XSLT to generate the resulting page */
         Transformer viewStylesheet;
         try {
-            viewStylesheet = compileStylesheet(LATEX_INPUT_XSLT_LOCATION).newTransformer();
+            viewStylesheet = compileStylesheet(transformerFactory, XSLT_LOCATION).newTransformer();
             viewStylesheet.setParameter("context-path", request.getContextPath());
             viewStylesheet.setParameter("latex-input", resultingInputLaTeX);
             if (resultArray!=null) {
@@ -157,7 +157,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         }
     }
     
-    private String[] createOutputXMLStrings(SnuggleSession session, DOMOutputOptions options)
+    private String[] createOutputXMLStrings(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
             throws ServletException, TransformerException {
         /* Create MathML doc with temp fake root */
         DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
@@ -190,11 +190,10 @@ public final class LaTeXInputServlet extends BaseServlet {
         
         /* Try to convert to Content MathML */
         Document cmathmlDocument = documentBuilder.newDocument();
-        Transformer ptocStylesheet = compileStylesheet(PMATHML_TO_CMATHML_LOCATION).newTransformer();
+        Transformer ptocStylesheet = compileStylesheet(transformerFactory, PMATHML_TO_CMATHML_LOCATION).newTransformer();
         ptocStylesheet.transform(new DOMSource(pmathmlDocument), new DOMResult(cmathmlDocument));
         
         /* Serialise P and C MathML for geeks */
-        TransformerFactory transformerFactory = XMLUtilities.createTransformerFactory();
         StringWriter pmathmlWriter = new StringWriter();
         StringWriter cmathmlWriter = new StringWriter();
         createSerializer(transformerFactory).transform(new DOMSource(pmathmlDocument), new StreamResult(pmathmlWriter));
@@ -214,7 +213,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         else {
             /* Convert Content MathML to Maxima Input */
             StringWriter maximaWriter = new StringWriter();
-            Transformer ctoMaximaStylesheet = compileStylesheet(CMATHML_TO_MAXIMA_LOCATION).newTransformer();
+            Transformer ctoMaximaStylesheet = compileStylesheet(transformerFactory, CMATHML_TO_MAXIMA_LOCATION).newTransformer();
             ctoMaximaStylesheet.transform(new DOMSource(cmathmlDocument), new StreamResult(maximaWriter));
             maximaInput = maximaWriter.toString();
             
@@ -233,14 +232,6 @@ public final class LaTeXInputServlet extends BaseServlet {
         
         /* Return results */
         return new String[] { pmathml, cmathml, maximaInput, maximaOutput };
-    }
-    
-    private Transformer createSerializer(TransformerFactory factory) throws TransformerConfigurationException {
-        Transformer serializer = factory.newTransformer();
-        serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-        serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        serializer.setOutputProperty(OutputKeys.ENCODING, "US-ASCII");
-        return serializer;
     }
 }
 

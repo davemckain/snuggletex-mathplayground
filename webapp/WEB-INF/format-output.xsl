@@ -52,8 +52,12 @@ All Rights Reserved
       <meta name="publisher" content="The University of Edinburgh" />
       <link rel="stylesheet" href="{$context-path}/includes/core.css" />
       <link rel="stylesheet" href="{$context-path}/includes/website.css" />
+      <xsl:apply-templates select="." mode="add-javascript"/>
     </head>
   </xsl:template>
+
+  <!-- Importing stylesheets should override as required -->
+  <xsl:template match="h:head" mode="add-javascript"/>
 
   <xsl:template match="h:body">
     <body id="{$pageId}">
@@ -80,6 +84,7 @@ All Rights Reserved
             <h2>Demos</h2>
             <ul>
               <li><a class="latexinput" href="{$context-path}/latexinput.xhtml">LaTeX Conversion Demo</a></li>
+              <li><a class="asciimath" href="{$context-path}/asciimath.xhtml">ASCIIMathML Demo</a></li>
             </ul>
           </div>
         </div>

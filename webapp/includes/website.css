@@ -76,7 +76,8 @@
    to a page, which is then matched to each style. This is quite
    handy for static content */
 
-body#latexinput a.latexinput {
+body#latexinput a.latexinput,
+body#asciimath a.asciimath {
   color: #f25c69;
   font-weight: bold;
 }
