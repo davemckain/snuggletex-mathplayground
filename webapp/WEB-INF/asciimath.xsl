@@ -78,9 +78,11 @@ All Rights Reserved
 
       <h3>Fixed Presentation MathML</h3>
       <p>
-        (This is after tidying and semantic inference. I've not done the
-        stylesheet for this yet but would imagine being able to get it into a form
-        similar to what SnuggleTeX can generate.)
+        (This is after tidying and semantic inference. I've only just started on
+        the XSLT 2.0 stylesheet for this so all it does so far is minor tidying.
+        Based on previous work, I imagine being able to get it into a form similar
+        to what SnuggleTeX can generate and suitable for conversion to Content MathML,
+        provided of course we restrict the mathematics we are handling.)
       </p>
       <pre class="result">
         <xsl:value-of select="$pmathml-fixed"/>
