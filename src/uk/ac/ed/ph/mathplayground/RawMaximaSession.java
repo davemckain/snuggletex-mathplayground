@@ -1,6 +1,6 @@
 /* $Id$
  *
- * Copyright 2008 University of Edinburgh.
+ * Copyright 2009 University of Edinburgh.
  * All Rights Reserved
  */
 package uk.ac.ed.ph.mathplayground;
@@ -54,6 +54,8 @@ import org.apache.log4j.Logger;
  *     Only tested so far on Linux with Maxima running on SBCL. This revision should fix
  *     issues reported by Graham Smith whereby each expression in the input was causing
  *     an input prompt to be displayed, which was messing up my "expect"-style code.
+ *     FIXME: I now need to update the stripping of the output to remove any input prompts
+ *     that may appear here!!
  *   </li>
  *   <li>
  *     Need to parametrise the location of the Maxima executable.
