@@ -51,7 +51,9 @@ import org.apache.log4j.Logger;
  * 
  * <ul>
  *   <li>
- *     Only tested so far on Linux.
+ *     Only tested so far on Linux with Maxima running on SBCL. This revision should fix
+ *     issues reported by Graham Smith whereby each expression in the input was causing
+ *     an input prompt to be displayed, which was messing up my "expect"-style code.
  *   </li>
  *   <li>
  *     Need to parametrise the location of the Maxima executable.
@@ -85,12 +87,6 @@ public final class RawMaximaSession {
      */
     public static String MAXIMA_EXECUTABLE_PATH = "/usr/bin/maxima";
 
-    /** 
-     * Regexp that matches the Maxima input prompt. Used to determine when to switch between
-     * reading and writing.
-     */
-    private static final Pattern inputPromptPattern = Pattern.compile("^\\(%i\\d+\\)\\s*\\z", Pattern.MULTILINE);
-
     /** Builds up output from each command */
     private final StringBuilder outputBuilder;
 
@@ -120,11 +116,12 @@ public final class RawMaximaSession {
         maximaInput = new PrintWriter(new OutputStreamWriter(maximaProcess.getOutputStream(), "ASCII"));
         
         /* Wait for first input prompt */
-        readUntilInputPrompt();
+        readUntilFirstInputPrompt("%i");
     }
 
-    private String readUntilInputPrompt() throws IOException {
-        log.info("Reading output from Maxima");
+    private String readUntilFirstInputPrompt(String inchar) throws IOException {
+        Pattern promptPattern = Pattern.compile("^\\(\\Q" + inchar + "\\E\\d+\\)\\s*\\z", Pattern.MULTILINE);
+        log.info("Reading output from Maxima until first prompt matching " + promptPattern);
         outputBuilder.setLength(0);
         int c;
         do {
@@ -138,7 +135,7 @@ public final class RawMaximaSession {
             /* If there's currently no more to read, see if we're now sitting at
              * an input prompt. */
             if (!maximaOutput.ready()) {
-                Matcher promptMatcher = inputPromptPattern.matcher(outputBuilder);
+                Matcher promptMatcher = promptPattern.matcher(outputBuilder);
                 if (promptMatcher.find()) {
                     /* Success. Trim off the prompt and store all of the raw output */
                     String result =  promptMatcher.replaceFirst("");
@@ -149,17 +146,26 @@ public final class RawMaximaSession {
         }
         while (true);
     }
-
-    public String executeRaw(String command) throws IOException {
+    
+    private String doMaximaUntil(String input, String inchar) throws IOException {
         ensureStarted();
-        log.info("Sending command '" + command + "' to Maxima");
-        maximaInput.println(command);
+        log.info("Sending input '" + input + "' to Maxima");
+        maximaInput.println(input);
         maximaInput.flush();
         if (maximaInput.checkError()) {
             /* FIXME: Throw a better Exception */
-            throw new IOException("Could not send command to Maxima");
+            throw new IOException("Could not send input to Maxima");
         }
-        return readUntilInputPrompt();
+        return readUntilFirstInputPrompt(inchar);
+    }
+
+    public String executeRaw(String command) throws IOException {
+        String rawOutput = doMaximaUntil(command + "inchar: %x$", "%x");
+        
+        /* Reset prompt and kill off last 3 results */
+        doMaximaUntil("inchar: %i$ kill(3)$", "%i");
+        
+        return rawOutput;
     }
     
     public String executeExpectingSingleOutput(String command) throws IOException {
@@ -242,6 +248,7 @@ public final class RawMaximaSession {
         
         /* Funny command - returns a result as well as outputting to STDOUT */
         System.out.println("Ex 6:" + session.executeRaw("tex(1/2);"));
+        
         session.close();
     }
 }
