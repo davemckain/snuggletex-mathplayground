@@ -6,7 +6,7 @@ This stylesheet is intended to be pipelined after the P->C stylesheet
 and converts the subset of Content MathML produced by that stylesheet
 into Maxima input.
 
-Copyright (c) 2008 The University of Edinburgh
+Copyright (c) 2009 The University of Edinburgh
 All Rights Reserved
 
 -->

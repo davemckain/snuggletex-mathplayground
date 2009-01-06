@@ -13,7 +13,7 @@ which can be turned off if required.
 
 TODO: Need to trim whitespace from MathML elements when performing comparisons.
 
-Copyright (c) 2008 The University of Edinburgh
+Copyright (c) 2009 The University of Edinburgh
 All Rights Reserved
 
 -->

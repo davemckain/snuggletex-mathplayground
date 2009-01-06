@@ -12,7 +12,7 @@ and the navigation menu.
 Relative links are fixed up so they are relative to the supplied
 context-path.
 
-Copyright (c) 2008 University of Edinburgh.
+Copyright (c) 2009 University of Edinburgh.
 All Rights Reserved
 
 -->
@@ -99,7 +99,7 @@ All Rights Reserved
         <p>
           MathPlayground v@uk.ac.ed.ph.mathplayground.version@
           <br />
-          Copyright &#xa9; 2008
+          Copyright &#xa9; 2009
           <a href="http://www.ph.ed.ac.uk">The School of Physics and Astronomy</a>,
           <a href="http://www.ed.ac.uk">The University of Edinburgh</a>.
           <br />
