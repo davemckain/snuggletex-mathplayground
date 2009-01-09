@@ -113,7 +113,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         String[] resultArray;
         TransformerFactory transformerFactory = createTransformerFactory();
         try {
-            resultArray = createOutputXMLStrings(transformerFactory, session, options);
+            resultArray = pipelineMathML(transformerFactory, session, options);
         }
         catch (Exception e) {
             throw new ServletException(e);
@@ -159,7 +159,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         }
     }
     
-    private String[] createOutputXMLStrings(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
+    private String[] pipelineMathML(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
             throws ServletException, TransformerException {
         /* Create MathML doc with temp fake root */
         DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();

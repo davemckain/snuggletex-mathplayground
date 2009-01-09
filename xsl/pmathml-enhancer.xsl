@@ -28,7 +28,7 @@ All Rights Reserved
 
   <xsl:strip-space elements="m:*"/>
 
-  <xsl:output method="xml" encoding="US-ASCII" indent="yes"/>
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
   <!-- ************************************************************ -->
 
@@ -268,7 +268,7 @@ All Rights Reserved
 
   <xsl:function name="s:is-explicit-multiplication" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and (.='*' or .='&#xd7;')])"/>
+    <xsl:sequence select="boolean($element[self::mo and (.='*' or .='&#xd7;' or .='&#x22c5;')])"/>
   </xsl:function>
 
   <xsl:function name="s:is-invertible-elementary-function" as="xs:boolean">

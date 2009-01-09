@@ -6,12 +6,14 @@
 package uk.ac.ed.ph.mathplayground.webapp;
 
 import uk.ac.ed.ph.commons.util.StringUtilities;
+import uk.ac.ed.ph.mathplayground.RawMaximaSession;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions.WebPageType;
+import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -20,14 +22,18 @@ import java.io.StringWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 /**
  * Trivial servlet demonstrating the use of ASCIIMathML for submitting wodges of MathML.
@@ -46,6 +52,9 @@ public final class ASCIIMathInputServlet extends BaseServlet {
     private static final String XSLT_LOCATION = "/WEB-INF/asciimath.xsl";
     
     public static final String FIXER_LOCATION = "/WEB-INF/asciimathml-fixer.xsl";
+    public static final String PMATHML_ENHANCER_LOCATION = "/WEB-INF/pmathml-enhancer.xsl";
+    public static final String PMATHML_TO_CMATHML_LOCATION = "/WEB-INF/pmathml-to-cmathml.xsl";
+    public static final String CMATHML_TO_MAXIMA_LOCATION = "/WEB-INF/cmathml-to-maxima.xsl";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -58,16 +67,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
             throws ServletException, IOException {
         doRequest(request, response);
     }
-    
-    private String[] processMathML(TransformerFactory transformerFactory, String pmathmlRaw)
-            throws TransformerException, ServletException {
-        StringWriter pmathmlFixedWriter = new StringWriter();
-        Transformer ptocStylesheet = compileStylesheet(transformerFactory, FIXER_LOCATION).newTransformer();
-        ptocStylesheet.transform(new StreamSource(new StringReader(pmathmlRaw)), new StreamResult(pmathmlFixedWriter));
-        
-        return new String[] { pmathmlFixedWriter.toString() };
-    }
-    
+
     private void doRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         TransformerFactory transformerFactory = createTransformerFactory();
@@ -75,25 +75,26 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         /* Get inputs, if appropriate */
         String asciiMathInput = request.getParameter("asciimathinput");
         String pmathmlRaw = request.getParameter("mathml");
-        String pmathmlFixed = null;
+        String[] resultArray = null;
         if (!StringUtilities.isNullOrEmpty(asciiMathInput) && !StringUtilities.isNullOrEmpty(pmathmlRaw)) {
             /* Something non-trivial was input, so process the raw MathML */
             pmathmlRaw = pmathmlRaw.trim();
             
             /* Fix the raw MathML */
-            String[] result;
             try {
-                result = processMathML(transformerFactory, pmathmlRaw);
+                resultArray = processMathML(transformerFactory, pmathmlRaw);
             }
             catch (TransformerException e) {
                 throw new ServletException(e);
             }
-            pmathmlFixed = result[0];
             
-            /* Log what was done */
-            log.info("ASCIIMath Input: " + asciiMathInput
+            log.info("Success Result:\nInput: " + asciiMathInput
                     + "\nPMathML Raw: " + pmathmlRaw
-                    + "\nPMathML Fixed: " + pmathmlFixed
+                    + "\nPMathML Fixed: " + resultArray[0]
+                    + "\nPMathML Enhanced: " + resultArray[1]
+                    + "\nCMathML: " + resultArray[2]
+                    + "\nMaxima Input: " + resultArray[3]
+                    + "\nMaxima Output: " + resultArray[4]
                     + "\n======================================");
         }
         
@@ -121,7 +122,13 @@ public final class ASCIIMathInputServlet extends BaseServlet {
             viewStylesheet.setParameter("context-path", request.getContextPath());
             viewStylesheet.setParameter("ascii-input", asciiMathInput);
             viewStylesheet.setParameter("pmathml-raw", pmathmlRaw);
-            viewStylesheet.setParameter("pmathml-fixed", pmathmlFixed);
+            if (resultArray!=null) {
+                viewStylesheet.setParameter("pmathml-fixed", resultArray[0]);
+                viewStylesheet.setParameter("pmathml-enhanced", resultArray[1]);
+                viewStylesheet.setParameter("cmathml", resultArray[2]);
+                viewStylesheet.setParameter("maxima-input", resultArray[3]);
+                viewStylesheet.setParameter("maxima-output", resultArray[4]);
+            }
         }
         catch (TransformerConfigurationException e) {
             throw new ServletException("Could not create stylesheet from Templates", e);
@@ -135,6 +142,67 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         catch (Exception e) {
             throw new ServletException("Unexpected Exception", e);
         }
+    }
+    
+    private String[] processMathML(TransformerFactory transformerFactory, String pmathmlRaw)
+            throws TransformerException, ServletException {
+        /* Fix up the raw MathML */
+        DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
+        Document fixedDocument = documentBuilder.newDocument();
+        Transformer fixerStylesheet = compileStylesheet(transformerFactory, FIXER_LOCATION).newTransformer();
+        fixerStylesheet.transform(new StreamSource(new StringReader(pmathmlRaw)), new DOMResult(fixedDocument));
+        
+        /* Enhance the PMathML */
+        Document epmathmlDocument = documentBuilder.newDocument();
+        Transformer enhancerStylesheet = compileStylesheet(transformerFactory, PMATHML_ENHANCER_LOCATION).newTransformer();
+        enhancerStylesheet.transform(new DOMSource(fixedDocument, "urn:fixed"), new DOMResult(epmathmlDocument));
+        
+        /* Then try to convert the enhanced PMathML to Content MathML */
+        Document cmathmlDocument = documentBuilder.newDocument();
+        Transformer ptocStylesheet = compileStylesheet(transformerFactory, PMATHML_TO_CMATHML_LOCATION).newTransformer();
+        ptocStylesheet.transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new DOMResult(cmathmlDocument));
+        
+        /* Serialise intermediate results for geeks */
+        StringWriter fixedWriter = new StringWriter();
+        StringWriter epmathmlWriter = new StringWriter();
+        StringWriter cmathmlWriter = new StringWriter();
+        createSerializer(transformerFactory).transform(new DOMSource(fixedDocument, "urn:fixed"), new StreamResult(fixedWriter));
+        createSerializer(transformerFactory).transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new StreamResult(epmathmlWriter));
+        createSerializer(transformerFactory).transform(new DOMSource(cmathmlDocument, "urn:cmathml"), new StreamResult(cmathmlWriter));
+        String fixed = fixedWriter.toString();
+        String epmathml = epmathmlWriter.toString();
+        String cmathml = cmathmlWriter.toString();
+        
+        /* Hunt out any failure annotation.
+         * TODO: Should use XPath for this!
+         */
+        String maximaInput;
+        String maximaOutput;
+        if (cmathml.indexOf("Presentation-to-Content-MathML-failure")!=-1) {
+            maximaInput = "(Failed conversion to intermediate Content MathML)";
+            maximaOutput = "(N/A)";
+        }
+        else {
+            /* Convert Content MathML to Maxima Input */
+            StringWriter maximaWriter = new StringWriter();
+            Transformer ctoMaximaStylesheet = compileStylesheet(transformerFactory, CMATHML_TO_MAXIMA_LOCATION).newTransformer();
+            ctoMaximaStylesheet.transform(new DOMSource(cmathmlDocument), new StreamResult(maximaWriter));
+            maximaInput = maximaWriter.toString();
+            
+            /* Now pass to Maxima */
+            RawMaximaSession maximaSession = new RawMaximaSession();
+            try {
+                maximaSession.open();
+                maximaOutput = maximaSession.executeRaw(maximaInput + ";");
+                maximaSession.close();
+            }
+            catch (Exception e) {
+                maximaOutput = "Exception occurred speaking to Maxima: " + e.toString();
+            }
+        }
+        
+        /* Return results */
+        return new String[] { fixed, epmathml, cmathml, maximaInput, maximaOutput };
     }
 }
 

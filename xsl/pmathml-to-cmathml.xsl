@@ -14,6 +14,7 @@ which can be turned off if required.
 TODO: /
 TODO: Factorial operator
 TODO: Need to trim whitespace from MathML elements when performing comparisons.
+TODO: Should we convert subscripted variables to special identifiers?
 
 Copyright (c) 2009 The University of Edinburgh
 All Rights Reserved
@@ -86,7 +87,7 @@ All Rights Reserved
 
   <xsl:function name="s:is-multiplication" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and (.='*' or .='&#xd7;' or .='&#x2062;')])"/>
+    <xsl:sequence select="boolean($element[self::mo and (.='*' or .='&#xd7;' or .='&#x2062;' or .='&#x22c5;')])"/>
   </xsl:function>
 
   <xsl:function name="s:is-function-application" as="xs:boolean">
