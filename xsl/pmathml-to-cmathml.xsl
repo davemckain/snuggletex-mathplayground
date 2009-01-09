@@ -11,6 +11,8 @@ few other things).
 Some semantic inference is also performed basic on common conventions,
 which can be turned off if required.
 
+TODO: /
+TODO: Factorial operator
 TODO: Need to trim whitespace from MathML elements when performing comparisons.
 
 Copyright (c) 2009 The University of Edinburgh
@@ -67,7 +69,7 @@ All Rights Reserved
             'arcsech', 'arccsch', 'arccoth',
             'ln', 'log', 'exp')"/>
 
-  <xsl:function name="s:is-equal" as="xs:boolean">
+  <xsl:function name="s:is-equals" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
     <xsl:sequence select="boolean($element[self::mo and .='='])"/>
   </xsl:function>
@@ -82,9 +84,9 @@ All Rights Reserved
     <xsl:sequence select="boolean($element[self::mo and .='-'])"/>
   </xsl:function>
 
-  <xsl:function name="s:is-times" as="xs:boolean">
+  <xsl:function name="s:is-multiplication" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and .='&#x2062;'])"/>
+    <xsl:sequence select="boolean($element[self::mo and (.='*' or .='&#xd7;' or .='&#x2062;')])"/>
   </xsl:function>
 
   <xsl:function name="s:is-function-application" as="xs:boolean">
@@ -324,7 +326,7 @@ All Rights Reserved
   <xsl:template name="process-group">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
-      <xsl:when test="$elements[s:is-equal(.)]">
+      <xsl:when test="$elements[s:is-equals(.)]">
         <!-- Equals -->
         <xsl:call-template name="handle-equals-group">
           <xsl:with-param name="elements" select="$elements"/>
@@ -342,7 +344,7 @@ All Rights Reserved
           <xsl:with-param name="elements" select="$elements"/>
         </xsl:call-template>
       </xsl:when>
-      <xsl:when test="$elements[s:is-times(.)]">
+      <xsl:when test="$elements[s:is-multiplication(.)]">
         <!-- Explicit multiplication -->
         <xsl:call-template name="handle-multiplication-group">
           <xsl:with-param name="elements" select="$elements"/>
@@ -375,7 +377,7 @@ All Rights Reserved
     <xsl:param name="elements" as="element()+" required="yes"/>
     <apply>
       <eq/>
-      <xsl:for-each-group select="$elements" group-adjacent="s:is-equal(.)">
+      <xsl:for-each-group select="$elements" group-adjacent="s:is-equals(.)">
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">
@@ -470,7 +472,7 @@ All Rights Reserved
     <xsl:param name="elements" as="element()+" required="yes"/>
     <apply>
       <times/>
-      <xsl:for-each-group select="$elements" group-adjacent="s:is-times(.)">
+      <xsl:for-each-group select="$elements" group-adjacent="s:is-multiplication(.)">
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:if test="not(following-sibling::*[1])">

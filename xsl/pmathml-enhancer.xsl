@@ -9,6 +9,7 @@ This should be able to be applied to any MathML document, but is
 currently designed primarily to be applied to the output from SnuggleTeX.
 
 TODO: Think about plus-or-minus operator??
+TODO: Should we specify precedence for other infix operators? (Later... nothing to do with MathAssess)
 
 Copyright (c) 2009 The University of Edinburgh
 All Rights Reserved
@@ -231,9 +232,6 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <!-- THE FOLLOWING IS VERY SIMILAR TO MY pmathml-to-cmathml STYLESHEET...
-       BUT NOT QUITE THE SAME! -->
-
   <xsl:variable name="invertible-elementary-functions" as="xs:string+"
     select="('sin', 'cos', 'tan',
              'sec', 'csc' ,'cot',
@@ -261,6 +259,11 @@ All Rights Reserved
   <xsl:function name="s:is-minus" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
     <xsl:sequence select="boolean($element[self::mo and .='-'])"/>
+  </xsl:function>
+
+  <xsl:function name="s:is-divide" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and .='/'])"/>
   </xsl:function>
 
   <xsl:function name="s:is-explicit-multiplication" as="xs:boolean">
@@ -307,6 +310,8 @@ All Rights Reserved
 
   <xsl:template name="process-group">
     <xsl:param name="elements" as="element()*" required="yes"/>
+    <!-- TODO: Might be worth making a table of n-ary operators and their precedence?
+         This would make it easy to add other things below... -->
     <xsl:choose>
       <xsl:when test="$elements[s:is-equals(.)]">
         <!-- Equals -->
@@ -406,16 +411,14 @@ All Rights Reserved
         <xsl:variable name="last-minus" select="$elements[s:is-minus(.)][position()=last()]" as="element()"/>
         <xsl:variable name="before-last-minus" select="$elements[. &lt;&lt; $last-minus]" as="element()+"/>
         <xsl:variable name="after-last-minus" select="$elements[. &gt;&gt; $last-minus]" as="element()*"/>
-        <xsl:call-template name="maybe-wrap-in-mrow">
-          <xsl:with-param name="elements" as="element()*">
-            <xsl:call-template name="handle-minus-group">
-              <xsl:with-param name="elements" select="$before-last-minus"/>
-            </xsl:call-template>
-            <xsl:copy-of select="$last-minus"/>
-            <xsl:call-template name="process-group">
-              <xsl:with-param name="elements" select="$after-last-minus"/>
-            </xsl:call-template>
-          </xsl:with-param>
+        <mrow>
+          <xsl:call-template name="handle-minus-group">
+            <xsl:with-param name="elements" select="$before-last-minus"/>
+          </xsl:call-template>
+        </mrow>
+        <xsl:copy-of select="$last-minus"/>
+        <xsl:call-template name="process-group">
+          <xsl:with-param name="elements" select="$after-last-minus"/>
         </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>

@@ -147,13 +147,6 @@ All Rights Reserved
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="apply[*[1][self::exp]]">
-    <!-- Exponential operator, which is unary -->
-    <xsl:text>exp(</xsl:text>
-    <xsl:apply-templates select="*[2]"/>
-    <xsl:text>)</xsl:text>
-  </xsl:template>
-
   <xsl:template match="apply[*[1][self::root] and not(degree)]">
     <!-- Square Root -->
     <xsl:text>sqrt(</xsl:text>

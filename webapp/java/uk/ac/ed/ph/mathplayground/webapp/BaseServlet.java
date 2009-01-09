@@ -66,7 +66,7 @@ abstract class BaseServlet extends HttpServlet {
      * @throws ServletException if XSLT could not be found or could not be compiled.
      */
     protected Templates compileStylesheet(TransformerFactory transformerFactory, String xsltPathInsideWebapp) throws ServletException {
-        StreamSource xsltSource = new StreamSource(ensureReadResource(xsltPathInsideWebapp));
+        StreamSource xsltSource = new StreamSource(ensureReadResource(xsltPathInsideWebapp), xsltPathInsideWebapp);
         
         /* Then compile the XSLT */
         try {

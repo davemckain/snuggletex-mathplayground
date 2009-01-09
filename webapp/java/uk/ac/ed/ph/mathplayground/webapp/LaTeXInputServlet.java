@@ -55,6 +55,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     /** Location of XSLT controlling page layout */
     private static final String XSLT_LOCATION = "/WEB-INF/latexinput.xsl";
 
+    public static final String PMATHML_ENHANCER_LOCATION = "/WEB-INF/pmathml-enhancer.xsl";
     public static final String PMATHML_TO_CMATHML_LOCATION = "/WEB-INF/pmathml-to-cmathml.xsl";
     public static final String CMATHML_TO_MAXIMA_LOCATION = "/WEB-INF/cmathml-to-maxima.xsl";
     
@@ -88,8 +89,9 @@ public final class LaTeXInputServlet extends BaseServlet {
         SnuggleEngine engine = new SnuggleEngine();
         SnuggleSession session = engine.createSession();
         
-        /* NOTE: Must turn on inference of Math structure here */
-        session.getConfiguration().setInferringMathStructure(true);
+        /* NOTE: We used to turn inference on within SnuggleTeX but this is now going to
+         * be done independently from it.  */
+        session.getConfiguration().setInferringMathStructure(false);
         
         SnuggleInput input = new SnuggleInput("\\[ " + resultingInputLaTeX + " \\]", "Form Input");
         session.parseInput(input);
@@ -173,6 +175,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         if (!errors.isEmpty()) {
             return null;
         }
+        
         /* If no errors, make sure we got a single <math/> element */
         NodeList nodeList = temporaryRoot.getChildNodes();
         if (nodeList.getLength()!=1) {
@@ -188,17 +191,22 @@ public final class LaTeXInputServlet extends BaseServlet {
         pmathmlDocument.removeChild(temporaryRoot);
         pmathmlDocument.appendChild(mathmlElement);
         
-        /* Try to convert to Content MathML */
+        /* Enhance the PMathML */
+        Document epmathmlDocument = documentBuilder.newDocument();
+        Transformer enhancerStylesheet = compileStylesheet(transformerFactory, PMATHML_ENHANCER_LOCATION).newTransformer();
+        enhancerStylesheet.transform(new DOMSource(pmathmlDocument, "urn:pmathml"), new DOMResult(epmathmlDocument));
+        
+        /* Then try to convert the enhanced PMathML to Content MathML */
         Document cmathmlDocument = documentBuilder.newDocument();
         Transformer ptocStylesheet = compileStylesheet(transformerFactory, PMATHML_TO_CMATHML_LOCATION).newTransformer();
-        ptocStylesheet.transform(new DOMSource(pmathmlDocument), new DOMResult(cmathmlDocument));
+        ptocStylesheet.transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new DOMResult(cmathmlDocument));
         
         /* Serialise P and C MathML for geeks */
-        StringWriter pmathmlWriter = new StringWriter();
+        StringWriter epmathmlWriter = new StringWriter();
         StringWriter cmathmlWriter = new StringWriter();
-        createSerializer(transformerFactory).transform(new DOMSource(pmathmlDocument), new StreamResult(pmathmlWriter));
-        createSerializer(transformerFactory).transform(new DOMSource(cmathmlDocument), new StreamResult(cmathmlWriter));
-        String pmathml = pmathmlWriter.toString();
+        createSerializer(transformerFactory).transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new StreamResult(epmathmlWriter));
+        createSerializer(transformerFactory).transform(new DOMSource(cmathmlDocument, "urn:cmathml"), new StreamResult(cmathmlWriter));
+        String pmathml = epmathmlWriter.toString();
         String cmathml = cmathmlWriter.toString();
         
         /* Hunt out any failure annotation.
