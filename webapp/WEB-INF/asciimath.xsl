@@ -25,7 +25,11 @@ All Rights Reserved
 
   <!-- Various text outputs -->
   <xsl:param name="pmathml-raw" select="''" as="xs:string"/>
-  <xsl:param name="pmathml-fixed" select="''" as="xs:string"/>
+  <xsl:param name="pmathml-fixed" select="'(Failed)'" as="xs:string"/>
+  <xsl:param name="pmathml-enhanced" select="'(Failed)'" as="xs:string"/>
+  <xsl:param name="cmathml" as="xs:string" select="'(Failed)'" required="no"/>
+  <xsl:param name="maxima-input" as="xs:string" select="'(Failed)'" required="no"/>
+  <xsl:param name="maxima-output" as="xs:string" select="'(Failed)'" required="no"/>
 
   <!-- Override page ID -->
   <xsl:variable name="pageId" select="'asciimath'" as="xs:string"/>
@@ -78,15 +82,33 @@ All Rights Reserved
 
       <h3>Fixed Presentation MathML</h3>
       <p>
-        (This is after tidying and semantic inference. I've only just started on
-        the XSLT 2.0 stylesheet for this so all it does so far is minor tidying.
-        Based on previous work, I imagine being able to get it into a form similar
-        to what SnuggleTeX can generate and suitable for conversion to Content MathML,
-        provided of course we restrict the mathematics we are handling.)
+        (This gets it into a roughly equivalent form as the basic output from
+        SnuggleTeX.)
       </p>
       <pre class="result">
         <xsl:value-of select="$pmathml-fixed"/>
       </pre>
+
+      <h3>(Post-processed) Presentation MathML</h3>
+      <pre class="result">
+        <xsl:value-of select="$pmathml-enhanced"/>
+      </pre>
+
+      <h3>Content MathML</h3>
+      <pre class="result">
+        <xsl:value-of select="$cmathml"/>
+      </pre>
+
+      <h3>Maxima Input</h3>
+      <pre class="result">
+        <xsl:value-of select="$maxima-input"/>
+      </pre>
+
+      <h3>(Raw) Maxima Output</h3>
+      <pre class="result">
+        <xsl:value-of select="$maxima-output"/>
+      </pre>
+
     </xsl:if>
 
   </xsl:template>
