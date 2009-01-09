@@ -102,7 +102,7 @@ All Rights Reserved
     <!-- Difference, which is either unary or binary -->
     <xsl:text>(</xsl:text>
     <xsl:choose>
-      <xsl:when test="count(*)=1">
+      <xsl:when test="count(*)=2">
         <!-- Unary version -->
         <xsl:text>-</xsl:text>
         <xsl:apply-templates select="*[2]"/>
