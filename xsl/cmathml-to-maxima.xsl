@@ -248,7 +248,16 @@ All Rights Reserved
   </xsl:template>
 
   <xsl:template match="cn">
-    <xsl:value-of select="."/>
+    <xsl:choose>
+      <xsl:when test="starts-with(., '-')">
+        <xsl:text>(</xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>)</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
