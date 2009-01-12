@@ -6,7 +6,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/servlet-api/2.4/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/ph-commons/1.0.0/ph-commons-util.jar" sourcepath="lib/ph-commons/1.0.0/src.zip"/>
-	<classpathentry kind="lib" path="lib/snuggletex/1.0.1/snuggletex.jar" sourcepath="lib/snuggletex/1.0.1/src.zip"/>
+	<classpathentry kind="lib" path="lib/snuggletex/1.1/snuggletex.jar" sourcepath="lib/snuggletex/1.1/src.zip"/>
 	<classpathentry kind="lib" path="lib/log4j/1.2.14/log4j-1.2.14.jar"/>
 	<classpathentry kind="output" path="build/src"/>
 </classpath>
