@@ -5,7 +5,6 @@
  */
 package uk.ac.ed.ph.mathplayground.webapp;
 
-import uk.ac.ed.ph.mathplayground.RawMaximaSession;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.InputError;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions;
@@ -18,7 +17,6 @@ import uk.ac.ed.ph.snuggletex.definitions.Globals;
 import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -29,9 +27,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -53,11 +49,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     private Logger log = Logger.getLogger(LaTeXInputServlet.class);
     
     /** Location of XSLT controlling page layout */
-    private static final String XSLT_LOCATION = "/WEB-INF/latexinput.xsl";
-
-    public static final String PMATHML_ENHANCER_LOCATION = "/WEB-INF/pmathml-enhancer.xsl";
-    public static final String PMATHML_TO_CMATHML_LOCATION = "/WEB-INF/pmathml-to-cmathml.xsl";
-    public static final String CMATHML_TO_MAXIMA_LOCATION = "/WEB-INF/cmathml-to-maxima.xsl";
+    private static final String DISPLAY_XSLT_LOCATION = "/WEB-INF/latexinput.xsl";
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -122,10 +114,9 @@ public final class LaTeXInputServlet extends BaseServlet {
         /* Log what was done */
         if (resultArray!=null) {
             log.info("Success Result:\nInput: " + resultingInputLaTeX
-                    + "\nPMathML: " + resultArray[0]
-                    + "\nCMathML: " + resultArray[1]
-                    + "\nMaxima Input: " + resultArray[2]
-                    + "\nMaxima Output: " + resultArray[3]
+                    + "\nMathML: " + resultArray[0]
+                    + "\nMaxima Input: " + resultArray[1]
+                    + "\nMaxima Output: " + resultArray[2]
                     + "\n======================================");
         }
         else {
@@ -135,14 +126,13 @@ public final class LaTeXInputServlet extends BaseServlet {
         /* Create XSLT to generate the resulting page */
         Transformer viewStylesheet;
         try {
-            viewStylesheet = compileStylesheet(transformerFactory, XSLT_LOCATION).newTransformer();
+            viewStylesheet = compileStylesheet(transformerFactory, DISPLAY_XSLT_LOCATION).newTransformer();
             viewStylesheet.setParameter("context-path", request.getContextPath());
             viewStylesheet.setParameter("latex-input", resultingInputLaTeX);
             if (resultArray!=null) {
-                viewStylesheet.setParameter("pmathml", resultArray[0]);
-                viewStylesheet.setParameter("cmathml", resultArray[1]);
-                viewStylesheet.setParameter("maxima-input", resultArray[2]);
-                viewStylesheet.setParameter("maxima-output", resultArray[3]);
+                viewStylesheet.setParameter("mathml", resultArray[0]);
+                viewStylesheet.setParameter("maxima-input", resultArray[1]);
+                viewStylesheet.setParameter("maxima-output", resultArray[2]);
             }
         }
         catch (TransformerConfigurationException e) {
@@ -160,7 +150,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     }
     
     private String[] pipelineMathML(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
-            throws ServletException, TransformerException {
+            throws ServletException, TransformerException, XPathExpressionException {
         /* Create MathML doc with temp fake root */
         DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
         Document pmathmlDocument = documentBuilder.newDocument();
@@ -191,54 +181,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         pmathmlDocument.removeChild(temporaryRoot);
         pmathmlDocument.appendChild(mathmlElement);
         
-        /* Enhance the PMathML */
-        Document epmathmlDocument = documentBuilder.newDocument();
-        Transformer enhancerStylesheet = compileStylesheet(transformerFactory, PMATHML_ENHANCER_LOCATION).newTransformer();
-        enhancerStylesheet.transform(new DOMSource(pmathmlDocument, "urn:pmathml"), new DOMResult(epmathmlDocument));
-        
-        /* Then try to convert the enhanced PMathML to Content MathML */
-        Document cmathmlDocument = documentBuilder.newDocument();
-        Transformer ptocStylesheet = compileStylesheet(transformerFactory, PMATHML_TO_CMATHML_LOCATION).newTransformer();
-        ptocStylesheet.transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new DOMResult(cmathmlDocument));
-        
-        /* Serialise P and C MathML for geeks */
-        StringWriter epmathmlWriter = new StringWriter();
-        StringWriter cmathmlWriter = new StringWriter();
-        createSerializer(transformerFactory).transform(new DOMSource(epmathmlDocument, "urn:epmathml"), new StreamResult(epmathmlWriter));
-        createSerializer(transformerFactory).transform(new DOMSource(cmathmlDocument, "urn:cmathml"), new StreamResult(cmathmlWriter));
-        String pmathml = epmathmlWriter.toString();
-        String cmathml = cmathmlWriter.toString();
-        
-        /* Hunt out any failure annotation.
-         * TODO: Should use XPath for this!
-         */
-        String maximaInput;
-        String maximaOutput;
-        if (cmathml.indexOf("Presentation-to-Content-MathML-failure")!=-1) {
-            maximaInput = "(Failed conversion to intermediate Content MathML)";
-            maximaOutput = "(N/A)";
-        }
-        else {
-            /* Convert Content MathML to Maxima Input */
-            StringWriter maximaWriter = new StringWriter();
-            Transformer ctoMaximaStylesheet = compileStylesheet(transformerFactory, CMATHML_TO_MAXIMA_LOCATION).newTransformer();
-            ctoMaximaStylesheet.transform(new DOMSource(cmathmlDocument), new StreamResult(maximaWriter));
-            maximaInput = maximaWriter.toString();
-            
-            /* Now pass to Maxima */
-            RawMaximaSession maximaSession = new RawMaximaSession();
-            try {
-                maximaSession.open();
-                maximaOutput = maximaSession.executeRaw(maximaInput + ";");
-                maximaSession.close();
-            }
-            catch (Exception e) {
-                maximaOutput = "Exception occurred speaking to Maxima: " + e.toString();
-            }
-        }
-        
-        /* Return results */
-        return new String[] { pmathml, cmathml, maximaInput, maximaOutput };
+        return upconvertMathML(transformerFactory, pmathmlDocument);
     }
 }
 

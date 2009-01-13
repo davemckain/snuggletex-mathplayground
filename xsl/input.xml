@@ -1,4 +1,35 @@
 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <semantics>
+    <mfenced open='{' close='}'>
+      <mrow>
+        <mn>1</mn>
+        <mo>-</mo>
+        <mi>x</mi>
+      </mrow>
+    </mfenced>
+    <annotation encoding="SnuggleTeX">blah</annotation>
+  </semantics>
+  <!--
+  <mrow>
+    <mo>(</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mi>x</mi>
+    <mo>-</mo>
+    <mrow>
+      <mo>(</mo>
+      <mn>4</mn>
+      <mo>-</mo>
+      <mrow>
+        <mo>sin</mo>
+        <mi>y</mi>
+      </mrow>
+      <mo>)</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo>]</mo>
+  </mrow>
+  -->
   <!--
   <mfenced open='[' close=']'>
     <mi>x</mi>
@@ -71,6 +102,7 @@
     <mi>x</mi>
   </msup>
   -->
+  <!--
   <mrow>
     <mfrac>
       <mi>a</mi>
@@ -97,11 +129,10 @@
     </msup>
     <mo>&#x2061;</mo>
     <mi>y</mi>
-    <!--
     <mo>&#x2062;</mo>
     <mfenced open="|" close="|">
       <mi>x</mi>
     </mfenced>
-    -->
   </mrow>
+    -->
 </math>

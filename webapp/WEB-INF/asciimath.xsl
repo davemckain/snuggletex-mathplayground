@@ -25,9 +25,7 @@ All Rights Reserved
 
   <!-- Various text outputs -->
   <xsl:param name="pmathml-raw" select="''" as="xs:string"/>
-  <xsl:param name="pmathml-fixed" select="'(Failed)'" as="xs:string"/>
-  <xsl:param name="pmathml-enhanced" select="'(Failed)'" as="xs:string"/>
-  <xsl:param name="cmathml" as="xs:string" select="'(Failed)'" required="no"/>
+  <xsl:param name="mathml" as="xs:string" select="'(Failed)'" required="no"/>
   <xsl:param name="maxima-input" as="xs:string" select="'(Failed)'" required="no"/>
   <xsl:param name="maxima-output" as="xs:string" select="'(Failed)'" required="no"/>
 
@@ -80,23 +78,9 @@ All Rights Reserved
         <xsl:value-of select="$pmathml-raw"/>
       </pre>
 
-      <h3>Fixed Presentation MathML</h3>
-      <p>
-        (This gets it into a roughly equivalent form as the basic output from
-        SnuggleTeX.)
-      </p>
+      <h3>Up-converted MathML</h3>
       <pre class="result">
-        <xsl:value-of select="$pmathml-fixed"/>
-      </pre>
-
-      <h3>(Post-processed) Presentation MathML</h3>
-      <pre class="result">
-        <xsl:value-of select="$pmathml-enhanced"/>
-      </pre>
-
-      <h3>Content MathML</h3>
-      <pre class="result">
-        <xsl:value-of select="$cmathml"/>
+        <xsl:value-of select="$mathml"/>
       </pre>
 
       <h3>Maxima Input</h3>
