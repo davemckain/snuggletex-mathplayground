@@ -25,20 +25,6 @@ All Rights Reserved
 
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
-  <xsl:variable name="invertible-elementary-functions" as="xs:string+"
-    select="('sin', 'cos', 'tan',
-             'sec', 'csc' ,'cot',
-             'sinh', 'cosh', 'tanh',
-             'sech', 'csch', 'coth')"/>
-
-  <xsl:variable name="elementary-functions" as="xs:string+"
-    select="($invertible-elementary-functions,
-            'arcsin', 'arccos', 'arctan',
-            'arcsec', 'arccsc', 'arccot',
-            'arcsinh', 'arccosh', 'arctanh',
-            'arcsech', 'arccsch', 'arccoth',
-            'ln', 'log', 'exp')"/>
-
   <!-- ************************************************************ -->
 
   <xsl:template match="math">
@@ -62,6 +48,109 @@ All Rights Reserved
     <xsl:apply-templates/>
   </xsl:template>
 
+  <!-- ***************************************************************
+
+  Fence balanced parentheses where possible. ASCIIMath outputs the
+  following structure so it's quite easy to do:
+
+  <mrow>
+    <mo>...opener...</mo>
+    ...
+    <mo>...closer...</mo>
+  </mrow>
+
+  **************************************************************** -->
+
+  <xsl:variable name="s:parentheses" as="element()+">
+    <s:pair open='(' close=')'/>
+    <s:pair open='[' close=']'/>
+    <s:pair open='{{' close='}}'/>
+    <s:pair open='&lt;' close='&gt;'/>
+  </xsl:variable>
+
+  <xsl:function name="s:is-open-parenthesis" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@open=$element]])"/>
+  </xsl:function>
+
+  <xsl:function name="s:is-close-parenthesis" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@close=$element]])"/>
+  </xsl:function>
+
+  <xsl:function name="s:is-separator" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and .=','])"/>
+  </xsl:function>
+
+  <xsl:function name="s:get-matching-closer-value" as="xs:string">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="$s:parentheses[@open=$element]/@close"/>
+  </xsl:function>
+
+  <xsl:template match="mrow[*[1][self::mo and s:is-open-parenthesis(.)] and *[position()=last()][self::mo and s:is-close-parenthesis(.)]]">
+    <xsl:variable name="contents" select="*[position() &gt; 1 and position() &lt; last()]" as="element()*"/>
+    <xsl:variable name="opener" select="*[1]" as="element()"/>
+    <xsl:variable name="closer" select="*[position()=last()]" as="element()"/>
+    <mfenced open="{$opener}" close="{$closer}">
+      <xsl:for-each-group select="$contents" group-adjacent="s:is-separator(.)">
+        <xsl:choose>
+          <xsl:when test="current-grouping-key()">
+            <!-- Separator => ignore -->
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- Item => becomes single child so might need wrapped up -->
+            <xsl:call-template name="maybe-wrap-in-mrow">
+              <xsl:with-param name="elements" as="element()*">
+                <xsl:apply-templates select="current-group()"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </mfenced>
+  </xsl:template>
+
+  <!-- ***************************************************************
+
+  ASCIIMathML outputs elementary functions as <mo/> instead of <mi/> and
+  always wraps the result in an <mrow/> if they are not going to be wrapped
+  in something else. It assumes that the operator only
+  applies to the following token. We're going to change this behaviour
+  by unwrapping the mrow.
+
+  **************************************************************** -->
+
+  <xsl:variable name="invertible-elementary-functions" as="xs:string+"
+    select="('sin', 'cos', 'tan',
+             'sec', 'csc' ,'cot',
+             'sinh', 'cosh', 'tanh',
+             'sech', 'csch', 'coth')"/>
+
+  <xsl:variable name="elementary-functions" as="xs:string+"
+    select="($invertible-elementary-functions,
+            'ln', 'log', 'exp')"/>
+
+  <xsl:function name="s:is-elementary-function" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:sequence select="boolean($element[self::mo and $elementary-functions=string(.)])"/>
+  </xsl:function>
+
+  <xsl:template match="mrow[count(*)=2 and *[1][s:is-elementary-function(.)]]">
+    <mi>
+      <xsl:value-of select="*[1]"/>
+    </mi>
+    <xsl:apply-templates select="*[2]"/>
+  </xsl:template>
+
+  <xsl:template match="mo[s:is-elementary-function(.)]">
+    <mi>
+      <xsl:value-of select="."/>
+    </mi>
+  </xsl:template>
+
+  <!-- *********************************************************** -->
+
   <!-- Join unary minus and literal numbers together -->
   <xsl:template match="mo[.='-' and not(preceding-sibling::*) and following-sibling::*[1][self::mn]]">
     <mn>
@@ -74,26 +163,9 @@ All Rights Reserved
     <!-- This has been handled above -->
   </xsl:template>
 
-  <!--
-  ASCIIMathML outputs elementary functions as <mo/> instead of <mi/> and
-  always wraps the result in an <mrow/> if they are not going to be wrapped
-  in something else. It assumes that the operator only
-  applies to the following token. We're going to change this behaviour
-  by unwrapping the mrow.
-  -->
-  <xsl:template match="mrow[count(*)=2 and *[1][self::mo and $elementary-functions=string(.)]]">
-    <mi>
-      <xsl:value-of select="*[1]"/>
-    </mi>
-    <xsl:apply-templates select="*[2]"/>
-  </xsl:template>
+  <!-- *********************************************************** -->
 
-  <xsl:template match="mo[$elementary-functions=string(.)]">
-    <mi>
-      <xsl:value-of select="."/>
-    </mi>
-  </xsl:template>
-
+  <!-- Strip off redundant <mrow/> elements -->
   <xsl:template match="mrow">
     <!-- Process children to see if we really need this -->
     <xsl:variable name="processed-children" as="element()*">
@@ -118,6 +190,8 @@ All Rights Reserved
     </xsl:copy>
   </xsl:template>
 
+  <!-- *********************************************************** -->
+
   <xsl:template name="maybe-wrap-in-mrow">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <xsl:choose>
@@ -132,5 +206,5 @@ All Rights Reserved
     </xsl:choose>
   </xsl:template>
 
-
 </xsl:stylesheet>
+
