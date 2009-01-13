@@ -14,8 +14,8 @@ All Rights Reserved
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:s="http://www.ph.ed.ac.uk/snuggletex"
   xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:s="http://www.ph.ed.ac.uk/snuggletex"
   xmlns="http://www.w3.org/1998/Math/MathML"
   exclude-result-prefixes="xs m s"
   xpath-default-namespace="http://www.w3.org/1998/Math/MathML">
@@ -117,10 +117,14 @@ All Rights Reserved
   <!-- ***************************************************************
 
   ASCIIMathML outputs elementary functions as <mo/> instead of <mi/> and
-  always wraps the result in an <mrow/> if they are not going to be wrapped
-  in something else. It assumes that the operator only
-  applies to the following token. We're going to change this behaviour
-  by unwrapping the mrow.
+  always wraps the result in an <mrow/> since the operators are assumed
+  to apply only to the next token, even though it is visually ambiguous.
+
+  It's not currently safe to change this behaviour as the '/' operator
+  only binds with the next token and is visually clear in this behaviour,
+  so I'll keep this convention.
+
+  (This is one area where ASCIIMathML deviates from SnuggleTeX.)
 
   **************************************************************** -->
 
@@ -138,13 +142,6 @@ All Rights Reserved
     <xsl:param name="element" as="element()"/>
     <xsl:sequence select="boolean($element[self::mo and $elementary-functions=string(.)])"/>
   </xsl:function>
-
-  <xsl:template match="mrow[count(*)=2 and *[1][s:is-elementary-function(.)]]">
-    <mi>
-      <xsl:value-of select="*[1]"/>
-    </mi>
-    <xsl:apply-templates select="*[2]"/>
-  </xsl:template>
 
   <xsl:template match="mo[s:is-elementary-function(.)]">
     <mi>
