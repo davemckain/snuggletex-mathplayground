@@ -38,14 +38,6 @@ All Rights Reserved
     <xsl:variable name="annotations" select="if (semantics) then semantics/*[position() != 1] else ()" as="element()*"/>
     <!-- Enhance the existing PMathML -->
     <xsl:variable name="enhanced-pmathml" as="element()*">
-      <!-- First of all, infer parentheses. It's easiest if we do this as a separate step
-           as the underlying algorithm changes the tree structure a lot. -->
-      <xsl:variable name="after-fencing">
-        <xsl:call-template name="fence-parentheses">
-          <xsl:with-param name="elements" select="$presentation-mathml"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <!-- Then do rest of the inference process -->
       <xsl:call-template name="process-group">
         <xsl:with-param name="elements" select="$after-fencing/*"/>
       </xsl:call-template>
@@ -108,130 +100,6 @@ All Rights Reserved
 
   <!-- ************************************************************ -->
 
-  <xsl:variable name="s:parentheses" as="element()+">
-    <s:pair open='(' close=')'/>
-    <s:pair open='[' close=']'/>
-    <s:pair open='{{' close='}}'/>
-    <s:pair open='&lt;' close='&gt;'/>
-  </xsl:variable>
-
-  <xsl:function name="s:is-open-parenthesis" as="xs:boolean">
-    <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@open=$element]])"/>
-  </xsl:function>
-
-  <xsl:function name="s:is-close-parenthesis" as="xs:boolean">
-    <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="boolean($element[self::mo and $s:parentheses[@close=$element]])"/>
-  </xsl:function>
-
-  <xsl:function name="s:get-matching-closer-value" as="xs:string">
-    <xsl:param name="element" as="element()"/>
-    <xsl:sequence select="$s:parentheses[@open=$element]/@close"/>
-  </xsl:function>
-
-  <xsl:template name="fence-parentheses">
-    <xsl:param name="elements" as="element()*" required="yes"/>
-    <xsl:call-template name="fence-parentheses-until">
-      <xsl:with-param name="elements" select="$elements"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template name="fence-parentheses-until">
-    <xsl:param name="elements" as="element()*" required="yes"/>
-    <xsl:param name="closer-value" as="xs:string" select="''" required="no"/>
-    <xsl:variable name="first-opener" as="element()?" select="$elements[s:is-open-parenthesis(.)][1]"/>
-    <xsl:variable name="first-closer" as="element()?" select="$elements[s:is-close-parenthesis(.)][1]"/>
-    <xsl:variable name="first-opener-or-closer" as="element()?" select="($first-opener | $first-closer)[1]"/>
-    <xsl:choose>
-      <xsl:when test="exists($first-opener-or-closer) and string($first-opener-or-closer)=string($first-closer)">
-        <!-- The first parenthesis found is a closer -->
-        <xsl:choose>
-          <xsl:when test="$closer-value!=''">
-            <xsl:choose>
-              <xsl:when test="string($first-closer)=$closer-value">
-                <!-- This is our terminating closer, so return original sequence -->
-                <xsl:copy-of select="$elements"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <!-- Wrong closer -->
-                <s:fail message="First parenthesis found was the closer '{$first-closer}'">
-                  <xsl:copy-of select="$elements"/>
-                </s:fail>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- No closer was expected here -->
-            <s:fail message="Found unopened closer '{$first-closer}'">
-              <xsl:copy-of select="$elements"/>
-            </s:fail>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="exists($first-opener-or-closer) and string($first-opener-or-closer)=string($first-opener)">
-        <!-- The first parenthesis found is an opener -->
-        <xsl:variable name="following-first-opener" as="element()*" select="$elements[. &gt;&gt; $first-opener]"/>
-        <xsl:variable name="required-closer-value" as="xs:string" select="s:get-matching-closer-value($first-opener)"/>
-        <xsl:variable name="fenced-followers" as="element()*">
-          <xsl:call-template name="fence-parentheses-until">
-            <xsl:with-param name="elements" select="$following-first-opener"/>
-            <xsl:with-param name="closer-value" select="$required-closer-value"/>
-          </xsl:call-template>
-        </xsl:variable>
-        <!-- First closer in result will be matching closer -->
-        <xsl:variable name="matching-closer" as="element()?" select="$fenced-followers[self::mo and .=$required-closer-value][1]"/>
-        <xsl:choose>
-          <xsl:when test="exists($matching-closer)">
-            <xsl:variable name="preceding-opener" as="element()*" select="$elements[. &lt;&lt; $first-opener]"/>
-            <xsl:variable name="preceding-matching-closer" as="element()*" select="$fenced-followers[. &lt;&lt; $matching-closer]"/>
-            <xsl:variable name="following-matching-closer" as="element()*" select="$fenced-followers[. &gt;&gt; $matching-closer]"/>
-            <xsl:variable name="first-fenced" as="element()+">
-              <xsl:copy-of select="$preceding-opener"/>
-              <mfenced open="{string($first-opener)}" close="{$required-closer-value}">
-                <!-- TODO: Maybe want to group across natural comma separators here? -->
-                <xsl:call-template name="maybe-wrap-in-mrow">
-                  <xsl:with-param name="elements" select="$preceding-matching-closer"/>
-                </xsl:call-template>
-              </mfenced>
-              <xsl:copy-of select="$following-matching-closer"/>
-            </xsl:variable>
-            <xsl:call-template name="fence-parentheses-until">
-              <xsl:with-param name="elements" select="$first-fenced"/>
-              <xsl:with-param name="closer-value" select="$closer-value"/>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:otherwise>
-            <s:fail message="Could not find matching closer for '{$first-opener}'">
-              <xsl:copy-of select="$fenced-followers"/>
-            </s:fail>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-- No parentheses in this group so descend into children and fence them -->
-        <xsl:apply-templates select="$elements" mode="fence-children"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="mrow" mode="fence-children">
-    <mrow>
-      <xsl:call-template name="fence-parentheses">
-        <xsl:with-param name="elements" select="*"/>
-      </xsl:call-template>
-    </mrow>
-  </xsl:template>
-
-  <xsl:template match="*|text()" mode="fence-children">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="fence-children"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <!-- ************************************************************ -->
-
   <xsl:variable name="invertible-elementary-functions" as="xs:string+"
     select="('sin', 'cos', 'tan',
              'sec', 'csc' ,'cot',
@@ -282,7 +150,7 @@ All Rights Reserved
   </xsl:function>
 
   <!-- Tests for the equivalent of \sin, \sin^{.}. Result need not make any actual sense! -->
-  <xsl:function name="s:is-recognised-function" as="xs:boolean">
+  <xsl:function name="s:is-supported-function" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
     <xsl:sequence select="s:is-elementary-function($element)
       or ($element[self::msup and s:is-elementary-function(*[1])])"/>
@@ -479,8 +347,8 @@ All Rights Reserved
   <xsl:template name="handle-consecutive-tokens">
     <xsl:param name="elements" as="element()*" required="yes"/>
     <!-- Split into groups starting with applications of zero or more standard functions -->
-    <xsl:for-each-group select="$elements" group-starting-with="*[s:is-recognised-function(.)
-        and not(preceding-sibling::*[1][s:is-recognised-function(.)])]">
+    <xsl:for-each-group select="$elements" group-starting-with="*[s:is-supported-function(.)
+        and not(preceding-sibling::*[1][s:is-supported-function(.)])]">
       <xsl:variable name="multiplicative-group" as="element()+" select="current-group()"/>
       <xsl:if test="position()!=1">
         <!-- Add an "Invisible Times" -->
@@ -500,7 +368,7 @@ All Rights Reserved
   <xsl:template name="apply-leading-functions">
     <xsl:param name="elements" as="element()+" required="yes"/>
     <xsl:choose>
-      <xsl:when test="$elements[1][s:is-recognised-function(.)] and count($elements)!=1">
+      <xsl:when test="$elements[1][s:is-supported-function(.)] and count($elements)!=1">
         <!-- This is a (prefix) function application. Copy the operator as-is -->
         <xsl:copy-of select="$elements[1]"/>
         <!-- Add an "Apply Function" operator -->
