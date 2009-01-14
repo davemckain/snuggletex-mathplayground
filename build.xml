@@ -210,6 +210,13 @@
         <include name="ph-commons-util.jar"/>
       </fileset>
     </copy>
+    <!-- Extract the SnuggleTeX up-conversion extensions XSLT into WEB-INF/classes so
+         that I can play around with these if necessary. -->
+    <unzip src="${build.lib.dir}/snuggletex.jar" dest="${build.webapp.dir}/WEB-INF/classes">
+      <patternset>
+        <include name="uk/ac/ed/ph/snuggletex/extensions/upconversion/*.xsl"/>
+      </patternset>
+    </unzip>
   </target>
 
   <!-- =================================================================== -->

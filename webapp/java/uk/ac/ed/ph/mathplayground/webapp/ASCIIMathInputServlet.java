@@ -12,25 +12,22 @@ import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions.WebPageType;
-import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Trivial servlet demonstrating the use of ASCIIMathML for submitting wodges of MathML.
@@ -47,9 +44,6 @@ public final class ASCIIMathInputServlet extends BaseServlet {
     
     /** Location of XSLT controlling page layout */
     private static final String DISPLAY_XSLT_LOCATION = "/WEB-INF/asciimath.xsl";
-
-    /** Stylesheet that fixes up ASCIIMathML output into a more SnuggleTeX-like form */
-    public static final String FIXER_LOCATION = "/WEB-INF/asciimathml-fixer.xsl";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -135,14 +129,15 @@ public final class ASCIIMathInputServlet extends BaseServlet {
     }
     
     private String[] processMathML(TransformerFactory transformerFactory, String pmathmlRaw)
-            throws TransformerException, ServletException, XPathExpressionException {
-        /* Fix up the raw MathML */
-        DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
-        Document fixedDocument = documentBuilder.newDocument();
-        Transformer fixerStylesheet = compileStylesheet(transformerFactory, FIXER_LOCATION).newTransformer();
-        fixerStylesheet.transform(new StreamSource(new StringReader(pmathmlRaw)), new DOMResult(fixedDocument));
-        
-        return upconvertMathML(transformerFactory, fixedDocument);
+            throws TransformerException, IOException, SAXException {
+        /* Parse the raw MathML */
+        Document rawDocument = MathMLUtilities.parseMathMLDocumentString(pmathmlRaw);
+        return upconvertMathML(transformerFactory, rawDocument);
+    }
+    
+    @Override
+    protected Document callUpconversionMethod(MathMLUpConverter upconverter, Document pmathmlDocument) {
+        return upconverter.upConvertASCIIMathML(pmathmlDocument, null);
     }
 }
 

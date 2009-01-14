@@ -5,22 +5,16 @@
  */
 package uk.ac.ed.ph.mathplayground.webapp;
 
-import uk.ac.ed.ph.commons.util.ConstraintUtilities;
 import uk.ac.ed.ph.mathplayground.RawMaximaSession;
-import uk.ac.ed.ph.snuggletex.SnuggleConstants;
-import uk.ac.ed.ph.snuggletex.SnuggleLogicException;
-import uk.ac.ed.ph.snuggletex.definitions.Globals;
+import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Iterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -29,13 +23,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
@@ -126,16 +116,17 @@ abstract class BaseServlet extends HttpServlet {
         }
     }
     
+    protected abstract Document callUpconversionMethod(MathMLUpConverter upconverter, Document pmathmlDocument);
+    
     /**
      * Up-converts the given (SnuggleTeX-standard) PMathML in various way. See method for details!
      */
     protected String[] upconvertMathML(TransformerFactory transformerFactory, Document pmathmlDocument)
-            throws ServletException, TransformerException, XPathExpressionException {
-        /* Up-convert the PMathML */
-        DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
-        Document upconvertedDocument = documentBuilder.newDocument();
-        Transformer upconverterStylesheet = compileStylesheet(transformerFactory, UPCONVERTER_XSLT_LOCATION).newTransformer();
-        upconverterStylesheet.transform(new DOMSource(pmathmlDocument, "urn:pmathml"), new DOMResult(upconvertedDocument));
+            throws TransformerException {
+        
+        /* Up-convert the PMathML, letting subclass pick appropriate method */
+        MathMLUpConverter upconverter = new MathMLUpConverter(null);
+        Document upconvertedDocument = callUpconversionMethod(upconverter, pmathmlDocument);
         
         /* Serialise result for geeks */
         StringWriter upconvertedWriter = new StringWriter();
@@ -143,41 +134,7 @@ abstract class BaseServlet extends HttpServlet {
         String upconverted = upconvertedWriter.toString();
         
         /* Extract Maxima annotation (if available) */
-        XPathFactory xpathFactory = XPathFactory.newInstance();
-        XPath xpath = xpathFactory.newXPath();
-        xpath.setNamespaceContext(new NamespaceContext() {
-
-            public String getNamespaceURI(String prefix) {
-                String result;
-                ConstraintUtilities.ensureNotNull(prefix);
-                if (prefix.equals("s")) {
-                    result = SnuggleConstants.SNUGGLETEX_NAMESPACE;
-                }
-                else if (prefix.equals("") || prefix.equals("m")) {
-                    result = Globals.MATHML_NAMESPACE;
-                }
-                else if (prefix.equals(XMLConstants.XML_NS_PREFIX)) {
-                    result = XMLConstants.XML_NS_URI;
-                }
-                else if (prefix.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
-                    result = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-                }
-                else {
-                    throw new SnuggleLogicException("Unexpected namespace prefix " + prefix);
-                }
-                return result;
-            }
-
-            public String getPrefix(String namespaceUri) {
-                throw new SnuggleLogicException("Didn't expect XPath API to call this method!");
-            }
-
-            @SuppressWarnings("unchecked")
-            public Iterator getPrefixes(String namespaceUri) {
-                throw new SnuggleLogicException("Didn't expect XPath API to call this method!");
-            }
-        });
-        String maximaAnnotation = xpath.evaluate("/m:math/m:semantics/m:annotation[@encoding='Maxima']", upconvertedDocument);
+        String maximaAnnotation = MathMLUtilities.extractAnnotationString(upconvertedDocument.getDocumentElement(), "Maxima");
 
         /* Do maxima stuff */
         String maximaInput;

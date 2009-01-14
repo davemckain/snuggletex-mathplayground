@@ -14,6 +14,7 @@ import uk.ac.ed.ph.snuggletex.SnuggleSession;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
 import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.definitions.Globals;
+import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
 
 import java.io.IOException;
@@ -27,7 +28,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -80,11 +80,6 @@ public final class LaTeXInputServlet extends BaseServlet {
         /* Parse the LaTeX */
         SnuggleEngine engine = new SnuggleEngine();
         SnuggleSession session = engine.createSession();
-        
-        /* NOTE: We used to turn inference on within SnuggleTeX but this is now going to
-         * be done independently from it.  */
-        session.getConfiguration().setInferringMathStructure(false);
-        
         SnuggleInput input = new SnuggleInput("\\[ " + resultingInputLaTeX + " \\]", "Form Input");
         session.parseInput(input);
         
@@ -150,7 +145,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     }
     
     private String[] pipelineMathML(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
-            throws ServletException, TransformerException, XPathExpressionException {
+            throws TransformerException {
         /* Create MathML doc with temp fake root */
         DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
         Document pmathmlDocument = documentBuilder.newDocument();
@@ -182,6 +177,12 @@ public final class LaTeXInputServlet extends BaseServlet {
         pmathmlDocument.appendChild(mathmlElement);
         
         return upconvertMathML(transformerFactory, pmathmlDocument);
+    }
+    
+    @Override
+    protected Document callUpconversionMethod(MathMLUpConverter upconverter,
+            Document pmathmlDocument) {
+        return upconverter.upConvertSnuggleTeXMathML(pmathmlDocument, null);
     }
 }
 
