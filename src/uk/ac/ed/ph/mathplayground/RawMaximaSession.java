@@ -11,6 +11,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,6 +94,8 @@ public final class RawMaximaSession {
      * TODO: This should be parametrised!
      */
     public static String MAXIMA_EXECUTABLE_PATH = "/usr/bin/maxima";
+    
+    private final ExecutorService executor;
 
     /** Builds up output from each command */
     private final StringBuilder outputBuilder;
@@ -103,6 +111,7 @@ public final class RawMaximaSession {
 
     public RawMaximaSession() {
         this.outputBuilder = new StringBuilder();
+        this.executor = Executors.newFixedThreadPool(1);
     }
 
     public void open() throws IOException {
@@ -121,32 +130,58 @@ public final class RawMaximaSession {
         readUntilFirstInputPrompt("%i");
     }
 
-    private String readUntilFirstInputPrompt(String inchar) throws IOException {
+    private String readUntilFirstInputPrompt(String inchar) {
         Pattern promptPattern = Pattern.compile("^\\(\\Q" + inchar + "\\E\\d+\\)\\s*\\z", Pattern.MULTILINE);
-        log.info("Reading output from Maxima until first prompt matching " + promptPattern);
-        outputBuilder.setLength(0);
-        int c;
-        do {
-            c = maximaOutput.read();
-            if (c==-1) {
-                /* FIXME: Throw a better Exception */
-                throw new IOException("Maxima output ended without finding input prompt");
-            }
-            outputBuilder.append((char) c);
-            
-            /* If there's currently no more to read, see if we're now sitting at
-             * an input prompt. */
-            if (!maximaOutput.ready()) {
-                Matcher promptMatcher = promptPattern.matcher(outputBuilder);
-                if (promptMatcher.find()) {
-                    /* Success. Trim off the prompt and store all of the raw output */
-                    String result =  promptMatcher.replaceFirst("");
-                    outputBuilder.setLength(0);
-                    return result;
-                }
-            }
+        FutureTask<String> maximaCall = new FutureTask<String>(new MaximaCallable(promptPattern));
+        
+        executor.execute(maximaCall);
+        
+        maximaCall.run();
+        try {
+            return maximaCall.get(1, TimeUnit.SECONDS);
         }
-        while (true);
+        catch (TimeoutException e) {
+            log.error("TIMEOUT!");
+            return null;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private class MaximaCallable implements Callable<String> {
+        
+        private final Pattern promptPattern;
+        
+        public MaximaCallable(Pattern promptPattern) {
+            this.promptPattern = promptPattern;
+        }
+        
+        public String call() throws Exception {
+            log.info("Reading output from Maxima until first prompt matching " + promptPattern);
+            outputBuilder.setLength(0);
+            int c;
+            do {
+                c = maximaOutput.read();
+                if (c==-1) {
+                    /* FIXME: Throw a better Exception */
+                    throw new IOException("Maxima output ended without finding input prompt");
+                }
+                outputBuilder.append((char) c);
+                
+                /* If there's currently no more to read, see if we're now sitting at
+                 * an input prompt. */
+                if (!maximaOutput.ready()) {
+                    Matcher promptMatcher = promptPattern.matcher(outputBuilder);
+                    if (promptMatcher.find()) {
+                        /* Success. Trim off the prompt and store all of the raw output */
+                        String result =  promptMatcher.replaceFirst("");
+                        outputBuilder.setLength(0);
+                        return result;
+                    }
+                }
+            } while (true);
+        }
     }
     
     private String doMaximaUntil(String input, String inchar) throws IOException {
@@ -182,6 +217,9 @@ public final class RawMaximaSession {
     public int close() {
         ensureStarted();
         try {
+            /* Close down executor */
+            executor.shutdown();
+            
             /* Ask Maxima to nicely close down by closing its input */
             log.info("Closing Maxima");
             maximaInput.close();
@@ -250,6 +288,9 @@ public final class RawMaximaSession {
         
         /* Funny command - returns a result as well as outputting to STDOUT */
         System.out.println("Ex 6:" + session.executeRaw("tex(1/2);"));
+        
+        /* Command that hangs Maxima */
+        System.out.println("Ex 7:" + session.executeRaw("1"));
         
         session.close();
     }
