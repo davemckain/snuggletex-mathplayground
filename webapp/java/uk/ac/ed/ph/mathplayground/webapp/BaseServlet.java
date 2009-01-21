@@ -5,13 +5,7 @@
  */
 package uk.ac.ed.ph.mathplayground.webapp;
 
-import uk.ac.ed.ph.mathplayground.RawMaximaSession;
-import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
-
 import java.io.InputStream;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,11 +17,14 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+
+import uk.ac.ed.ph.mathplayground.RawMaximaSession;
+import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
+import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 /**
  * Trivial base class for servlets in the demo webapp
@@ -125,13 +122,11 @@ abstract class BaseServlet extends HttpServlet {
             throws TransformerException {
         
         /* Up-convert the PMathML, letting subclass pick appropriate method */
-        MathMLUpConverter upconverter = new MathMLUpConverter(null);
+        MathMLUpConverter upconverter = new MathMLUpConverter();
         Document upconvertedDocument = callUpconversionMethod(upconverter, pmathmlDocument);
         
         /* Serialise result for geeks */
-        StringWriter upconvertedWriter = new StringWriter();
-        createSerializer(transformerFactory).transform(new DOMSource(upconvertedDocument, "urn:upconverted"), new StreamResult(upconvertedWriter));
-        String upconverted = upconvertedWriter.toString();
+        String upconverted = MathMLUtilities.serializeDocument(upconvertedDocument);
         
         /* Extract Maxima annotation (if available) */
         String maximaAnnotation = MathMLUtilities.extractAnnotationString(upconvertedDocument.getDocumentElement(), "Maxima");
