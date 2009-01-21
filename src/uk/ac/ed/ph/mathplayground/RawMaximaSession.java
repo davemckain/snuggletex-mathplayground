@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,9 +67,6 @@ import org.apache.log4j.Logger;
  *     that may appear here!!
  *   </li>
  *   <li>
- *     Need to parametrise the location of the Maxima executable.
- *   </li>
- *   <li>
  *     It's possible to confuse things if you ask Maxima to output something which looks
  *     like the input prompt (e.g. "(%i1)").
  *   </li>
@@ -74,10 +74,6 @@ import org.apache.log4j.Logger;
  *     Some Maxima commands (e.g. the one-argument version of 'tex') also output to STDOUT
  *     as well as returning a result. This will confuse the methods which attempt to grok
  *     Maxima's output.
- *   </li>
- *   <li>
- *     If you send an incomplete command to Maxima, it will hang indefinitely. I need to fix
- *     this!
  *   </li>
  * </ul>
  * 
@@ -88,67 +84,149 @@ public final class RawMaximaSession {
 
     private static final Logger log = Logger.getLogger(RawMaximaSession.class);
     
-    /**
-     * Change this to point to your Maxima executable.
-     * 
-     * TODO: This should be parametrised!
-     */
-    public static String MAXIMA_EXECUTABLE_PATH = "/usr/bin/maxima";
+    public static final String MAXIMA_EXECUTABLE_PATH_PROPERTY = "uk.ac.ed.ph.mathplayground.maxima.path";
+    public static final String MAXIMA_ENVIRONMENT_PROPERTY_BASE = "uk.ac.ed.ph.mathplayground.maxima.env";
+    public static final String MAXIMA_TIMEOUT_PROPERTY = "uk.ac.ed.ph.mathplayground.maxima.timeout";
+    
+    /** Default timeout (in seconds) to use if not specified by property */
+    public static int DEFAULT_TIMEOUT = 5;
     
     private final ExecutorService executor;
-
-    /** Builds up output from each command */
-    private final StringBuilder outputBuilder;
 
     /** Current Maxima process, or null if no session open */
     private Process maximaProcess;
     
-    /** Reads Maxima output, or null if no session open */
+    /** Reads Maxima standard output, or null if no session open */
     private BufferedReader maximaOutput;
+    
+    /** Reads Maxima standard error, or null if no session open */
+    private BufferedReader maximaErrorStream;
     
     /** Writes to Maxima, or null if no session open */
     private PrintWriter maximaInput;
+    
+    /** Timeout in seconds to wait for response from Maxima before killing session */
+    private int timeout;
+    
+    /** Builds up output from each command */
+    private final StringBuilder outputBuilder;
+    private final StringBuilder errorOutputBuilder;
 
     public RawMaximaSession() {
-        this.outputBuilder = new StringBuilder();
         this.executor = Executors.newFixedThreadPool(1);
+        this.timeout = getDefaultTimeout();
+        this.outputBuilder = new StringBuilder();
+        this.errorOutputBuilder = new StringBuilder();
+    }
+    
+    /**
+     * @throws MaximaConfigurationException
+     * @return
+     */
+    public int getDefaultTimeout() {
+        String systemDefaultTimeout = System.getProperty(MAXIMA_TIMEOUT_PROPERTY);
+        int result;
+        if (systemDefaultTimeout!=null) {
+            try {
+                result = Integer.parseInt(systemDefaultTimeout);
+            }
+            catch (NumberFormatException e) {
+                throw new MaximaConfigurationException("Default timeout " + systemDefaultTimeout + " must be an integer");
+            }
+        }
+        else {
+            result = DEFAULT_TIMEOUT;
+        }
+        return result;
+    }
+    
+    public int getTimeout() {
+        return timeout;
+    }
+    
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
-    public void open() throws IOException {
-        ensureNotStarted();
 
-        /* Start up Maxima with the -q option (which suppresses the startup
-         * message) */
-        log.info("Starting Maxima");
-        maximaProcess = Runtime.getRuntime().exec(new String[] { MAXIMA_EXECUTABLE_PATH, "-q" });
+    /**
+     * 
+     * @throws MaximaTimeoutException
+     * @throws MaximaRuntimeException
+     * @throws MaximaConfigurationException
+     */
+    public void open() throws MaximaTimeoutException {
+        ensureNotStarted();
+        
+        /* Extract relevant system properties required to get Maxima running */
+        String maximaPath = System.getProperty(MAXIMA_EXECUTABLE_PATH_PROPERTY);
+        List<String> environmentList = new ArrayList<String>();
+        String environmentProperty;
+        for (int i=0; ;i++) {
+            environmentProperty = System.getProperty(MAXIMA_ENVIRONMENT_PROPERTY_BASE + i);
+            if (environmentProperty!=null) {
+                environmentList.add(environmentProperty);
+            }
+            else {
+                break;
+            }
+        }
+
+        /* Start up Maxima with the -q option (which suppresses the startup message) */
+        log.info("Starting Maxima at " + maximaPath);
+        log.info("Using Environment " + environmentList);
+        try {
+            maximaProcess = Runtime.getRuntime().exec(new String[] { maximaPath, "-q" },
+                    environmentList.toArray(new String[environmentList.size()]));
+        }
+        catch (IOException e) {
+            throw new MaximaConfigurationException("Could not launch Maxima process", e);
+        }
 
         /* Get at input and outputs streams, wrapped up as ASCII readers/writers */
-        maximaOutput = new BufferedReader(new InputStreamReader(maximaProcess.getInputStream(), "ASCII"));
-        maximaInput = new PrintWriter(new OutputStreamWriter(maximaProcess.getOutputStream(), "ASCII"));
-        
+        try {
+            maximaOutput = new BufferedReader(new InputStreamReader(maximaProcess.getInputStream(), "ASCII"));
+            maximaErrorStream = new BufferedReader(new InputStreamReader(maximaProcess.getErrorStream(), "ASCII"));
+            maximaInput = new PrintWriter(new OutputStreamWriter(maximaProcess.getOutputStream(), "ASCII"));
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new MaximaRuntimeException("Could not extract Maxima IO stream", e);
+        }
+
         /* Wait for first input prompt */
         readUntilFirstInputPrompt("%i");
     }
 
-    private String readUntilFirstInputPrompt(String inchar) {
+    private String readUntilFirstInputPrompt(String inchar) throws MaximaTimeoutException {
         Pattern promptPattern = Pattern.compile("^\\(\\Q" + inchar + "\\E\\d+\\)\\s*\\z", Pattern.MULTILINE);
         FutureTask<String> maximaCall = new FutureTask<String>(new MaximaCallable(promptPattern));
-        
+
         executor.execute(maximaCall);
         
-        maximaCall.run();
+        String result = null;
         try {
-            return maximaCall.get(1, TimeUnit.SECONDS);
+            if (timeout > 0) {
+                /* Wait until timeout */
+                log.info("Doing Maxima call with timeout " + timeout + "s");
+                result = maximaCall.get(timeout, TimeUnit.SECONDS);
+            }
+            else {
+                /* Wait indefinitely (this can be dangerous!) */
+                log.info("Doing Maxima call without timeout");
+                result = maximaCall.get();
+            }
         }
         catch (TimeoutException e) {
-            log.error("TIMEOUT!");
-            return null;
+            log.error("Timeout was exceeded waiting for Maxima - killing the session");
+            close();
+            throw new MaximaTimeoutException(timeout);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MaximaRuntimeException("Unexpected Exception", e);
         }
+        return result;
+        
     }
-    
     private class MaximaCallable implements Callable<String> {
         
         private final Pattern promptPattern;
@@ -157,46 +235,88 @@ public final class RawMaximaSession {
             this.promptPattern = promptPattern;
         }
         
-        public String call() throws Exception {
+        private void handleReadFailure(String message) {
+            throw new MaximaRuntimeException(message + "\nOutput buffer at this time was '"
+                    + outputBuilder.toString()
+                    + "'\nError buffer at this time was '"
+                    + errorOutputBuilder.toString()
+                    + "'");
+        }
+        
+        private boolean absorbErrors() throws IOException {
+            int errorChar;
+            while (maximaErrorStream.ready()) {
+                errorChar = maximaErrorStream.read();
+                if (errorChar!=-1) {
+                    errorOutputBuilder.append((char) errorChar);
+                }
+                else {
+                    /* STDERR has closed */
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public String call() {
             log.info("Reading output from Maxima until first prompt matching " + promptPattern);
             outputBuilder.setLength(0);
-            int c;
-            do {
-                c = maximaOutput.read();
-                if (c==-1) {
-                    /* FIXME: Throw a better Exception */
-                    throw new IOException("Maxima output ended without finding input prompt");
-                }
-                outputBuilder.append((char) c);
-                
-                /* If there's currently no more to read, see if we're now sitting at
-                 * an input prompt. */
-                if (!maximaOutput.ready()) {
-                    Matcher promptMatcher = promptPattern.matcher(outputBuilder);
-                    if (promptMatcher.find()) {
-                        /* Success. Trim off the prompt and store all of the raw output */
-                        String result =  promptMatcher.replaceFirst("");
-                        outputBuilder.setLength(0);
-                        return result;
+            errorOutputBuilder.setLength(0);
+            int outChar;
+            try {
+                for (;;) {
+                    /* First absorb anything the error stream wants to say */
+                    absorbErrors();
+                    
+                    /* Block on standard output */
+                    outChar = maximaOutput.read();
+                    if (outChar==-1) {
+                        /* STDOUT has finished. See if there are more errors */
+                        absorbErrors();
+                        handleReadFailure("Maxima STDOUT and STDERR closed before finding an input prompt");
+                    }
+                    outputBuilder.append((char) outChar);
+                    
+                    /* If there's currently no more to read, see if we're now sitting at
+                     * an input prompt. */
+                    if (!maximaOutput.ready()) {
+                        Matcher promptMatcher = promptPattern.matcher(outputBuilder);
+                        if (promptMatcher.find()) {
+                            /* Success. Trim off the prompt and store all of the raw output */
+                            String result =  promptMatcher.replaceFirst("");
+                            outputBuilder.setLength(0);
+                            return result;
+                        }
+                        else {
+                            /* Not at a prompt - Maxima must still be thinking so loop through again */
+                            continue;
+                        }
                     }
                 }
-            } while (true);
+            }
+            catch (MaximaRuntimeException e) {
+                close();
+                throw e;
+            }
+            catch (IOException e) {
+                /* If anything has gone wrong, we'll close the Session */
+                throw new MaximaRuntimeException("IOException occurred reading from Maxima", e);
+            }
         }
     }
     
-    private String doMaximaUntil(String input, String inchar) throws IOException {
+    private String doMaximaUntil(String input, String inchar) throws MaximaTimeoutException {
         ensureStarted();
         log.info("Sending input '" + input + "' to Maxima");
         maximaInput.println(input);
         maximaInput.flush();
         if (maximaInput.checkError()) {
-            /* FIXME: Throw a better Exception */
-            throw new IOException("Could not send input to Maxima");
+            throw new MaximaRuntimeException("An error occurred sending input to Maxima");
         }
         return readUntilFirstInputPrompt(inchar);
     }
 
-    public String executeRaw(String command) throws IOException {
+    public String executeRaw(String command) throws MaximaTimeoutException {
         String rawOutput = doMaximaUntil(command + "inchar: %x$", "%x");
         
         /* Reset prompt and kill off last 3 results */
@@ -205,12 +325,25 @@ public final class RawMaximaSession {
         return rawOutput;
     }
     
-    public String executeExpectingSingleOutput(String command) throws IOException {
+    /**
+     * TODO: Not sure how useful this is here?
+     * 
+     * @throws MaximaTimeoutException
+     * @throws MaximaRuntimeException
+     */
+    public String executeExpectingSingleOutput(String command) throws MaximaTimeoutException {
         String rawOutput = executeRaw(command);
         return rawOutput.trim().replaceFirst("\\(%o\\d+\\)\\s*", "");
     }
     
-    public String[] executeExpectingMultipleLabels(String command) throws IOException {
+    
+    /**
+     * TODO: Not sure how useful this is here?
+     * 
+     * @throws MaximaTimeoutException
+     * @throws MaximaRuntimeException
+     */
+    public String[] executeExpectingMultipleLabels(String command) throws MaximaTimeoutException {
         return executeExpectingSingleOutput(command).split("(?s)\\s*\\(%o\\d+\\)\\s*");
     }
 
@@ -221,7 +354,7 @@ public final class RawMaximaSession {
             executor.shutdown();
             
             /* Ask Maxima to nicely close down by closing its input */
-            log.info("Closing Maxima");
+            log.info("Closing Maxima nicely");
             maximaInput.close();
             if (maximaInput.checkError()) {
                 log.warn("Forcibly terminating Maxima");
@@ -247,6 +380,7 @@ public final class RawMaximaSession {
         maximaProcess = null;
         maximaInput = null;
         maximaOutput = null;
+        maximaErrorStream = null;
         outputBuilder.setLength(0);
     }
 
@@ -264,7 +398,12 @@ public final class RawMaximaSession {
     
     //---------------------------------------------------------------------------------
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, MaximaTimeoutException {
+        /* Set up local environment */
+        System.setProperty(MAXIMA_EXECUTABLE_PATH_PROPERTY, "/opt/local/bin/maxima");
+        System.setProperty(MAXIMA_TIMEOUT_PROPERTY, "1");
+        System.setProperty(MAXIMA_ENVIRONMENT_PROPERTY_BASE + "0", "PATH=/usr/bin:/opt/local/bin");
+        
         RawMaximaSession session = new RawMaximaSession();
         
         session.open();
