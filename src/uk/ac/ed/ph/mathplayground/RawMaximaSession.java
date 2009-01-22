@@ -225,8 +225,8 @@ public final class RawMaximaSession {
             throw new MaximaRuntimeException("Unexpected Exception", e);
         }
         return result;
-        
     }
+    
     private class MaximaCallable implements Callable<String> {
         
         private final Pattern promptPattern;
@@ -287,10 +287,9 @@ public final class RawMaximaSession {
                             outputBuilder.setLength(0);
                             return result;
                         }
-                        else {
-                            /* Not at a prompt - Maxima must still be thinking so loop through again */
-                            continue;
-                        }
+                        /* If we're here then we're not at a prompt - Maxima must still be thinking
+                         * so loop through again */
+                        continue;
                     }
                 }
             }
@@ -398,7 +397,7 @@ public final class RawMaximaSession {
     
     //---------------------------------------------------------------------------------
 
-    public static void main(String[] args) throws IOException, MaximaTimeoutException {
+    public static void main(String[] args) throws MaximaTimeoutException {
         /* Set up local environment */
         System.setProperty(MAXIMA_EXECUTABLE_PATH_PROPERTY, "/opt/local/bin/maxima");
         System.setProperty(MAXIMA_TIMEOUT_PROPERTY, "1");

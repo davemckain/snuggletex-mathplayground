@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.log4j.Logger;
@@ -59,8 +58,6 @@ public final class ASCIIMathInputServlet extends BaseServlet {
 
     private void doRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        TransformerFactory transformerFactory = createTransformerFactory();
-        
         /* Get inputs, if appropriate */
         String asciiMathInput = request.getParameter("asciimathinput");
         String pmathmlRaw = request.getParameter("mathml");
@@ -71,7 +68,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
             
             /* Fix the raw MathML */
             try {
-                resultArray = processMathML(transformerFactory, pmathmlRaw);
+                resultArray = processMathML(pmathmlRaw);
             }
             catch (Exception e) {
                 throw new ServletException(e);
@@ -102,6 +99,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         );
         
         /* Create XSLT to generate the resulting page */
+        TransformerFactory transformerFactory = createTransformerFactory();
         Transformer viewStylesheet;
         try {
             viewStylesheet = compileStylesheet(transformerFactory, DISPLAY_XSLT_LOCATION).newTransformer();
@@ -128,11 +126,11 @@ public final class ASCIIMathInputServlet extends BaseServlet {
         }
     }
     
-    private String[] processMathML(TransformerFactory transformerFactory, String pmathmlRaw)
-            throws TransformerException, IOException, SAXException {
+    private String[] processMathML(String pmathmlRaw)
+            throws IOException, SAXException {
         /* Parse the raw MathML */
         Document rawDocument = MathMLUtilities.parseMathMLDocumentString(pmathmlRaw);
-        return upconvertMathML(transformerFactory, rawDocument);
+        return upconvertMathML(rawDocument);
     }
     
     @Override

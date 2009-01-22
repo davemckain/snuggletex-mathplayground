@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.log4j.Logger;
@@ -100,7 +99,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         String[] resultArray;
         TransformerFactory transformerFactory = createTransformerFactory();
         try {
-            resultArray = pipelineMathML(transformerFactory, session, options);
+            resultArray = pipelineMathML(session, options);
         }
         catch (Exception e) {
             throw new ServletException(e);
@@ -144,8 +143,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         }
     }
     
-    private String[] pipelineMathML(TransformerFactory transformerFactory, SnuggleSession session, DOMOutputOptions options)
-            throws TransformerException {
+    private String[] pipelineMathML(SnuggleSession session, DOMOutputOptions options) {
         /* Create MathML doc with temp fake root */
         DocumentBuilder documentBuilder = XMLUtilities.createNSAwareDocumentBuilder();
         Document pmathmlDocument = documentBuilder.newDocument();
@@ -176,12 +174,11 @@ public final class LaTeXInputServlet extends BaseServlet {
         pmathmlDocument.removeChild(temporaryRoot);
         pmathmlDocument.appendChild(mathmlElement);
         
-        return upconvertMathML(transformerFactory, pmathmlDocument);
+        return upconvertMathML(pmathmlDocument);
     }
     
     @Override
-    protected Document callUpconversionMethod(MathMLUpConverter upconverter,
-            Document pmathmlDocument) {
+    protected Document callUpconversionMethod(MathMLUpConverter upconverter, Document pmathmlDocument) {
         return upconverter.upConvertSnuggleTeXMathML(pmathmlDocument, null);
     }
 }

@@ -118,9 +118,7 @@ abstract class BaseServlet extends HttpServlet {
     /**
      * Up-converts the given (SnuggleTeX-standard) PMathML in various way. See method for details!
      */
-    protected String[] upconvertMathML(TransformerFactory transformerFactory, Document pmathmlDocument)
-            throws TransformerException {
-        
+    protected String[] upconvertMathML(Document pmathmlDocument) {
         /* Up-convert the PMathML, letting subclass pick appropriate method */
         MathMLUpConverter upconverter = new MathMLUpConverter();
         Document upconvertedDocument = callUpconversionMethod(upconverter, pmathmlDocument);
