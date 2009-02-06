@@ -160,6 +160,11 @@ public final class RawMaximaSession {
         
         /* Extract relevant system properties required to get Maxima running */
         String maximaPath = System.getProperty(MAXIMA_EXECUTABLE_PATH_PROPERTY);
+        if (maximaPath==null) {
+            throw new MaximaConfigurationException("System property " + MAXIMA_EXECUTABLE_PATH_PROPERTY
+                    + " must be set to point to the Maxima executable");
+        }
+        
         List<String> environmentList = new ArrayList<String>();
         String environmentProperty;
         for (int i=0; ;i++) {
