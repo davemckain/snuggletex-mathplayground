@@ -5,6 +5,12 @@
  */
 package uk.ac.ed.ph.mathplayground.webapp;
 
+import uk.ac.ed.ph.mathplayground.MaximaMathMLFixer;
+import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
+import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
+
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.ServletException;
@@ -19,13 +25,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.qtitools.mathassess.tools.maxima.RawMaximaSession;
 import org.w3c.dom.Document;
-
-import uk.ac.ed.ph.mathplayground.RawMaximaSession;
-import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
+import org.xml.sax.SAXException;
 
 /**
  * Trivial base class for servlets in the demo webapp
@@ -35,20 +37,10 @@ import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
  */
 abstract class BaseServlet extends HttpServlet {
     
-    private Logger log = Logger.getLogger(ASCIIMathInputServlet.class);
-    
     private static final long serialVersionUID = -2577813908466694931L;
     
     /** Stylesheet to up-convert the raw SnuggleTeX output into various other things */
     public static final String UPCONVERTER_XSLT_LOCATION = "/WEB-INF/snuggletex-upconverter.xsl";
-    
-    @Override
-    public void init() throws ServletException {
-        /* TODO: These need to be parametrised properly.. */
-        System.setProperty(RawMaximaSession.MAXIMA_EXECUTABLE_PATH_PROPERTY, "/opt/local/bin/maxima");
-        System.setProperty(RawMaximaSession.MAXIMA_TIMEOUT_PROPERTY, "10");
-        System.setProperty(RawMaximaSession.MAXIMA_ENVIRONMENT_PROPERTY_BASE + "0", "PATH=/usr/bin:/opt/local/bin");
-    }
 
     /**
      * Helper that reads in a resource from the webapp hierarchy, throwing a {@link ServletException}
@@ -144,26 +136,59 @@ abstract class BaseServlet extends HttpServlet {
         /* Do maxima stuff */
         String maximaInput;
         String maximaOutput;
+        String maximaMathMLOutput;
         if (maximaAnnotation==null || maximaAnnotation.length()==0) {
             maximaInput = "(Failed conversion to intermediate Content MathML)";
             maximaOutput = "(N/A)";
+            maximaMathMLOutput = "(N/A)";
         }
         else {
-            /* Pass to Maxima */
+            /* Pass input to Maxima */
             RawMaximaSession maximaSession = new RawMaximaSession();
             maximaInput = maximaAnnotation;
             try {
                 maximaSession.open();
+                
+                /* Get raw output */
                 maximaOutput = maximaSession.executeRaw(maximaInput + ";");
+                
+                /* Get MathML output */
+                maximaSession.executeRaw("load(mathml)$");
+                String rawOutput = maximaSession.executeRaw("mathml(" + maximaInput + ");");
+                maximaMathMLOutput = tidyRawMaximaMathMLOutput(rawOutput);
                 maximaSession.close();
             }
             catch (Exception e) {
-                log.warn("Exception speaking to Maxima", e);
                 maximaOutput = "Exception occurred speaking to Maxima: " + e.toString();
+                maximaMathMLOutput = "(N/A)";
             }
         }
         
         /* Return results */
-        return new String[] { upconverted, maximaInput, maximaOutput };
+        return new String[] { upconverted, maximaInput, maximaOutput, maximaMathMLOutput };
+    }
+    
+    private String tidyRawMaximaMathMLOutput(String rawOutput) throws IOException, SAXException {
+        /* First of all, trim off labels and other extraneous stuff */
+        String mathMLElement = rawOutput.replaceFirst("(?s)^.+(<math)", "$1")
+            .replaceFirst("(?s)(</math>).+$", "$1");
+        
+        /* Replace entities */
+        mathMLElement = mathMLElement.replace("&ExponentialE;", "e")
+            .replace("&ImaginaryI;", "i")
+            .replace("&pi;", "\u03c0");
+        /* etc... */
+        
+        /* Fix the lousy MathML we get from Maxima to something similar to SnuggleTeX output */
+        MaximaMathMLFixer fixer = new MaximaMathMLFixer();
+        Document mathMLDocument = MathMLUtilities.parseMathMLDocumentString(mathMLElement);
+        Document fixedDocument = fixer.fixMaximaMathMLOutput(mathMLDocument, null);
+        
+        /* Now up-convert */
+        MathMLUpConverter upconverter = new MathMLUpConverter();
+        Document upconvertedDocument = upconverter.upConvertSnuggleTeXMathML(fixedDocument, null);
+
+        /* That's it! */
+        return MathMLUtilities.serializeDocument(upconvertedDocument);
     }
 }
