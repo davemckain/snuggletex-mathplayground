@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import uk.ac.ed.ph.mathplayground.RawMaximaSession;
@@ -34,10 +35,20 @@ import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
  */
 abstract class BaseServlet extends HttpServlet {
     
+    private Logger log = Logger.getLogger(ASCIIMathInputServlet.class);
+    
     private static final long serialVersionUID = -2577813908466694931L;
     
     /** Stylesheet to up-convert the raw SnuggleTeX output into various other things */
     public static final String UPCONVERTER_XSLT_LOCATION = "/WEB-INF/snuggletex-upconverter.xsl";
+    
+    @Override
+    public void init() throws ServletException {
+        /* TODO: These need to be parametrised properly.. */
+        System.setProperty(RawMaximaSession.MAXIMA_EXECUTABLE_PATH_PROPERTY, "/opt/local/bin/maxima");
+        System.setProperty(RawMaximaSession.MAXIMA_TIMEOUT_PROPERTY, "10");
+        System.setProperty(RawMaximaSession.MAXIMA_ENVIRONMENT_PROPERTY_BASE + "0", "PATH=/usr/bin:/opt/local/bin");
+    }
 
     /**
      * Helper that reads in a resource from the webapp hierarchy, throwing a {@link ServletException}
@@ -127,12 +138,13 @@ abstract class BaseServlet extends HttpServlet {
         String upconverted = MathMLUtilities.serializeDocument(upconvertedDocument);
         
         /* Extract Maxima annotation (if available) */
-        String maximaAnnotation = MathMLUtilities.extractAnnotationString(upconvertedDocument.getDocumentElement(), "Maxima");
+        String maximaAnnotation = MathMLUtilities.extractAnnotationString(upconvertedDocument.getDocumentElement(),
+                MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
 
         /* Do maxima stuff */
         String maximaInput;
         String maximaOutput;
-        if (maximaAnnotation.length()==0) {
+        if (maximaAnnotation==null || maximaAnnotation.length()==0) {
             maximaInput = "(Failed conversion to intermediate Content MathML)";
             maximaOutput = "(N/A)";
         }
@@ -146,6 +158,7 @@ abstract class BaseServlet extends HttpServlet {
                 maximaSession.close();
             }
             catch (Exception e) {
+                log.warn("Exception speaking to Maxima", e);
                 maximaOutput = "Exception occurred speaking to Maxima: " + e.toString();
             }
         }
