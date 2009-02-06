@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/ph-commons/1.0.0/ph-commons-util.jar" sourcepath="lib/ph-commons/1.0.0/src.zip"/>
 	<classpathentry kind="lib" path="lib/snuggletex/1.1/snuggletex.jar" sourcepath="lib/snuggletex/1.1/src.zip"/>
 	<classpathentry kind="lib" path="lib/log4j/1.2.14/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="lib/mathassess-tools/0.1/mathassess-tools.jar"/>
 	<classpathentry kind="output" path="build/src"/>
 </classpath>

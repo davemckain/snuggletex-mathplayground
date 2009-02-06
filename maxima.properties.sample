@@ -1,0 +1,28 @@
+# Template for a maxima.properties file. This specifies run-time
+# settings for running Maxima and must be in your ClassPath when
+# using any of the Maxima-calling code in this project.
+#
+# If you want to run the test suite, you must make a copy of this
+# file called maxima.properties and store it in this directory
+# BEFORE running the test suite.
+#
+#
+# Specify the location of Maxima on the machine you're going to
+# be running it on:
+org.qtitools.mathassess.tools.maxima.path=/usr/bin/maxima
+
+# You may set environmental variables using the following lines.
+# Add further lines consecutively numbered env2, env3 etc. as required.
+# (The values you provide here may need to be escaped to be valid
+# property keys.)
+#
+#org.qtitools.mathassess.tools.maxima.env0=
+#org.qtitools.mathassess.tools.maxima.env1=
+
+# Specify how long the Maxima code will wait for a response from
+# Maxima for a particular call before the session gets killed.
+#
+# A number of zero or less is interpreted as "no timeout". Use
+# carefully!
+org.qtitools.mathassess.tools.maxima.timeout=5
+

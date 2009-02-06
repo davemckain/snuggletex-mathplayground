@@ -127,6 +127,7 @@ public final class LaTeXInputServlet extends BaseServlet {
                 viewStylesheet.setParameter("mathml", resultArray[0]);
                 viewStylesheet.setParameter("maxima-input", resultArray[1]);
                 viewStylesheet.setParameter("maxima-output", resultArray[2]);
+                viewStylesheet.setParameter("maxima-mathml-output", resultArray[3]);
             }
         }
         catch (TransformerConfigurationException e) {
