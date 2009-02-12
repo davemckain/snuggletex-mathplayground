@@ -28,6 +28,7 @@ All Rights Reserved
   <xsl:param name="mathml" as="xs:string" select="'(Failed)'" required="no"/>
   <xsl:param name="maxima-input" as="xs:string" select="'(Failed)'" required="no"/>
   <xsl:param name="maxima-output" as="xs:string" select="'(Failed)'" required="no"/>
+  <xsl:param name="maxima-mathml-output" as="xs:string" select="'(Failed)'" required="no"/>
 
   <!-- Override page ID -->
   <xsl:variable name="pageId" select="'asciimath'" as="xs:string"/>
@@ -92,6 +93,12 @@ All Rights Reserved
       <pre class="result">
         <xsl:value-of select="$maxima-output"/>
       </pre>
+
+      <h3>Up-converted Maxima MathML Output</h3>
+      <pre class="result">
+        <xsl:value-of select="$maxima-mathml-output"/>
+      </pre>
+
 
     </xsl:if>
 

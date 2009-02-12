@@ -78,6 +78,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
                     + "\nMathML Fixed: " + resultArray[0]
                     + "\nMaxima Input: " + resultArray[1]
                     + "\nMaxima Output: " + resultArray[2]
+                    + "\nMaxima MathML: " + resultArray[3]
                     + "\n======================================");
         }
         
@@ -110,6 +111,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
                 viewStylesheet.setParameter("mathml", resultArray[0]);
                 viewStylesheet.setParameter("maxima-input", resultArray[1]);
                 viewStylesheet.setParameter("maxima-output", resultArray[2]);
+                viewStylesheet.setParameter("maxima-mathml-output", resultArray[3]);
             }
         }
         catch (TransformerConfigurationException e) {

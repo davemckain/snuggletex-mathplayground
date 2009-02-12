@@ -111,6 +111,7 @@ public final class LaTeXInputServlet extends BaseServlet {
                     + "\nMathML: " + resultArray[0]
                     + "\nMaxima Input: " + resultArray[1]
                     + "\nMaxima Output: " + resultArray[2]
+                    + "\nMaxima MathML: " + resultArray[3]
                     + "\n======================================");
         }
         else {
