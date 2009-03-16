@@ -29,6 +29,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.log4j.Logger;
+import org.qtitools.mathassess.tools.maxima.upconversion.UpConversionConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -181,7 +182,7 @@ public final class LaTeXInputServlet extends BaseServlet {
     
     @Override
     protected Document callUpconversionMethod(MathMLUpConverter upconverter, Document pmathmlDocument) {
-        return upconverter.upConvertSnuggleTeXMathML(pmathmlDocument, null);
+        return upconverter.upConvertSnuggleTeXMathML(pmathmlDocument, UpConversionConstants.UP_CONVERSION_PARAMETERS);
     }
 }
 
