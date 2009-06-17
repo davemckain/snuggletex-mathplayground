@@ -69,6 +69,11 @@
   text-decoration: none;
 }
 
+.warning {
+  border: 2px solid red;
+  background-color: #ffffcc;
+}
+
 /************************************************************/
 
 /* The next style makes the "current" page active. This is a

@@ -7,15 +7,16 @@ package uk.ac.ed.ph.mathplayground.webapp;
 
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.InputError;
-import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.WebPageOutputOptions;
+import uk.ac.ed.ph.snuggletex.WebPageOutputOptionsTemplates;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions.ErrorOutputOptions;
-import uk.ac.ed.ph.snuggletex.MathMLWebPageOptions.WebPageType;
+import uk.ac.ed.ph.snuggletex.WebPageOutputOptions.WebPageType;
 import uk.ac.ed.ph.snuggletex.definitions.Globals;
-import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 
 import java.io.IOException;
 import java.util.List;
@@ -84,10 +85,9 @@ public final class LaTeXInputServlet extends BaseServlet {
         session.parseInput(input);
         
         /* Set up web output options */
-        MathMLWebPageOptions options = new MathMLWebPageOptions();
+        WebPageOutputOptions options = WebPageOutputOptionsTemplates.createWebPageOptions(WebPageType.CROSS_BROWSER_XHTML);
         options.setMathVariantMapping(true);
         options.setAddingMathAnnotations(true);
-        options.setPageType(WebPageType.CROSS_BROWSER_XHTML);
         options.setErrorOutputOptions(ErrorOutputOptions.XHTML);
         options.setTitle("LaTeX to MathML and Maxima");
         options.setAddingTitleHeading(false); /* We'll put our own title in */
@@ -135,7 +135,7 @@ public final class LaTeXInputServlet extends BaseServlet {
         catch (TransformerConfigurationException e) {
             throw new ServletException("Could not create stylesheet from Templates", e);
         }
-        options.setStylesheet(viewStylesheet);
+        options.setStylesheets(viewStylesheet);
         
         /* Generate and serve the resulting web page */
         try {

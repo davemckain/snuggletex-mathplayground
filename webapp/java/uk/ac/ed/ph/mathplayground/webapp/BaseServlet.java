@@ -5,8 +5,8 @@
  */
 package uk.ac.ed.ph.mathplayground.webapp;
 
-import uk.ac.ed.ph.snuggletex.extensions.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.internal.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
+import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.InputStream;
@@ -36,9 +36,6 @@ import org.w3c.dom.Document;
 abstract class BaseServlet extends HttpServlet {
     
     private static final long serialVersionUID = -2577813908466694931L;
-    
-    /** Stylesheet to up-convert the raw SnuggleTeX output into various other things */
-    public static final String UPCONVERTER_XSLT_LOCATION = "/WEB-INF/snuggletex-upconverter.xsl";
 
     /**
      * Helper that reads in a resource from the webapp hierarchy, throwing a {@link ServletException}
@@ -57,7 +54,7 @@ abstract class BaseServlet extends HttpServlet {
     }
     
     protected TransformerFactory createTransformerFactory() {
-        TransformerFactory transformerFactory = XMLUtilities.createTransformerFactory();
+        TransformerFactory transformerFactory = XMLUtilities.createSaxonTransformerFactory();
         
         /* Create a cheap URIResolver to help with xsl:import and friends. */
         transformerFactory.setURIResolver(new CheapoURIResolver());
