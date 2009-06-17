@@ -52,6 +52,12 @@ All Rights Reserved
   <xsl:template match="h:body" mode="make-content">
     <h2><xsl:value-of select="$title"/></h2>
 
+    <div class="warning">
+      <strong>NOTE:</strong>
+      This demo has been largely replaced by an equivalent in SnuggleTeX:
+      <a href="http://www.ph.ed.ac.uk/snuggletex/ASCIIMathMLUpConversionDemo">ASCIIMathML Up-Conversion Demo</a>.
+    </div>
+
     <!-- Stolen shamelessly from PROMPT! -->
     <h3>Input</h3>
     <p>

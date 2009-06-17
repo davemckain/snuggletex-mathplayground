@@ -25,8 +25,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
-import org.apache.log4j.Logger;
 import org.qtitools.mathassess.tools.maxima.upconversion.UpConversionConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -41,7 +42,7 @@ public final class ASCIIMathInputServlet extends BaseServlet {
     private static final long serialVersionUID = 4376587500238353176L;
     
     /** Logger so that we can log what users are trying out to allow us to improve things */
-    private Logger log = Logger.getLogger(ASCIIMathInputServlet.class);
+    private Logger log = LoggerFactory.getLogger(ASCIIMathInputServlet.class);
     
     /** Location of XSLT controlling page layout */
     private static final String DISPLAY_XSLT_LOCATION = "/WEB-INF/asciimath.xsl";

@@ -70,8 +70,10 @@
 }
 
 .warning {
+  padding: 1em;
   border: 2px solid red;
   background-color: #ffffcc;
+  -moz-border-radius: 1em;
 }
 
 /************************************************************/

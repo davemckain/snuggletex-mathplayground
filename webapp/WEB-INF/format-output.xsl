@@ -90,11 +90,6 @@ All Rights Reserved
         </div>
         <div id="maincontent">
           <div id="maininner">
-            <div class="warning">
-              <strong>NOTE:</strong>
-              These demos have now been largely replaced by equivalents in
-              <a href="http://www.ph.ed.ac.uk/snuggletex/">SnuggleTeX</a>.
-            </div>
             <!-- Generate page content -->
             <xsl:apply-templates select="." mode="make-content"/>
           </div>
