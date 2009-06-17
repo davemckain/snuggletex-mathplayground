@@ -23,8 +23,9 @@
   <!-- Compilation ClassPath -->
   <path id="compile.classpath">
     <pathelement location="${build.lib.dir}/ph-commons-util.jar"/>
-    <pathelement location="${build.lib.dir}/snuggletex.jar"/>
-    <pathelement location="${build.lib.dir}/mathassess-tools.jar"/>
+    <pathelement location="${build.lib.dir}/snuggletex-core-1.1-SNAPSHOT.jar"/>
+    <pathelement location="${build.lib.dir}/snuggletex-upconversion-1.1-SNAPSHOT.jar"/>
+    <pathelement location="${build.lib.dir}/MathAssessTools-1.0-SNAPSHOT.jar"/>
     <pathelement location="${build.lib.dir}/log4j-1.2.14.jar"/>
   </path>
 
@@ -208,11 +209,12 @@
         <include name="**.xsl"/>
       </fileset>
     </copy>
-    <!-- Add in snuggletex.jar + Saxon 9 JARs. -->
+    <!-- Add in snuggletex jars + Saxon 9 JARs. -->
     <copy todir="${build.webapp.dir}/WEB-INF/lib">
       <fileset dir="${build.lib.dir}">
-        <include name="snuggletex.jar"/>
-        <include name="mathassess-tools.jar"/>
+        <include name="snuggletex-core-1.1-SNAPSHOT.jar"/>
+        <include name="snuggletex-upconversion-1.1-SNAPSHOT.jar"/>
+        <include name="MathAssessTools-1.0-SNAPSHOT.jar"/>
         <include name="saxon9*.jar"/>
         <include name="log4j*.jar"/>
         <include name="ph-commons-util.jar"/>
