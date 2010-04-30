@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<!--
+
+$Id$
+
+Copyright (c) 2010, The University of Edinburgh
+All Rights Reserved
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uk.ac.ed.ph.mathplayground</groupId>
+  <artifactId>mathplayground</artifactId>
+  <version>0.9-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <properties>
+    <snuggletex.version>1.2.1</snuggletex.version>
+    <jacomax.version>0.2.1</jacomax.version>
+    <ph-commons.version>1.0-SNAPSHOT</ph-commons.version>
+    <matools.version>1.3.1</matools.version>
+    <saxon9.version>9.1.0.8</saxon9.version>
+    <slf4j.version>1.5.11</slf4j.version>
+    <log4j.version>1.2.14</log4j.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>uk.ac.ed.ph.snuggletex</groupId>
+      <artifactId>snuggletex-core</artifactId>
+      <version>${snuggletex.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.ed.ph.snuggletex</groupId>
+      <artifactId>snuggletex-upconversion</artifactId>
+      <version>${snuggletex.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.qtitools.mathassess</groupId>
+      <artifactId>MathAssessTools-Glue</artifactId>
+      <version>${matools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.ed.ph.jacomax</groupId>
+      <artifactId>jacomax</artifactId>
+      <version>${jacomax.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.ed.ph.commons</groupId>
+      <artifactId>ph-commons-util</artifactId>
+      <version>${ph-commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9</artifactId>
+      <version>${saxon9.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9-dom</artifactId>
+      <version>${saxon9.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <repositories>
+    <repository>
+      <id>www2.ph.ed.ac.uk</id>
+      <url>http://www2.ph.ed.ac.uk/maven2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  <name>MathPlayground</name>
+  <description>
+    Web application demonstrating experimental work on web-based maths
+  </description>
+  <inceptionYear>2008</inceptionYear>
+  <organization>
+    <name>The University of Edinburgh</name>
+    <url>http://www.ed.ac.uk</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>BSD License (3 clause)</name>
+      <url>LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>davemckain</id>
+      <name>David McKain</name>
+      <email>david.mckain&#xa0;[at]&#xa0;ed.ac.uk</email>
+      <url>http://www2.ph.ed.ac.uk/~dmckain/</url>
+      <organization>School of Physics and Astronomy, University of Edinburgh</organization>
+      <organizationUrl>http://www.ph.ed.ac.uk</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+  <distributionManagement>
+    <!-- (This is not intended for general use!) -->
+    <repository>
+      <id>www2.ph.ed.ac.uk</id>
+      <url>file:///Disk/lust3/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>www2.ph.ed.ac.uk</id>
+      <url>file:///Disk/lust3/maven2</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-beta-1</version>
+        <configuration>
+          <warName>mathplayground</warName>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

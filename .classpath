@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="build/webapp/WEB-INF/classes" path="webapp/java"/>
-	<classpathentry kind="src" output="build/test" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/servlet-api/2.4/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/ph-commons/1.0.0/ph-commons-util.jar" sourcepath="lib/ph-commons/1.0.0/src.zip"/>
-	<classpathentry kind="lib" path="lib/snuggletex/1.1/snuggletex-core-1.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/snuggletex/1.1/snuggletex-upconversion-1.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/mathassess-tools/1.0/MathAssessTools-1.0-SNAPSHOT.jar"/>
-        <classpathentry kind="lib" path="lib/slf4j/1.5.6/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="output" path="build/src"/>
+  <classpathentry kind="src" output="target/classes" path="src/main/java"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+  <classpathentry kind="output" path="target/classes"/>
 </classpath>

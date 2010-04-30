@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+
+Web Deployment Descriptor for the MathPlayground webapp
+
+$Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
+
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" version="2.4"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <display-name>MathPlayground</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <mime-mapping>
+    <extension>xhtml</extension>
+    <mime-type>application/xhtml+xml</mime-type>
+  </mime-mapping>
+
+  <servlet>
+    <servlet-name>LaTeXInputServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.LaTeXInputServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>ASCIIMathInputServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LaTeXInputServlet</servlet-name>
+    <url-pattern>/latexinput.xhtml</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ASCIIMathInputServlet</servlet-name>
+    <url-pattern>/asciimath.xhtml</url-pattern>
+  </servlet-mapping>
+
+</web-app>
