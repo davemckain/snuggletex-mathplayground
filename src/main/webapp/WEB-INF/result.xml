@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+    <title>ASCIIMathML Input Demo</title>
+    <script type="text/javascript" src="includes/jquery.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathMLwidget.js"></script>
+  </head>
+  <body>
+    <h1>ASCIIMathML Input Demo Result</h1>
+    <h2>ASCIIMathML Input</h2>
+    <p>You entered the following</p>
+    <pre><![CDATA[${asciiMathInput}]]></pre>
+    <h2>Presentation MathML</h2>
+    <pre><![CDATA[${pMathMLDisplay}]]></pre>
+    <h2>Content MathML</h2>
+    <pre><![CDATA[${cMathMLDisplay}]]></pre>
+    <h2>Maxima Input Syntax</h2>
+    <pre><![CDATA[${maximaDisplay}]]></pre>
+    <h2>Parallel MathML</h2>
+    <pre><![CDATA[${parallelMathML}]]></pre>
+    <a href="ASCIIMathMLInputDemo">Try Again</a>
+  </body>
+</html>
