@@ -14,37 +14,12 @@ $Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
   <welcome-file-list>
     <welcome-file>ASCIIMathMLInputDemo</welcome-file>
   </welcome-file-list>
-
   <servlet>
     <servlet-name>ASCIIMathMLInputDemo</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.minimal.ASCIIMathMLInputDemoServlet</servlet-class>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLInputDemoServlet</servlet-class>
   </servlet>
-  <!--
-  <servlet>
-    <servlet-name>LaTeXInputServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.LaTeXInputServlet</servlet-class>
-    <load-on-startup>0</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>ASCIIMathInputServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  -->
-
   <servlet-mapping>
     <servlet-name>ASCIIMathMLInputDemo</servlet-name>
     <url-pattern>/ASCIIMathMLInputDemo</url-pattern>
   </servlet-mapping>
-  <!--
-  <servlet-mapping>
-    <servlet-name>LaTeXInputServlet</servlet-name>
-    <url-pattern>/latexinput.xhtml</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ASCIIMathInputServlet</servlet-name>
-    <url-pattern>/asciimath.xhtml</url-pattern>
-  </servlet-mapping>
-  -->
-
 </web-app>
