@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='UTF-8'>
+    <title>ASCIIMath Dynamic Input Demo</title>
+    <link rel="stylesheet" type="text/css" href="includes/webapp-base.css" />
+    <link rel="stylesheet" type="text/css" href="includes/content-styles.css" />
+    <link rel="stylesheet" type="text/css" href="includes/snuggletex-webapp.css" />
+    <link rel="stylesheet" type="text/css" href="includes/snuggletex.css" />
+    <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
+    <script type="text/javascript" src="includes/jquery/jquery-1.5.0.min.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
+    <script type="text/javascript" src="lib/MathJax/MathJax.js">
+      MathJax.Hub.Config({
+        /* MathML input, or sort of SnuggleTeX output */
+        config: ["MMLorHTML.js"],
+        extensions: ["mml2jax.js"],
+        jax: ["input/MathML"]
+      });
+    </script>
+    <script type="text/javascript">//<![CDATA[
+      jQuery(document).ready(function() {
+        ASCIIMathInputController.setValidatorServiceUrl('ASCIIMathMLUpConversionService');
+        ASCIIMathInputController.setDelay(500);
+        var widget = ASCIIMathInputController.createInputWidget('asciiMathInputControl', 'asciiMathOutputControl');
+        widget.setMathJaxRenderingContainerId('mathJaxRendering');
+        widget.validatedRenderingContainerId = 'validatedRendering';
+        widget.pmathSourceContainerId = 'pmathSource';
+        widget.cmathSourceContainerId = 'cmathSource';
+        widget.maximaSourceContainerId = 'maximaSource';
+        widget.init();
+      });
+    //]]></script>
+  </head>
+  <body id="asciiMathDemo">
+    <div id="container">
+      <div id="header">
+        <div id="identities">
+          <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="includes/images/ed_logo.gif" alt="University of Edinburgh Logo"/></a></div>
+          <div id="edname"><a href="http://www.ed.ac.uk"><img src="includes/images/uofe2.gif" alt="University of Edinburgh" /></a></div>
+          <div id="schoolname"><a href="/"><img src="includes/images/panda.gif" alt="School of Physics &amp; Astronomy" /></a></div>
+        </div>
+        <div id="GlobalNav">
+          <ul>
+            <li class="active"><a href="http://www2.ph.ed.ac.uk/elearning/" class="active"><span>e-Learning</span></a></li>
+          </ul>
+        </div>
+        <div id="utility">
+          <a class="utilContact" href="http://www.ph.ed.ac.uk/elearning/contacts/#dmckain">Contact us</a>
+        </div>
+      </div>
+      <div id="sectionHeader">
+        <div id="sectionHeaderTitle">
+          <a href="./">SnuggleTeX Math Playground</a>
+        </div>
+      </div>
+      <div id="contentArea">
+        <div id="content">
+          <div id="navigation">
+            <div id="navinner">
+              Navigation here
+            </div>
+          </div>
+          <div id="maincontent">
+            <div id="maininner">
+              <!-- CONTENT START -->
+              <h3>ASCIIMath Input</h3>
+              <form action="ASCIIMathMLDemo" method="post">
+                <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
+                <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
+                <input type="submit" value="Go!">
+              </form>
+              <h3>ASCIIMathML (real time MathJax rendering)</h3>
+              <div id="mathJaxRendering"></div>
+
+              <h3>Verified MathML</h3>
+              <div id="validatedRendering"></div>
+
+              <h3>Resulting ASCIIMathML source</h3>
+              <pre class="result" id="pmathSource"></pre>
+
+              <h3>Resulting Content MathML source</h3>
+              <pre class="result" id="cmathSource"></pre>
+
+              <h3>Resulting Maxima code</h3>
+              <pre class="result" id="maximaSource"></pre>
+              <!-- CONTENT END -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Standard Footer -->
+    <div id="footer">
+      <div id="copyright">
+        <div id="footer-text">
+          <p>
+            SnuggleTeX Math Playground
+            Copyright &#xa9; 2008&#x2012;2011
+            <a href="http://www.ph.ed.ac.uk">The School of Physics and Astronomy</a>,
+            <a href="http://www.ed.ac.uk">The University of Edinburgh</a>.
+            <br />
+            For more information, contact
+            <a href="http://www.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>.
+          </p>
+          <p>
+            The University of Edinburgh is a charitable body, registered in Scotland,
+            with registration number SC005336.
+          </p>
+        </div>
+        <div class="clearFloat"></div>
+      </div>
+    </div>
+  </body>
+</html>

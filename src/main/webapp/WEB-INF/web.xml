@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <!--
 
-Web Deployment Descriptor for the MathPlayground webapp
+Web Deployment Descriptor for the SnuggleTeX Math Playground
 
 $Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
+
+Copyright (c) 2008-2011, The University of Edinburgh
+All Rights Reserved
 
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" version="2.4"
@@ -11,15 +14,25 @@ $Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <display-name>MathPlayground</display-name>
+  <description>SnuggleTeX Math Playground</description>
   <welcome-file-list>
-    <welcome-file>ASCIIMathMLInputDemo</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   <servlet>
-    <servlet-name>ASCIIMathMLInputDemo</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLInputDemoServlet</servlet-class>
+    <servlet-name>ASCIIMathMLDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLDemoServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLUpConversionService</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ASCIIMathMLInputDemo</servlet-name>
-    <url-pattern>/ASCIIMathMLInputDemo</url-pattern>
+    <servlet-name>ASCIIMathMLDemoServlet</servlet-name>
+    <url-pattern>/ASCIIMathMLDemo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
+    <url-pattern>/ASCIIMathMLUpConversionService</url-pattern>
   </servlet-mapping>
 </web-app>

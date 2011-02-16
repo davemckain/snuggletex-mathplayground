@@ -9,18 +9,17 @@ All Rights Reserved
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <name>SnuggleTeX Math Playground</name>
   <groupId>uk.ac.ed.ph.mathplayground</groupId>
   <artifactId>mathplayground</artifactId>
   <version>0.9-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
-    <snuggletex.version>1.2.1</snuggletex.version>
-    <jacomax.version>0.2.1</jacomax.version>
+    <snuggletex.version>1.3-SNAPSHOT</snuggletex.version>
     <ph-commons.version>1.0-SNAPSHOT</ph-commons.version>
-    <matools.version>1.3.1</matools.version>
     <saxon9.version>9.1.0.8</saxon9.version>
     <slf4j.version>1.5.11</slf4j.version>
-    <log4j.version>1.2.14</log4j.version>
+    <log4j.version>1.2.16</log4j.version>
   </properties>
   <dependencies>
     <dependency>
@@ -32,16 +31,6 @@ All Rights Reserved
       <groupId>uk.ac.ed.ph.snuggletex</groupId>
       <artifactId>snuggletex-upconversion</artifactId>
       <version>${snuggletex.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.qtitools.mathassess</groupId>
-      <artifactId>MathAssessTools-Glue</artifactId>
-      <version>${matools.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>uk.ac.ed.ph.jacomax</groupId>
-      <artifactId>jacomax</artifactId>
-      <version>${jacomax.version}</version>
     </dependency>
     <dependency>
       <groupId>uk.ac.ed.ph.commons</groupId>
@@ -83,6 +72,12 @@ All Rights Reserved
       <version>2.4</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mathjax</groupId>
+      <artifactId>MathJax</artifactId>
+      <version>1.0.1a-dec10</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>
@@ -96,7 +91,6 @@ All Rights Reserved
       </releases>
     </repository>
   </repositories>
-  <name>MathPlayground</name>
   <description>
     Web application demonstrating experimental work on web-based maths
   </description>
@@ -153,12 +147,45 @@ All Rights Reserved
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      <!-- Unpack MathJax JavaScript -->
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>prepare-package</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>org.mathjax</groupId>
+                   <artifactId>MathJax</artifactId>
+                   <version>1.0.1a-dec10</version>
+                   <type>zip</type>
+                   <overWrite>false</overWrite>
+                   <outputDirectory>${project.build.directory}/extras/lib</outputDirectory>
+                 </artifactItem>
+               </artifactItems>
+             </configuration>
+           </execution>
+         </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-beta-1</version>
         <configuration>
           <warName>mathplayground</warName>
+          <!--
+          <webResources>
+            <resource>
+              <directory>${project.build.directory}/extras</directory>
+            </resource>
+          </webResources>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          -->
         </configuration>
       </plugin>
     </plugins>
