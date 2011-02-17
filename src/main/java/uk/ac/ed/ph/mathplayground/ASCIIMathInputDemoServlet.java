@@ -5,7 +5,6 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.commons.util.IOUtilities;
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
@@ -28,12 +27,12 @@ import org.w3c.dom.Element;
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class ASCIIMathMLDemoServlet extends BaseServlet {
+public final class ASCIIMathInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
 
     /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(ASCIIMathMLDemoServlet.class);
+    private static Logger logger = LoggerFactory.getLogger(ASCIIMathInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -41,15 +40,8 @@ public final class ASCIIMathMLDemoServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        
-        /* Generate output page */
-        String pageTemplate = IOUtilities.readUnicodeStream(ensureReadResource("/WEB-INF/asciimath-demo.html"));
-        pageTemplate = pageTemplate.replace("${asciiMathInput}", DEFAULT_INPUT)
-            ;
-        
-        response.setContentType("text/html; charset=UTF-8");
-        response.getWriter().print(pageTemplate);
-        response.getWriter().flush();
+        request.setAttribute("asciiMathInput", DEFAULT_INPUT);
+        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo.jsp").forward(request, response);
     }
     
     /** Handles the posted raw input & PMathML extracted from ASCIIMathML. */
@@ -84,6 +76,15 @@ public final class ASCIIMathMLDemoServlet extends BaseServlet {
         logger.info("Raw ASCIIMathML Output: {}", asciiMathOutput);
         logger.info("Final parallel MathML: {}", parallelMathML);
         
-        throw new ServletException("FINISH THIS!");
+        request.setAttribute("asciiMathInput", asciiMathInput);
+        request.setAttribute("asciiMathOutput", asciiMathOutput);
+        request.setAttribute("parallelMathML", parallelMathML);
+        request.setAttribute("pMathML", pMathMLUpConverted);
+        request.setAttribute("cMathML", cMathML);
+        request.setAttribute("maxima", maximaInput);
+        
+        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo-result.jsp").forward(request, response);
+
+        
     }
 }

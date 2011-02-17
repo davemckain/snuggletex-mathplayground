@@ -75,6 +75,13 @@
   font-weight: bold;
 }
 
+/************************************************************/
+/* NAVIGATION STUFF */
+
+body#asciiMathInputDemo li.asciiMathInputDemo {
+  font-weight: bold;
+}
+
 
 /************************************************************/
 

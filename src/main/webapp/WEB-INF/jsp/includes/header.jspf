@@ -1,0 +1,80 @@
+<%--
+
+$Id: header.jspf 1085 2010-12-16 17:20:42Z dmckain $
+
+Copyright (c) 2010, The University of Edinburgh.
+All Rights Reserved
+
+************************************************************
+
+Base JSP Page Header
+
+Attributes:
+
+title: Optional page title
+
+@author  David McKain
+@version $Revision: 1085 $
+
+--%>
+<%@ page contentType="text/html; charset=UTF-8" session="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="author" content="David McKain">
+    <meta name="publisher" content="The University of Edinburgh">
+    <title>SnuggleTeX Math Playground - <c:out value="${title}" default="Math Playground"/></title>
+    <link rel="stylesheet" type="text/css" href="includes/webapp-base.css" />
+    <link rel="stylesheet" type="text/css" href="includes/content-styles.css" />
+    <link rel="stylesheet" type="text/css" href="includes/mathplayground-webapp.css" />
+    <link rel="stylesheet" type="text/css" href="includes/snuggletex.css" />
+    <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
+    <script type="text/javascript" src="includes/jquery/jquery-1.5.0.min.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
+    <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
+    <script type="text/javascript" src="lib/MathJax/MathJax.js">//<![CDATA[
+      // NB: This type of inline config isn't HTML5 valid
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        extensions: ["mml2jax.js"],
+        jax: ["input/MathML"]
+      });
+    //]]></script>
+  </head>
+  <body id="${pageId}">
+    <div id="container">
+      <div id="header">
+        <div id="identities">
+          <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="includes/images/ed_logo.gif" alt="University of Edinburgh Logo"/></a></div>
+          <div id="edname"><a href="http://www.ed.ac.uk"><img src="includes/images/uofe2.gif" alt="University of Edinburgh" /></a></div>
+          <div id="schoolname"><a href="/"><img src="includes/images/panda.gif" alt="School of Physics &amp; Astronomy" /></a></div>
+        </div>
+        <div id="GlobalNav">
+          <ul>
+            <li class="active"><a href="http://www2.ph.ed.ac.uk/elearning/" class="active"><span>e-Learning</span></a></li>
+          </ul>
+        </div>
+        <div id="utility">
+          <a class="utilContact" href="http://www2.ph.ed.ac.uk/elearning/contacts/#dmckain">Contact us</a>
+        </div>
+      </div>
+      <div id="sectionHeader">
+        <div id="sectionHeaderTitle">
+          <a href="./">SnuggleTeX Math Playground</a>
+        </div>
+      </div>
+      <div id="contentArea">
+        <div id="content">
+          <div id="navigation">
+            <div id="navinner">
+              <h2>Demos</h2>
+              <ul>
+                <li class="asciiMathInputDemo"><a href="ASCIIMathInputDemo">ASCIIMath Verified Input Demo</a></li>
+              </ul>
+            </div>
+          </div>
+          <div id="maincontent">
+            <div id="maininner">

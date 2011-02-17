@@ -14,7 +14,7 @@ $Id$
 
   <!-- Log most events to custom file -->
   <appender name="FILE"  class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="${catalina.home}/logs/snuggletex.log"/>
+    <param name="File" value="${catalina.home}/logs/mathplayground.log"/>
     <param name="MaxFileSize" value="500KB" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%-5p [%d{ISO8601}] [%c{1}/%L#%M()] - %m%n"/>
@@ -27,7 +27,7 @@ $Id$
 
   <!-- Custom loggers to allow fine-grained logging level selection -->
   <!--
-  <logger name="uk.ac.ed.ph.snuggletex.webapp">
+  <logger name="uk.ac.ed.ph.mathplayground">
     <level value="DEBUG"/>
   </logger>
   -->

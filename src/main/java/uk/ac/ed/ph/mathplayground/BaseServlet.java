@@ -6,9 +6,7 @@
 package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
-import uk.ac.ed.ph.snuggletex.utilities.SaxonTransformerFactoryChooser;
 import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
-import uk.ac.ed.ph.snuggletex.utilities.SimpleStylesheetCache;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
 
 import java.io.InputStream;
@@ -43,11 +41,7 @@ abstract class BaseServlet extends HttpServlet {
     }
     
     protected StylesheetManager getStylesheetManager() {
-        StylesheetManager stylesheetManager = new StylesheetManager();
-        stylesheetManager.setStylesheetCache(new SimpleStylesheetCache());
-        stylesheetManager.setTransformerFactoryChooser(SaxonTransformerFactoryChooser.getInstance());
-
-        return stylesheetManager;
+        return (StylesheetManager) getServletContext().getAttribute(ContextInitialiser.STYLESHEET_MANAGER_ATTRIBUTE_NAME);
     }
     
     protected SerializationSpecifier createMathMLSourceSerializationOptions() {

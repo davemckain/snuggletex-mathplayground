@@ -28,18 +28,10 @@ import org.w3c.dom.Element;
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class ASCIIMathMLUpConversionService extends BaseServlet {
+public final class ASCIIMathUpConversionService extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
     
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        String asciiMathML = request.getParameter("asciiMathML");
-        doService(response, asciiMathML);
-    }
-
-    /** Handles the posted raw input & PMathML extracted from ASCIIMathML. */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {

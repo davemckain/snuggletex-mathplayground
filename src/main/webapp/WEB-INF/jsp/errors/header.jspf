@@ -1,0 +1,12 @@
+<%--
+
+$Id: header.jspf 1050 2010-11-15 16:23:47Z dmckain $
+
+JSP Page Header for error pages
+
+Copyright (c) 2010, The University of Edinburgh.
+All Rights Reserved
+
+--%>
+<%@ page isErrorPage="true" %>
+<%@ include file="/WEB-INF/jsp/includes/header.jspf" %>

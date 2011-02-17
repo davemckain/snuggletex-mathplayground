@@ -19,20 +19,38 @@ All Rights Reserved
     <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+  <listener>
+    <listener-class>uk.ac.ed.ph.mathplayground.ContextInitialiser</listener-class>
+  </listener>
   <servlet>
-    <servlet-name>ASCIIMathMLDemoServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLDemoServlet</servlet-class>
+    <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputDemoServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathMLUpConversionService</servlet-class>
+    <servlet-name>ASCIIMathUpConversionService</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathUpConversionService</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ASCIIMathMLDemoServlet</servlet-name>
-    <url-pattern>/ASCIIMathMLDemo</url-pattern>
+    <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
+    <url-pattern>/ASCIIMathInputDemo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>ASCIIMathMLUpConversionService</servlet-name>
-    <url-pattern>/ASCIIMathMLUpConversionService</url-pattern>
+    <servlet-name>ASCIIMathUpConversionService</servlet-name>
+    <url-pattern>/ASCIIMathUpConversionService</url-pattern>
   </servlet-mapping>
+
+  <!-- Custom error page declarations -->
+  <error-page>
+    <error-code>403</error-code>
+    <location>/WEB-INF/jsp/errors/403.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/WEB-INF/jsp/errors/404.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/jsp/errors/500.jsp</location>
+  </error-page>
+
 </web-app>
