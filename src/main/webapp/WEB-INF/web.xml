@@ -30,6 +30,10 @@ All Rights Reserved
     <servlet-name>ASCIIMathUpConversionService</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathUpConversionService</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>SnuggleTeXUpConversionService</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXUpConversionService</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
     <url-pattern>/ASCIIMathInputDemo</url-pattern>
@@ -37,6 +41,10 @@ All Rights Reserved
   <servlet-mapping>
     <servlet-name>ASCIIMathUpConversionService</servlet-name>
     <url-pattern>/ASCIIMathUpConversionService</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SnuggleTeXUpConversionService</servlet-name>
+    <url-pattern>/SnuggleTeXUpConversionService</url-pattern>
   </servlet-mapping>
 
   <!-- Custom error page declarations -->
