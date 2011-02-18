@@ -53,7 +53,9 @@ var ASCIIMathInputController = (function() {
         mathModeInput = mathModeInput.replace(/`/g, "\\`");
 
         var span = AMparseMath(mathModeInput); // This is <span><math>...</math></span>
-        return span.childNodes[0]; /* This is <math>...</math> */
+        var math = span.childNodes[0]; /* This is <math>...</math> */
+        math.setAttribute("display", "block");
+        return math;
     };
 
     /**
@@ -229,11 +231,11 @@ var ASCIIMathInputController = (function() {
 
             /* Maybe show CMath source */
             if (widget.cmathSourceContainerId!=null) {
-                jQuery("#" + widget.cmathSourceContainerId).text(cmath);
+                jQuery("#" + widget.cmathSourceContainerId).text(cmath || 'Could not generate Content MathML');
             }
             /* Maybe show Maxima is we got it */
             if (widget.maximaSourceContainerId!=null) {
-                jQuery("#" + widget.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not get Maxima');
+                jQuery("#" + widget.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not generate Maxima syntax');
             }
         };
 
