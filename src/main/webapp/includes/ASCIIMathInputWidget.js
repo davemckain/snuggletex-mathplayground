@@ -217,7 +217,8 @@ var ASCIIMathInputController = (function() {
             /* We consider "valid" to mean "getting as far as CMathML" here */
             var cmath = jsonData['cmath'];
             if (cmath!=null) {
-                updateValidationContainer(Widget.STATUS_SUCCESS, jsonData['pmathBracketed']);
+                var bracketed = jsonData['pmathBracketed'].replace(/<math/, "<math display='block'");
+                updateValidationContainer(Widget.STATUS_SUCCESS, bracketed);
             }
             else if (jsonData['cmathFailures']!=null) {
                 updateValidationContainer(Widget.STATUS_FAILURE);
