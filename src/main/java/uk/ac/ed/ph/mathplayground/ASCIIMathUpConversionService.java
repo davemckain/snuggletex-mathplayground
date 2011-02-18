@@ -43,7 +43,7 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
     private void doService(HttpServletResponse response, String asciiMathML) throws IOException {
         /* Do up-conversion */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
-        UpConversionOptions upConversionOptions = new UpConversionOptions();
+        UpConversionOptions upConversionOptions = (UpConversionOptions) getUpConversionOptions().clone();
         upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.DO_BRACKETED_PRESENTATION_MATHML, "true");
         Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathML, upConversionOptions);
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */

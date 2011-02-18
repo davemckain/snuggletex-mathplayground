@@ -7,6 +7,8 @@ package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
+import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptionDefinitions;
+import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.IOException;
@@ -63,7 +65,9 @@ public final class ASCIIMathInputDemoServlet extends BaseServlet {
         
         /* Do up-conversion and extract wreckage */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
-        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathOutput, null);
+        UpConversionOptions upConversionOptions = (UpConversionOptions) getUpConversionOptions().clone();
+        upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
+        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathOutput, upConversionOptions);
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
         SerializationSpecifier sourceSerializationOptions = createMathMLSourceSerializationOptions();
         String parallelMathML = MathMLUtilities.serializeElement(mathElement, sourceSerializationOptions);
@@ -84,7 +88,5 @@ public final class ASCIIMathInputDemoServlet extends BaseServlet {
         request.setAttribute("maxima", maximaInput);
         
         request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo-result.jsp").forward(request, response);
-
-        
     }
 }

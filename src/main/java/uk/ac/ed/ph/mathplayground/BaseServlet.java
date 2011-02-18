@@ -6,6 +6,7 @@
 package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
+import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
 import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
 
@@ -49,5 +50,9 @@ abstract class BaseServlet extends HttpServlet {
         result.setIndenting(true);
         result.setUsingNamedEntities(true);
         return result;
+    }
+    
+    protected UpConversionOptions getUpConversionOptions() {
+        return (UpConversionOptions) getServletContext().getAttribute(ContextInitialiser.UPCONVERSION_OPTIONS_ATTRIBUTE_NAME);
     }
 }
