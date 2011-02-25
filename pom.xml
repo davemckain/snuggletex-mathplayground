@@ -82,13 +82,6 @@ All Rights Reserved
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.mathjax</groupId>
-      <artifactId>MathJax</artifactId>
-      <version>1.0.1a-dec10</version>
-      <type>zip</type>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
   <repositories>
     <repository>
@@ -158,45 +151,11 @@ All Rights Reserved
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-      <!-- Unpack MathJax JavaScript -->
-      <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-dependency-plugin</artifactId>
-         <executions>
-           <execution>
-             <id>unpack</id>
-             <phase>prepare-package</phase>
-             <goals>
-               <goal>unpack</goal>
-             </goals>
-             <configuration>
-               <artifactItems>
-                 <artifactItem>
-                   <groupId>org.mathjax</groupId>
-                   <artifactId>MathJax</artifactId>
-                   <version>1.0.1a-dec10</version>
-                   <type>zip</type>
-                   <overWrite>false</overWrite>
-                   <outputDirectory>${project.build.directory}/extras/lib</outputDirectory>
-                 </artifactItem>
-               </artifactItems>
-             </configuration>
-           </execution>
-         </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-beta-1</version>
         <configuration>
           <warName>mathplayground</warName>
-          <!--
-          <webResources>
-            <resource>
-              <directory>${project.build.directory}/extras</directory>
-            </resource>
-          </webResources>
-          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-          -->
         </configuration>
       </plugin>
     </plugins>

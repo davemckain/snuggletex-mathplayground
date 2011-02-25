@@ -131,6 +131,20 @@ var ASCIIMathInputController = (function() {
         }
     };
 
+    var replaceContainerXML = function(containerQuery, xml) {
+        var content = null;
+        if (document.adoptNode) {
+            /* Nice browser */
+            var rootElement = jQuery.parseXML(xml).childNodes[0];
+            document.adoptNode(rootElement);
+            content = rootElement;
+        }
+        else {
+            /* Internet Exploder */
+            //content = xml;
+        }
+        replaceContainerContent(containerQuery, content);
+    };
 
     /************************************************************/
 
@@ -261,7 +275,7 @@ var ASCIIMathInputController = (function() {
                     case Widget.STATUS_SUCCESS:
                         statusContainer.attr('class', 'asciiMathWidgetStatus success');
                         replaceContainerContent(messageContainer, "Your input makes sense. It has been interpreted as:");
-                        replaceContainerContent(resultContainer, jQuery.parseXML(mathmlString).childNodes[0]);
+                        replaceContainerXML(resultContainer, mathmlString);
                         break;
 
                     case Widget.STATUS_FAILURE:
