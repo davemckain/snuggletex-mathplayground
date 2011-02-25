@@ -38,12 +38,193 @@ var mathfontfamily = "";
 
 /************************************************************/
 
-var ASCIIMathInputController = (function() {
+var VerifierController = (function() {
 
     var validatorServiceUrl = null; /* Caller must fill in */
     var delay = 300;
+    var usingMathJax = true;
+
+    var STATUS_WAITING = 0;
+    var STATUS_SUCCESS = 1;
+    var STATUS_FAILURE = 2;
+    var STATUS_ERROR = 3;
+
+    /************************************************************/
+
+    var VerifierControl = function() {
+        this.verifiedRenderingContainerId = null;
+        this.cmathSourceContainerId = null;
+        this.maximaSourceContainerId = null;
+        var currentXHR = null;
+        var currentTimeoutId = null;
+        var verifierControl = this;
+
+        this.doVerifyLater = function(verifyInputData) {
+            if (currentTimeoutId!=null) {
+                window.clearTimeout(currentTimeoutId);
+            }
+            else {
+                this.updateVerifierContainer(STATUS_WAITING); /* Show waiting animation */
+            }
+            currentTimeoutId = window.setTimeout(function() {
+                verifierControl.verify(verifyInputData);
+                currentTimeoutId = null;
+            }, delay);
+        };
+
+        this.verify = function(verifyInputData) {
+            if (this.verifiedRenderingContainerId!=null && validatorServiceUrl!=null) {
+                currentXHR = jQuery.ajax({
+                    type: 'POST',
+                    url: validatorServiceUrl,
+                    dataType: 'json',
+                    data: verifyInputData,
+                    success: function(data, textStatus, jqXHR) {
+                        if (currentXHR==jqXHR) {
+                            currentXHR = null;
+                            verifierControl.showVerificationResult(data);
+                        }
+                    }
+                });
+            }
+        };
+
+        this.showVerificationResult = function(jsonData) {
+            if (this.verifiedRenderingContainerId!=null) {
+                var verifiedRenderingContainer = jQuery("#" + this.verifiedRenderingContainerId);
+
+                /* We consider "valid" to mean "getting as far as CMathML" here */
+                var cmath = jsonData['cmath'];
+                if (cmath!=null) {
+                    var bracketed = jsonData['pmathBracketed'].replace(/<math/, "<math display='block'");
+                    this.updateVerifierContainer(STATUS_SUCCESS, bracketed);
+                }
+                else if (jsonData['cmathFailures']!=null) {
+                    this.updateVerifierContainer(STATUS_FAILURE);
+                }
+                else {
+                    this.updateVerifierContainer(STATUS_ERROR);
+                }
+
+                /* Maybe show CMath source */
+                if (this.cmathSourceContainerId!=null) {
+                    jQuery("#" + this.cmathSourceContainerId).text(cmath || 'Could not generate Content MathML');
+                }
+                /* Maybe show Maxima is we got it */
+                if (this.maximaSourceContainerId!=null) {
+                    jQuery("#" + this.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not generate Maxima syntax');
+                }
+            }
+        };
+
+        this.updateVerifierContainer = function(status, mathmlString) {
+            if (this.verifiedRenderingContainerId!=null) {
+                var verifiedRenderingContainer = jQuery("#" + this.verifiedRenderingContainerId);
+                /* Set up children if not done already */
+                if (verifiedRenderingContainer.children().size()==0) {
+                    verifiedRenderingContainer.html("<div class='asciiMathWidgetStatus'></div>"
+                        + "<div class='asciiMathWidgetMessage'></div>"
+                        + "<div class='asciiMathWidgetResult'></div>");
+                }
+                var statusContainer = verifiedRenderingContainer.children().first();
+                var messageContainer = statusContainer.next();
+                var resultContainer = messageContainer.next();
+                switch(status) {
+                    case STATUS_WAITING:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus waiting');
+                        VerifierController.replaceContainerContent(messageContainer, "Checking...");
+                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        break;
+
+                    case STATUS_SUCCESS:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus success');
+                        VerifierController.replaceContainerContent(messageContainer, "Your input makes sense. It has been interpreted as:");
+                        VerifierController.replaceContainerXML(resultContainer, mathmlString);
+                        break;
+
+                    case STATUS_FAILURE:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
+                        VerifierController.replaceContainerContent(messageContainer, "I could not understand your input");
+                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        break;
+
+                    case STATUS_ERROR:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus error');
+                        VerifierController.replaceContainerContent(messageContainer, "Unexpected error");
+                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        break;
+                }
+            }
+
+        };
+    };
+
+    VerifierControl.prototype.setVerifiedRenderingContainerId = function(id) {
+        this.verifiedRenderingContainerId = id;
+    };
+
+    VerifierControl.prototype.setCMathSourceContainerId = function(id) {
+        this.cmathSourceContainerId = id;
+    };
+
+    VerifierControl.prototype.setMaximaSourceContainerId = function(id) {
+        this.maximaSourceContainerId = id;
+    };
+
+    VerifierControl.prototype.verifyLater = function(verifyInputData) {
+        this.doVerifyLater(verifyInputData);
+    };
+
+    return {
+        replaceContainerContent: function(containerQuery, content) {
+            containerQuery.empty();
+            if (content!=null) {
+                containerQuery.append(content);
+
+                /* Maybe schedule MathJax update if this is a MathML Element */
+                if (usingMathJax && content instanceof Element && content.nodeType==1 && content.nodeName=="math") {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
+                }
+            }
+        },
+
+        replaceContainerXML: function(containerQuery, xml) {
+            var content = null;
+            if (document.adoptNode) {
+                /* Nice browser */
+                var rootElement = jQuery.parseXML(xml).childNodes[0];
+                document.adoptNode(rootElement);
+                content = rootElement;
+            }
+            else {
+                /* Internet Exploder */
+                content = xml;
+            }
+            VerifierController.replaceContainerContent(containerQuery, content);
+        },
+
+        createVerifierControl: function() {
+            return new VerifierControl();
+        },
+
+        getValidatorServiceUrl: function() { return validatorServiceUrl },
+        setValidatorServiceUrl: function(url) { validatorServiceUrl = url },
+
+        getDelay: function() { return delay },
+        setDelay: function(newDelay) { delay = newDelay },
+
+        isUsingMathJax: function() { return usingMathJax },
+        setUsingMathJax: function(newUsingMathJax) { usingMathJax = newUsingMathJax },
+    };
+
+})();
+
+/************************************************************/
+
+var ASCIIMathInputController = (function() {
+
     var newline = "\r\n";
-    var doMathJax = true;
+    var usingMathJax = true; // FIXME!
 
     /************************************************************/
     /* ASCIIMath calling helpers */
@@ -117,45 +298,13 @@ var ASCIIMathInputController = (function() {
     };
 
     /************************************************************/
-    /* Utility helpers */
 
-    var replaceContainerContent = function(containerQuery, content) {
-        containerQuery.empty();
-        if (content!=null) {
-            containerQuery.append(content);
-
-            /* Maybe schedule MathJax update if this is a MathML Element */
-            if (doMathJax && content instanceof Element && content.nodeType==1 && content.nodeName=="math") {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
-            }
-        }
-    };
-
-    var replaceContainerXML = function(containerQuery, xml) {
-        var content = null;
-        if (document.adoptNode) {
-            /* Nice browser */
-            var rootElement = jQuery.parseXML(xml).childNodes[0];
-            document.adoptNode(rootElement);
-            content = rootElement;
-        }
-        else {
-            /* Internet Exploder */
-            //content = xml;
-        }
-        replaceContainerContent(containerQuery, content);
-    };
-
-    /************************************************************/
-
-    var Widget = function(_asciiMathInputId, _asciiMathOutputId) {
+    var Widget = function(_asciiMathInputId, _asciiMathOutputId, _verifierControl) {
         this.asciiMathInputControlId = _asciiMathInputId;
         this.asciiMathOutputControlId = _asciiMathOutputId;
+        this.verifierControl = _verifierControl;
         this.mathJaxRenderingContainerId = null;
-        this.validatedRenderingContainerId = null;
         this.pmathSourceContainerId = null;
-        this.cmathSourceContainerId = null;
-        this.maximaSourceContainerId = null;
         var lastInput = null;
         var currentXHR = null;
         var currentTimeoutId = null;
@@ -176,16 +325,14 @@ var ASCIIMathInputController = (function() {
             if (lastInput==null || asciiMathInput!=lastInput) {
                 /* Something has changed */
                 lastInput = asciiMathInput;
-                if (currentTimeoutId!=null) {
-                    window.clearTimeout(currentTimeoutId);
+
+                /* Update live preview */
+                var mathmlSource = widget.updatePreview();
+
+                /* Maybe verify the input */
+                if (this.verifierControl!=null) {
+                    this.verifierControl.verifyLater(mathmlSource);
                 }
-                else {
-                    updateValidationContainer(0); /* Show waiting animation */
-                }
-                currentTimeoutId = window.setTimeout(function() {
-                    widget.updatePreview();
-                    currentTimeoutId = null;
-                }, delay);
             }
         };
 
@@ -197,100 +344,19 @@ var ASCIIMathInputController = (function() {
         this.updatePreview = function() {
             /* Get ASCIIMathML to generate a <math> element */
             var asciiMathElement = callASCIIMath(this.getASCIIMathInput());
-            var source = extractMathML(asciiMathElement);
+            var mathmlSource = extractMathML(asciiMathElement);
 
-            /* Maybe update preview source box */
+            /* Maybe update preview mathmlSource box */
             if (this.pmathSourceContainerId!=null) {
-                jQuery("#" + this.pmathSourceContainerId).text(source);
+                jQuery("#" + this.pmathSourceContainerId).text(mathmlSource);
             }
 
             /* Maybe insert MathML into the DOM for display */
             if (this.mathJaxRenderingContainerId!=null) {
-                replaceContainerContent(jQuery("#" + this.mathJaxRenderingContainerId),
+                VerifierController.replaceContainerContent(jQuery("#" + this.mathJaxRenderingContainerId),
                     asciiMathElement);
             }
-
-            /* Maybe validate the input */
-            if (this.validatedRenderingContainerId!=null && validatorServiceUrl!=null) {
-                currentXHR = jQuery.ajax({
-                    type: 'POST',
-                    url: validatorServiceUrl,
-                    dataType: 'json',
-                    data: source,
-                    success: function(data, textStatus, jqXHR) {
-                        if (currentXHR==jqXHR) {
-                            currentXHR = null;
-                            showValidationResult(data);
-                        }
-                    }
-                });
-            }
-        };
-
-        var showValidationResult = function(jsonData) {
-            var validatedRenderingContainer = jQuery("#" + widget.validatedRenderingContainerId);
-
-            /* We consider "valid" to mean "getting as far as CMathML" here */
-            var cmath = jsonData['cmath'];
-            if (cmath!=null) {
-                var bracketed = jsonData['pmathBracketed'].replace(/<math/, "<math display='block'");
-                updateValidationContainer(Widget.STATUS_SUCCESS, bracketed);
-            }
-            else if (jsonData['cmathFailures']!=null) {
-                updateValidationContainer(Widget.STATUS_FAILURE);
-            }
-            else {
-                updateValidationContainer(Widget.STATUS_ERROR);
-            }
-
-            /* Maybe show CMath source */
-            if (widget.cmathSourceContainerId!=null) {
-                jQuery("#" + widget.cmathSourceContainerId).text(cmath || 'Could not generate Content MathML');
-            }
-            /* Maybe show Maxima is we got it */
-            if (widget.maximaSourceContainerId!=null) {
-                jQuery("#" + widget.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not generate Maxima syntax');
-            }
-        };
-
-        var updateValidationContainer = function(status, mathmlString) {
-            if (widget.validatedRenderingContainerId!=null) {
-                var validatedRenderingContainer = jQuery("#" + widget.validatedRenderingContainerId);
-                /* Set up children if not done already */
-                if (validatedRenderingContainer.children().size()==0) {
-                    validatedRenderingContainer.html("<div class='asciiMathWidgetStatus'></div>"
-                        + "<div class='asciiMathWidgetMessage'></div>"
-                        + "<div class='asciiMathWidgetResult'></div>");
-                }
-                var statusContainer = validatedRenderingContainer.children().first();
-                var messageContainer = statusContainer.next();
-                var resultContainer = messageContainer.next();
-                switch(status) {
-                    case Widget.STATUS_WAITING:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus waiting');
-                        replaceContainerContent(messageContainer, "Checking...");
-                        replaceContainerContent(resultContainer, "\xa0");
-                        break;
-
-                    case Widget.STATUS_SUCCESS:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus success');
-                        replaceContainerContent(messageContainer, "Your input makes sense. It has been interpreted as:");
-                        replaceContainerXML(resultContainer, mathmlString);
-                        break;
-
-                    case Widget.STATUS_FAILURE:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
-                        replaceContainerContent(messageContainer, "I could not understand your input");
-                        replaceContainerContent(resultContainer, "\xa0");
-                        break;
-
-                    case Widget.STATUS_ERROR:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus error');
-                        replaceContainerContent(messageContainer, "Unexpected error");
-                        replaceContainerContent(resultContainer, "\xa0");
-                        break;
-                }
-            }
+            return mathmlSource;
         };
 
         this.doInit = function() {
@@ -307,32 +373,35 @@ var ASCIIMathInputController = (function() {
             });
 
             /* Set up initial preview */
-            widget.updatePreview();
+            var mathmlSource = widget.updatePreview();
+
+            /* Maybe do verification on the initial input */
+            if (this.verifierControl!=null) {
+                this.verifierControl.verifyLater(mathmlSource);
+            }
 
             /* Set up handler to update preview when required */
             inputSelector.bind("change keyup keydown", function() {
                 widget.updatePreviewIfChanged();
             });
         };
-
-    };
-
-    Widget.prototype.setMathJaxRenderingContainerId = function(id) {
-        this.mathJaxRenderingContainerId = id;
     };
 
     Widget.prototype.init = function() {
         this.doInit();
     };
 
-    Widget.STATUS_WAITING = 0;
-    Widget.STATUS_SUCCESS = 1;
-    Widget.STATUS_FAILURE = 2;
-    Widget.STATUS_ERROR = 3;
+    Widget.prototype.setMathJaxRenderingContainerId = function(id) {
+        this.mathJaxRenderingContainerId = id;
+    }
+
+    Widget.prototype.setPMathSourceContainerId = function(id) {
+        this.pmathSourceContainerId = id;
+    }
 
     return {
-        createInputWidget: function(inputId, outputId) {
-            return new Widget(inputId, outputId);
+        createInputWidget: function(inputId, outputId, verifierControl) {
+            return new Widget(inputId, outputId, verifierControl);
         },
 
         getValidatorServiceUrl: function() { return validatorServiceUrl },
