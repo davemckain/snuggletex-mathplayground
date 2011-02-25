@@ -35,7 +35,7 @@ title: Optional page title
     <script type="text/javascript" src="includes/jquery/jquery-1.5.0.min.js"></script>
     <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
     <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
-    <script type="text/javascript" src="lib/MathJax/MathJax.js">//<![CDATA[
+    <script type="text/javascript" src="http://www2.ph.ed.ac.uk/lib/MathJax/MathJax.js">//<![CDATA[
       // NB: This type of inline config isn't HTML5 valid
       MathJax.Hub.Config({
         config: ["MMLorHTML.js"],
