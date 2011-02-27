@@ -17,7 +17,7 @@ All Rights Reserved
 
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    VerifierController.setValidatorServiceUrl('ASCIIMathUpConversionService');
+    VerifierController.setVerifierServiceUrl('ASCIIMathUpConversionService');
     VerifierController.setDelay(500);
 
     var verifierControl = VerifierController.createVerifierControl();

@@ -30,7 +30,6 @@ title: Optional page title
     <link rel="stylesheet" type="text/css" href="includes/webapp-base.css" />
     <link rel="stylesheet" type="text/css" href="includes/content-styles.css" />
     <link rel="stylesheet" type="text/css" href="includes/mathplayground-webapp.css" />
-    <link rel="stylesheet" type="text/css" href="includes/snuggletex.css" />
     <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
     <script type="text/javascript" src="includes/jquery/jquery-1.5.0.min.js"></script>
     <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
@@ -73,6 +72,7 @@ title: Optional page title
               <h2>Demos</h2>
               <ul>
                 <li class="asciiMathInputDemo"><a href="ASCIIMathInputDemo">ASCIIMath Verified Input Demo</a></li>
+                <li class="snuggleTeXInputDemo"><a href="SnuggleTeXInputDemo">SnuggleTeX Verified Input Demo</a></li>
               </ul>
             </div>
           </div>

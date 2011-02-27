@@ -40,7 +40,7 @@ var mathfontfamily = "";
 
 var VerifierController = (function() {
 
-    var validatorServiceUrl = null; /* Caller must fill in */
+    var verifierServiceUrl = null; /* Caller must fill in */
     var delay = 300;
     var usingMathJax = true;
 
@@ -73,10 +73,10 @@ var VerifierController = (function() {
         };
 
         this.verify = function(verifyInputData) {
-            if (this.verifiedRenderingContainerId!=null && validatorServiceUrl!=null) {
+            if (this.verifiedRenderingContainerId!=null && verifierServiceUrl!=null) {
                 currentXHR = jQuery.ajax({
                     type: 'POST',
-                    url: validatorServiceUrl,
+                    url: verifierServiceUrl,
                     dataType: 'json',
                     data: verifyInputData,
                     success: function(data, textStatus, jqXHR) {
@@ -96,7 +96,7 @@ var VerifierController = (function() {
                 /* We consider "valid" to mean "getting as far as CMathML" here */
                 var cmath = jsonData['cmath'];
                 if (cmath!=null) {
-                    var bracketed = jsonData['pmathBracketed'].replace(/<math/, "<math display='block'");
+                    var bracketed = jsonData['pmathBracketed'];//.replace(/<math/, "<math display='block'");
                     this.updateVerifierContainer(STATUS_SUCCESS, bracketed);
                 }
                 else if (jsonData['cmathFailures']!=null) {
@@ -207,8 +207,8 @@ var VerifierController = (function() {
             return new VerifierControl();
         },
 
-        getValidatorServiceUrl: function() { return validatorServiceUrl },
-        setValidatorServiceUrl: function(url) { validatorServiceUrl = url },
+        getVerifierServiceUrl: function() { return verifierServiceUrl },
+        setVerifierServiceUrl: function(url) { verifierServiceUrl = url },
 
         getDelay: function() { return delay },
         setDelay: function(newDelay) { delay = newDelay },
@@ -224,7 +224,6 @@ var VerifierController = (function() {
 var ASCIIMathInputController = (function() {
 
     var newline = "\r\n";
-    var usingMathJax = true; // FIXME!
 
     /************************************************************/
     /* ASCIIMath calling helpers */
@@ -403,12 +402,73 @@ var ASCIIMathInputController = (function() {
         createInputWidget: function(inputId, outputId, verifierControl) {
             return new Widget(inputId, outputId, verifierControl);
         },
+    };
 
-        getValidatorServiceUrl: function() { return validatorServiceUrl },
-        setValidatorServiceUrl: function(url) { validatorServiceUrl = url },
+})();
 
-        getDelay: function() { return delay },
-        setDelay: function(newDelay) { delay = newDelay },
+/************************************************************/
+
+var SnuggleTeXInputController = (function() {
+
+    /************************************************************/
+
+    var Widget = function(_snuggleTeXInputControlId, _verifierControl) {
+        this.snuggleTeXInputControlId = _snuggleTeXInputControlId;
+        this.verifierControl = _verifierControl;
+        var lastInput = null;
+        var currentXHR = null;
+        var currentTimeoutId = null;
+        var widget = this;
+
+        this.getLaTeXInput= function() {
+            var inputSelector = jQuery("#" + this.snuggleTeXInputControlId);
+            return inputSelector.get(0).value;
+        };
+
+        this.updatePreviewIfChanged = function() {
+            var latexInput = this.getLaTeXInput();
+            if (lastInput==null || latexInput!=lastInput) {
+                /* Something has changed */
+                lastInput = latexInput;
+
+                /* Maybe verify the input */
+                if (this.verifierControl!=null) {
+                    this.verifierControl.verifyLater(latexInput);
+                }
+            }
+        };
+
+        this.doInit = function() {
+            var inputSelector = jQuery("#" + this.snuggleTeXInputControlId);
+
+            /* Maybe do verification on the initial input */
+            if (this.verifierControl!=null) {
+                this.verifierControl.verifyLater(this.getLaTeXInput());
+            }
+
+            /* Set up handler to update preview when required */
+            inputSelector.bind("change keyup keydown", function() {
+                widget.updatePreviewIfChanged();
+            });
+        };
+    };
+
+    Widget.prototype.init = function() {
+        this.doInit();
+    };
+
+    Widget.prototype.setMathJaxRenderingContainerId = function(id) {
+        this.mathJaxRenderingContainerId = id;
+    }
+
+    Widget.prototype.setPMathSourceContainerId = function(id) {
+        this.pmathSourceContainerId = id;
+    }
+
+    return {
+        createInputWidget: function(inputId, verifierControl) {
+            return new Widget(inputId, verifierControl);
+        },
     };
 
 })();
