@@ -217,7 +217,8 @@ var VerifierController = (function() {
                 containerQuery.append(content);
 
                 /* Maybe schedule MathJax update if this is a MathML Element */
-                if (usingMathJax && content instanceof Element && content.nodeType==1 && content.nodeName=="math") {
+                if (usingMathJax && (content.nodeType && content.nodeType==1 && content.nodeName=="math")
+                        || (content.substr && content.substr(0,6)=='<math ')) {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
                 }
             }
@@ -234,7 +235,7 @@ var VerifierController = (function() {
         setDelay: function(newDelay) { delay = newDelay },
 
         isUsingMathJax: function() { return usingMathJax },
-        setUsingMathJax: function(newUsingMathJax) { usingMathJax = newUsingMathJax },
+        setUsingMathJax: function(newUsingMathJax) { usingMathJax = newUsingMathJax }
     };
 
 })();
@@ -255,6 +256,7 @@ var ASCIIMathInputController = (function() {
         var span = AMparseMath(mathModeInput); // This is <span><math>...</math></span>
         var math = span.childNodes[0]; /* This is <math>...</math> */
         math.setAttribute("display", "block");
+        math.removeAttribute("title"); // MathJax doesn't like this!
         return math;
     };
 
@@ -421,7 +423,7 @@ var ASCIIMathInputController = (function() {
     return {
         createInputWidget: function(inputId, outputId, verifierControl) {
             return new Widget(inputId, outputId, verifierControl);
-        },
+        }
     };
 
 })();
@@ -480,7 +482,7 @@ var SnuggleTeXInputController = (function() {
     return {
         createInputWidget: function(inputId, verifierControl) {
             return new Widget(inputId, verifierControl);
-        },
+        }
     };
 
 })();

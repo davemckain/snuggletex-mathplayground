@@ -365,18 +365,32 @@ function AMinitSymbols() {
 
 var AMmathml = "http://www.w3.org/1998/Math/MathML";
 
+// NEW VERSIONS HERE!
 function AMcreateElementMathML(t) {
-  if (isIE) return document.createElement("m:"+t);
+  if (isIE) return document.createElement(t);
   else return document.createElementNS(AMmathml,t);
 }
 
 function AMcreateMmlNode(t,frag) {
-//  var node = AMcreateElementMathML(name);
-  if (isIE) var node = document.createElement("m:"+t);
+  if (isIE) var node = document.createElement(t);
   else var node = document.createElementNS(AMmathml,t);
   node.appendChild(frag);
   return node;
 }
+
+// ORIGINAL VERSIONS BELOW
+//function AMcreateElementMathML(t) {
+//  if (isIE) return document.createElement("m:"+t);
+//  else return document.createElementNS(AMmathml,t);
+//}
+//
+//function AMcreateMmlNode(t,frag) {
+////  var node = AMcreateElementMathML(name);
+//  if (isIE) var node = document.createElement("m:"+t);
+//  else var node = document.createElementNS(AMmathml,t);
+//  node.appendChild(frag);
+//  return node;
+//}
 
 function define(oldstr,newstr) {
   AMsymbols = AMsymbols.concat([{input:oldstr, tag:"mo", output:newstr, 
