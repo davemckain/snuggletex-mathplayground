@@ -17,6 +17,7 @@ All Rights Reserved
   <properties>
     <snuggletex.version>1.3-SNAPSHOT</snuggletex.version>
     <ph-commons.version>1.0-SNAPSHOT</ph-commons.version>
+    <json-simple.version>1.1</json-simple.version>
     <saxon9.version>9.1.0.8</saxon9.version>
     <slf4j.version>1.5.11</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
@@ -38,16 +39,9 @@ All Rights Reserved
       <version>${ph-commons.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon9</artifactId>
-      <version>${saxon9.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon9-dom</artifactId>
-      <version>${saxon9.version}</version>
-      <scope>runtime</scope>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -64,6 +58,18 @@ All Rights Reserved
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9</artifactId>
+      <version>${saxon9.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon9-dom</artifactId>
+      <version>${saxon9.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

@@ -96,7 +96,7 @@ var VerifierController = (function() {
                 /* We consider "valid" to mean "getting as far as CMathML" here */
                 var cmath = jsonData['cmath'];
                 if (cmath!=null) {
-                    var bracketed = jsonData['pmathBracketed'];//.replace(/<math/, "<math display='block'");
+                    var bracketed = jsonData['pmathBracketed'];
                     this.updateVerifierContainer(STATUS_SUCCESS, bracketed);
                 }
                 else if (jsonData['cmathFailures']!=null) {
@@ -456,14 +456,6 @@ var SnuggleTeXInputController = (function() {
     Widget.prototype.init = function() {
         this.doInit();
     };
-
-    Widget.prototype.setMathJaxRenderingContainerId = function(id) {
-        this.mathJaxRenderingContainerId = id;
-    }
-
-    Widget.prototype.setPMathSourceContainerId = function(id) {
-        this.pmathSourceContainerId = id;
-    }
 
     return {
         createInputWidget: function(inputId, verifierControl) {

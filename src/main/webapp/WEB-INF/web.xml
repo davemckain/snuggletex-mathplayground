@@ -31,6 +31,10 @@ All Rights Reserved
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathUpConversionService</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXInputDemoServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>SnuggleTeXUpConversionService</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXUpConversionService</servlet-class>
   </servlet>
@@ -41,6 +45,10 @@ All Rights Reserved
   <servlet-mapping>
     <servlet-name>ASCIIMathUpConversionService</servlet-name>
     <url-pattern>/ASCIIMathUpConversionService</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
+    <url-pattern>/SnuggleTeXInputDemo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SnuggleTeXUpConversionService</servlet-name>

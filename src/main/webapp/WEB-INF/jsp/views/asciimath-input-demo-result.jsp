@@ -20,13 +20,13 @@ All Rights Reserved
 <pre class="result">${asciiMathInput}</pre>
 
 <h3>Resulting Parallel MathML</h3>
-<pre class="result">${fn:escapeXml(parallelMathML)}</pre>
+<pre class="result">${fn:escapeXml(pmathParallel)}</pre>
 
 <h3>Resulting Presentation MathML</h3>
-<pre class="result">${fn:escapeXml(pMathML)}</pre>
+<pre class="result">${fn:escapeXml(pmath)}</pre>
 
 <h3>Resulting Content MathML</h3>
-<pre class="result">${fn:escapeXml(cMathML)}</pre>
+<pre class="result">${fn:escapeXml(cmath)}</pre>
 
 <h3>Resulting Maxima</h3>
 <pre class="result">${fn:escapeXml(maxima)}</pre>

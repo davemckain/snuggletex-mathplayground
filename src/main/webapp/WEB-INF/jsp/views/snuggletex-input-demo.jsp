@@ -36,7 +36,7 @@ All Rights Reserved
 </p>
 <form action="SnuggleTeXInputDemo" method="post" class="input">
   <div class="inputBox">
-    <input id="latexInputControl" name="latexInput" type="text" value="${latexInput}">
+    <input id="latexInputControl" name="latexMathInput" type="text" value="${latexMathInput}">
     <input type="submit" value="Submit">
   </div>
 </form>

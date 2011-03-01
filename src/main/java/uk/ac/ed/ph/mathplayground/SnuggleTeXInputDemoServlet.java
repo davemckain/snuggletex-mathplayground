@@ -5,7 +5,16 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
+import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
+import uk.ac.ed.ph.snuggletex.InputError;
+import uk.ac.ed.ph.snuggletex.SnuggleSimpleMathRunner;
+import uk.ac.ed.ph.snuggletex.upconversion.UpConvertingPostProcessor;
+import uk.ac.ed.ph.snuggletex.utilities.MessageFormatter;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,20 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
-import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
-import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleInput;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
-import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptionDefinitions;
-import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
-import uk.ac.ed.ph.snuggletex.upconversion.UpConvertingPostProcessor;
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 /**
  * Version of {@link ASCIIMathInputDemoServlet} that uses SnuggleTeX input instead.
@@ -47,7 +43,7 @@ public final class SnuggleTeXInputDemoServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        request.setAttribute("latexInput", DEFAULT_INPUT);
+        request.setAttribute("latexMathInput", DEFAULT_INPUT);
         request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-input-demo.jsp").forward(request, response);
     }
     
@@ -55,46 +51,40 @@ public final class SnuggleTeXInputDemoServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String latexInput = request.getParameter("latexInput");
-        
-        if (latexInput==null) {
+        String latexMathInput = request.getParameter("latexMathInput");
+        if (latexMathInput==null) {
             logger.warn("No latexInput parameter present");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+        logger.info("LaTeX Math Input: {}", latexMathInput);
+        request.setAttribute("latexMathInput", latexMathInput);
         
-        /* Parse LaTeX */
-        SnuggleEngine engine = new SnuggleEngine(getStylesheetManager());
-        SnuggleSession session = engine.createSession();
-        session.parseInput(new SnuggleInput("$" + latexInput + "$"));
-
-        /* Register Up-converted */
-        UpConversionOptions upConversionOptions = (UpConversionOptions) getUpConversionOptions().clone();
-        upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
-        UpConvertingPostProcessor postProcessor = new UpConvertingPostProcessor(upConversionOptions);
+        /* Set up SnuggleTeX output options, including up-conversion */
         DOMOutputOptions domOptions = new DOMOutputOptions();
-        domOptions.setDOMPostProcessors(postProcessor);
+        domOptions.addDOMPostProcessors(new UpConvertingPostProcessor(getUpConversionOptions()));
         
-        /* Build DOM */
-        NodeList nodeList = session.buildDOMSubtree(domOptions);
-        Element mathmlElement = (Element) nodeList.item(0);
-        
-        SerializationSpecifier sourceSerializationOptions = createMathMLSourceSerializationOptions();
-        String parallelMathML = MathMLUtilities.serializeElement(mathmlElement, sourceSerializationOptions);
-        String pMathMLUpConverted = MathMLUtilities.serializeDocument(MathMLUtilities.isolateFirstSemanticsBranch(mathmlElement), sourceSerializationOptions);
-        Document cMathMLDocument = MathMLUtilities.isolateAnnotationXML(mathmlElement, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
-        String cMathML = cMathMLDocument!=null ? MathMLUtilities.serializeDocument(cMathMLDocument, sourceSerializationOptions) : null;
-        String maximaInput = MathMLUtilities.extractAnnotationString(mathmlElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
-        
-        logger.info("LaTeX Input: {}", latexInput);
-        logger.info("Final parallel MathML: {}", parallelMathML);
-        
-        request.setAttribute("latexInput", latexInput);
-        request.setAttribute("parallelMathML", parallelMathML);
-        request.setAttribute("pMathML", pMathMLUpConverted);
-        request.setAttribute("cMathML", cMathML);
-        request.setAttribute("maxima", maximaInput);
-        
+        /* Run SnuggleTeX on input */
+        SnuggleSimpleMathRunner runner = getSnuggleEngine().createSimpleMathRunner();
+        Element mathElement = runner.doMathInput(latexMathInput, domOptions);
+        if (mathElement!=null) {
+            /* Successful parse, so unwrap MathML */
+            LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
+            logger.info("Final parallel MathML: {}", unwrappedMathML.get("pmathParallel"));
+            request.setAttribute("pmathParallel", unwrappedMathML.get("pmathParallel"));
+            request.setAttribute("pmath", unwrappedMathML.get("pmath"));
+            request.setAttribute("cmath", unwrappedMathML.get("cmath"));
+            request.setAttribute("maxima", unwrappedMathML.get("maxima"));
+        }
+        else {
+            /* Failed to parse or build DOM */
+            logger.info("Resulting errors: {}", runner.getLastErrors());
+            List<String> errors = new ArrayList<String>();
+            for (InputError error : runner.getLastErrors()) {
+                errors.add(MessageFormatter.formatErrorAsString(error));
+            }
+            request.setAttribute("errors", errors);
+        }
         request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-input-demo-result.jsp").forward(request, response);
     }
 }

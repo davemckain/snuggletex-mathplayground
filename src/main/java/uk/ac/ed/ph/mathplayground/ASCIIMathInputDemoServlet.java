@@ -5,13 +5,10 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
-import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptionDefinitions;
-import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,38 +52,30 @@ public final class ASCIIMathInputDemoServlet extends BaseServlet {
          */
         String asciiMathInput = request.getParameter("asciiMathInput");
         String asciiMathOutput = request.getParameter("asciiMathOutput");
-        
         if (asciiMathInput==null || asciiMathOutput==null) {
             logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}, asciiMathOutput={}", asciiMathInput, asciiMathOutput);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not extract data passed by ASCIIMathML");
             return;
         }
         asciiMathOutput = asciiMathOutput.trim();
+        logger.info("ASCIIMathML Input: {}", asciiMathInput);
+        logger.info("Raw ASCIIMathML Output: {}", asciiMathOutput);
+        request.setAttribute("asciiMathInput", asciiMathInput);
+        
+        System.out.println(asciiMathOutput);
         
         /* Do up-conversion and extract wreckage */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
-        UpConversionOptions upConversionOptions = (UpConversionOptions) getUpConversionOptions().clone();
-        upConversionOptions.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
-        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathOutput, upConversionOptions);
+        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathOutput, getUpConversionOptions());
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
-        SerializationSpecifier sourceSerializationOptions = createMathMLSourceSerializationOptions();
-        String parallelMathML = MathMLUtilities.serializeElement(mathElement, sourceSerializationOptions);
-        String pMathMLUpConverted = MathMLUtilities.serializeDocument(MathMLUtilities.isolateFirstSemanticsBranch(mathElement), sourceSerializationOptions);
-        Document cMathMLDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
-        String cMathML = cMathMLDocument!=null ? MathMLUtilities.serializeDocument(cMathMLDocument, sourceSerializationOptions) : null;
-        String maximaInput = MathMLUtilities.extractAnnotationString(mathElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
         
-        logger.info("ASCIIMathML Input: {}", asciiMathInput);
-        logger.info("Raw ASCIIMathML Output: {}", asciiMathOutput);
-        logger.info("Final parallel MathML: {}", parallelMathML);
-        
-        request.setAttribute("asciiMathInput", asciiMathInput);
-        request.setAttribute("asciiMathOutput", asciiMathOutput);
-        request.setAttribute("parallelMathML", parallelMathML);
-        request.setAttribute("pMathML", pMathMLUpConverted);
-        request.setAttribute("cMathML", cMathML);
-        request.setAttribute("maxima", maximaInput);
-        
+        LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
+
+        logger.info("Final parallel MathML: {}", unwrappedMathML.get("pmathParallel"));
+        request.setAttribute("pmathParallel", unwrappedMathML.get("pmathParallel"));
+        request.setAttribute("pmath", unwrappedMathML.get("pmath"));
+        request.setAttribute("cmath", unwrappedMathML.get("cmath"));
+        request.setAttribute("maxima", unwrappedMathML.get("maxima"));
         request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo-result.jsp").forward(request, response);
     }
 }

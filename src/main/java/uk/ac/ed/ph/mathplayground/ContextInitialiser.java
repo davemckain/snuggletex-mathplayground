@@ -8,7 +8,9 @@ package uk.ac.ed.ph.mathplayground;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptionDefinitions;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
+import uk.ac.ed.ph.snuggletex.upconversion.internal.UpConversionPackageDefinitions;
 import uk.ac.ed.ph.snuggletex.utilities.SaxonTransformerFactoryChooser;
 import uk.ac.ed.ph.snuggletex.utilities.SimpleStylesheetCache;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
@@ -33,6 +35,7 @@ public final class ContextInitialiser implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(ContextInitialiser.class);
     
     public static final String STYLESHEET_MANAGER_ATTRIBUTE_NAME = "stylesheetManager";
+    public static final String SNUGGLE_ENGINE_ATTRIBUTE_NAME = "snuggleEngine";
     public static final String UPCONVERSION_OPTIONS_ATTRIBUTE_NAME = "upconversionOptions";
     
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -46,8 +49,15 @@ public final class ContextInitialiser implements ServletContextListener {
         stylesheetManager.setTransformerFactoryChooser(SaxonTransformerFactoryChooser.getInstance());
         servletContext.setAttribute(STYLESHEET_MANAGER_ATTRIBUTE_NAME, stylesheetManager);
         
+        /* Create shared SnuggleEngine, including up-conversion package */
+        SnuggleEngine snuggleEngine = new SnuggleEngine(stylesheetManager);
+        snuggleEngine.addPackage(UpConversionPackageDefinitions.getPackage());
+        servletContext.setAttribute(SNUGGLE_ENGINE_ATTRIBUTE_NAME, snuggleEngine);
+        
         /* Set up up-conversion options for demos */
         UpConversionOptions ucOpts = new UpConversionOptions();
+        ucOpts.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
+        ucOpts.setSpecifiedOption(UpConversionOptionDefinitions.DO_BRACKETED_PRESENTATION_MATHML, "true");
         ucOpts.assumeSymbol(createUpConversionSymbolElement("e"), "exponentialNumber");
         ucOpts.assumeSymbol(createUpConversionSymbolElement("f"), "function");
         ucOpts.assumeSymbol(createUpConversionSymbolElement("g"), "function");

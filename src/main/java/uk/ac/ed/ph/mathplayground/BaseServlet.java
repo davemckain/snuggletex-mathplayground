@@ -6,14 +6,26 @@
 package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
+import uk.ac.ed.ph.snuggletex.SnuggleEngine;
+import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConversionOptions;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
 import uk.ac.ed.ph.snuggletex.utilities.StylesheetManager;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Trivial base class for servlets in the demo webapp
@@ -45,14 +57,71 @@ abstract class BaseServlet extends HttpServlet {
         return (StylesheetManager) getServletContext().getAttribute(ContextInitialiser.STYLESHEET_MANAGER_ATTRIBUTE_NAME);
     }
     
-    protected SerializationSpecifier createMathMLSourceSerializationOptions() {
-        SerializationSpecifier result = new SerializationOptions();
-        result.setIndenting(true);
-        result.setUsingNamedEntities(true);
-        return result;
+    protected SnuggleEngine getSnuggleEngine() {
+        return (SnuggleEngine) getServletContext().getAttribute(ContextInitialiser.SNUGGLE_ENGINE_ATTRIBUTE_NAME);
     }
     
     protected UpConversionOptions getUpConversionOptions() {
         return (UpConversionOptions) getServletContext().getAttribute(ContextInitialiser.UPCONVERSION_OPTIONS_ATTRIBUTE_NAME);
+    }
+    
+    //-----------------------------------------------------------------------
+    
+    protected void sendJSONResponse(HttpServletResponse response, JSONObject jsonObject) throws IOException {
+        response.setContentType("text/json; charset=UTF-8");
+        PrintWriter responseWriter = response.getWriter();
+        responseWriter.append(jsonObject.toJSONString());
+        responseWriter.flush();
+    }
+    
+    //-----------------------------------------------------------------------
+    
+    protected LinkedHashMap<String, String> unwrapMathMLElement(Element mathElement) {
+        LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
+        
+        /* These options are used to serialize MathML that might get used, i.e. no entities */
+        SerializationSpecifier serOptions = new SerializationOptions();
+        serOptions.setIndenting(true);
+        
+        /* These options are used to serialize MathML that will only be displayed as source */
+        SerializationSpecifier sourceOptions = new SerializationOptions();
+        sourceOptions.setIndenting(true);
+        sourceOptions.setUsingNamedEntities(true);
+        
+        /* Isolate various annotations from the result */
+        Document pmathDocument = MathMLUtilities.isolateFirstSemanticsBranch(mathElement);
+        Document pmathBracketedDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.BRACKETED_PRESENTATION_MATHML_ANNOTATION_NAME);
+        Document cmathDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
+        String maximaAnnotation = MathMLUtilities.extractAnnotationString(mathElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
+        Document contentFailuresAnnotation = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_FAILURES_ANNOTATION_NAME);
+        Document maximaFailuresAnnotation = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.MAXIMA_FAILURES_ANNOTATION_NAME);
+        
+        /* Build up result */
+        maybeAddResult(result, "pmathParallel", mathElement, sourceOptions);
+        maybeAddResult(result, "pmathBracketed", pmathBracketedDocument, serOptions);
+        maybeAddResult(result, "pmath", pmathDocument, sourceOptions);
+        maybeAddResult(result, "cmath", cmathDocument, sourceOptions);
+        maybeAddResult(result, "maxima", maximaAnnotation);
+        maybeAddResult(result, "cmathFailures", contentFailuresAnnotation, sourceOptions);
+        maybeAddResult(result, "maximaFailures", maximaFailuresAnnotation, sourceOptions);
+        return result;
+    }
+    
+    private void maybeAddResult(Map<String, String> resultBuilder, String key, Document value, SerializationSpecifier serializationSpecifier) {
+        if (value!=null) {
+            resultBuilder.put(key, MathMLUtilities.serializeDocument(value, serializationSpecifier));
+        }
+    }
+    
+    private void maybeAddResult(Map<String, String> resultBuilder, String key, Element value, SerializationSpecifier serializationSpecifier) {
+        if (value!=null) {
+            resultBuilder.put(key, MathMLUtilities.serializeElement(value, serializationSpecifier));
+        }
+    }
+    
+    private void maybeAddResult(Map<String, String> resultBuilder, String key, String value) {
+        if (value!=null) {
+            resultBuilder.put(key, value);
+        }
     }
 }
