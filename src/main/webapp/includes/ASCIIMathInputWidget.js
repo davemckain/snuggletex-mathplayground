@@ -44,10 +44,11 @@ var VerifierController = (function() {
     var delay = 300;
     var usingMathJax = true;
 
-    var STATUS_WAITING = 0;
-    var STATUS_SUCCESS = 1;
-    var STATUS_FAILURE = 2;
-    var STATUS_ERROR = 3;
+    var STATUS_WAITING       = 0;
+    var STATUS_SUCCESS       = 1;
+    var STATUS_PARSE_ERROR   = 2;
+    var STATUS_VERIFY_FAILED = 3;
+    var STATUS_UNKNOWN_ERROR = 4;
 
     /************************************************************/
 
@@ -100,10 +101,18 @@ var VerifierController = (function() {
                     this.updateVerifierContainer(STATUS_SUCCESS, bracketed);
                 }
                 else if (jsonData['cmathFailures']!=null) {
-                    this.updateVerifierContainer(STATUS_FAILURE);
+                    this.updateVerifierContainer(STATUS_VERIFY_FAILED);
+                }
+                else if (jsonData['errors']!=null) {
+                    var html = '<ul>';
+                    for (var i in jsonData['errors']) {
+                        html += '<li>' + jsonData['errors'][i] + '</li>'
+                    }
+                    html += '</ul>';
+                    this.updateVerifierContainer(STATUS_PARSE_ERROR, null, html);
                 }
                 else {
-                    this.updateVerifierContainer(STATUS_ERROR);
+                    this.updateVerifierContainer(STATUS_UNKNOWN_ERROR);
                 }
 
                 /* Maybe show CMath source */
@@ -117,7 +126,7 @@ var VerifierController = (function() {
             }
         };
 
-        this.updateVerifierContainer = function(status, mathmlString) {
+        this.updateVerifierContainer = function(status, mathElementString, errorContent) {
             if (this.verifiedRenderingContainerId!=null) {
                 var verifiedRenderingContainer = jQuery("#" + this.verifiedRenderingContainerId);
                 /* Set up children if not done already */
@@ -132,31 +141,57 @@ var VerifierController = (function() {
                 switch(status) {
                     case STATUS_WAITING:
                         statusContainer.attr('class', 'asciiMathWidgetStatus waiting');
-                        VerifierController.replaceContainerContent(messageContainer, "Checking...");
-                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        this.showMessage(messageContainer, "Checking...");
+                        this.showMessage(resultContainer, null);
                         break;
 
                     case STATUS_SUCCESS:
                         statusContainer.attr('class', 'asciiMathWidgetStatus success');
-                        VerifierController.replaceContainerContent(messageContainer, "Your input makes sense. It has been interpreted as:");
-                        VerifierController.replaceContainerXML(resultContainer, mathmlString);
+                        this.showMessage(messageContainer, "Your input makes sense. It has been interpreted as:");
+                        this.showXML(resultContainer, mathElementString);
                         break;
 
-                    case STATUS_FAILURE:
+                    case STATUS_PARSE_ERROR:
                         statusContainer.attr('class', 'asciiMathWidgetStatus failure');
-                        VerifierController.replaceContainerContent(messageContainer, "I could not understand your input");
-                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        this.showMessage(messageContainer, "SnuggleTeX could not parse your input:");
+                        this.showMessage(resultContainer, errorContent);
                         break;
 
-                    case STATUS_ERROR:
+                    case STATUS_VERIFY_FAILED:
+                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
+                        this.showMessage(messageContainer, "I could not make sense of your input");
+                        this.showMessage(resultContainer, null);
+                        break;
+
+                    case STATUS_UNKNOWN_ERROR:
                         statusContainer.attr('class', 'asciiMathWidgetStatus error');
-                        VerifierController.replaceContainerContent(messageContainer, "Unexpected error");
-                        VerifierController.replaceContainerContent(resultContainer, "\xa0");
+                        this.showMessage(messageContainer, "Unexpected error");
+                        this.showMessage(resultContainer, null);
                         break;
                 }
             }
 
         };
+
+        this.showMessage = function(containerQuery, html) {
+            VerifierController.replaceContainerContent(containerQuery, html || "\xa0");
+        };
+
+        this.showXML = function(containerQuery, xml) {
+            var content;
+            if (document.adoptNode) {
+                /* Nice browser */
+                var rootElement = jQuery.parseXML(xml).childNodes[0];
+                document.adoptNode(rootElement);
+                content = rootElement;
+            }
+            else {
+                /* Internet Exploder */
+                content = xml;
+            }
+            VerifierController.replaceContainerContent(containerQuery, content);
+        };
+
     };
 
     VerifierControl.prototype.setVerifiedRenderingContainerId = function(id) {
@@ -186,21 +221,6 @@ var VerifierController = (function() {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
                 }
             }
-        },
-
-        replaceContainerXML: function(containerQuery, xml) {
-            var content = null;
-            if (document.adoptNode) {
-                /* Nice browser */
-                var rootElement = jQuery.parseXML(xml).childNodes[0];
-                document.adoptNode(rootElement);
-                content = rootElement;
-            }
-            else {
-                /* Internet Exploder */
-                content = xml;
-            }
-            VerifierController.replaceContainerContent(containerQuery, content);
         },
 
         createVerifierControl: function() {
