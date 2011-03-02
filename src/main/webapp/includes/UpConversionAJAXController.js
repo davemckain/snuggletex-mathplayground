@@ -124,7 +124,7 @@ var UpConversionAJAXController = (function() {
                     case STATUS_SUCCESS:
                         statusContainer.attr('class', 'upConversionAJAXControlStatus success');
                         this.showMessage(messageContainer, "Your input makes sense. It has been interpreted as:");
-                        this.showXML(resultContainer, mathElementString);
+                        this.showMathML(resultContainer, mathElementString);
                         break;
 
                     case STATUS_PARSE_ERROR:
@@ -153,21 +153,9 @@ var UpConversionAJAXController = (function() {
             UpConversionAJAXController.replaceContainerContent(containerQuery, html || "\xa0");
         };
 
-        this.showXML = function(containerQuery, xml) {
-            var content;
-            if (document.adoptNode) {
-                /* Nice browser */
-                var rootElement = jQuery.parseXML(xml).childNodes[0];
-                document.adoptNode(rootElement);
-                content = rootElement;
-            }
-            else {
-                /* Internet Exploder */
-                content = xml;
-            }
-            UpConversionAJAXController.replaceContainerContent(containerQuery, content);
+        this.showMathML = function(containerQuery, mathmlString) {
+            UpConversionAJAXController.replaceContainerMathMLContent(containerQuery, mathmlString);
         };
-
     };
 
     UpConversionAJAXControl.prototype.setBracketedRenderingContainerId = function(id) {
@@ -195,6 +183,48 @@ var UpConversionAJAXController = (function() {
                 /* Maybe schedule MathJax update if this is a MathML Element */
                 if (usingMathJax && (content.nodeType && content.nodeType==1 && content.nodeName=="math")
                         || (content.substr && content.substr(0,6)=='<math ')) {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
+                }
+            }
+        },
+
+        replaceContainerMathMLContent: function(containerQuery, mathmlContent) {
+            containerQuery.empty();
+            if (mathmlContent!=null) {
+                if (mathmlContent.nodeType) {
+                    /* This is (assumed to be a) MathML DOM Element */
+                    if (document.adoptNode) {
+                        /* Gecko, Webkit, Opera: we adopt the MathML Element into the
+                         * document and append it as a child */
+                        document.adoptNode(mathmlContent);
+                        containerQuery.append(mathmlContent);
+                    }
+                    else {
+                        /* Internet Explorer: We just append the Element's XML source,
+                         * which is quite easy to extract in this case. */
+                        containerQuery.append(mathmlContent.xml);
+                    }
+                }
+                else if (typeof mathmlContent == "string") {
+                    /* MathML String */
+                    if (document.adoptNode) {
+                        /* Gecko, Webkit, Opera: We parse the XML, adopt it and
+                         * append as child. */
+                        var mathElement = jQuery.parseXML(mathmlContent).childNodes[0];
+                        document.adoptNode(mathElement);
+                        containerQuery.append(mathElement);
+                    }
+                    else {
+                        /* Internet Exploder */
+                        containerQuery.append(mathmlContent);
+                    }
+                }
+                else {
+                    throw "Unexpected Math Content: " + (typeof mathmlContent) + (mathmlContent);
+                }
+
+                /* Maybe schedule MathJax update */
+                if (usingMathJax) {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
                 }
             }

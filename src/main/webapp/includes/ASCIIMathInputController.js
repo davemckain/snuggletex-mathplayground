@@ -16,13 +16,27 @@
 
 /************************************************************/
 
-/* (Reset certain defaults chosen by ASCIIMathML) */
-var mathcolor = "";
-var mathfontfamily = "";
-
 var ASCIIMathInputController = (function() {
 
-    var newline = "\r\n";
+    var createXMLDocument = function() {
+        var doc;
+        if (document.implementation && document.implementation.createDocument) {
+            /* Gecko, Webkit, Opera */
+            doc = document.implementation.createDocument("", "", null);
+        }
+        else {
+            try {
+                /* Internet Explorer */
+                doc = new ActiveXObject("Microsoft.XMLDOM");
+            }
+            catch (e) {
+                alert("I don't know how to create a DOM Document in this browser");
+            }
+        }
+        return doc;
+    };
+
+    var asciiMathParser = MakeASCIIMathParser(createXMLDocument());
 
     /************************************************************/
     /* ASCIIMath calling helpers */
@@ -31,10 +45,8 @@ var ASCIIMathInputController = (function() {
         /* Escape use of backquote symbol to prevent exiting math mode */
         mathModeInput = mathModeInput.replace(/`/g, "\\`");
 
-        var span = AMparseMath(mathModeInput); // This is <span><math>...</math></span>
-        var math = span.childNodes[0]; /* This is <math>...</math> */
+        var math = asciiMathParser.parseMath(mathModeInput);
         math.setAttribute("display", "block");
-        math.removeAttribute("title"); // MathJax doesn't like this!
         return math;
     };
 
@@ -43,57 +55,22 @@ var ASCIIMathInputController = (function() {
      * <math> element.
      */
     var extractMathML = function(asciiMathElement) {
-        return AMnode2string(asciiMathElement, "")
-            .substring(newline.length); /* Trim off leading newline */
-    };
-
-    /* Fixed up version of the function of the same name in ASCIIMathMLeditor.js,
-     * with the following changes:
-     *
-     * * Used newline variable for line breaks
-     * * Attribute values are escape correctly
-     */
-    var AMnode2string = function(inNode, indent) {
-        var i, str = "";
-        if (inNode.nodeType == 1) {
-            var name = inNode.nodeName.toLowerCase(); // (IE fix)
-            str = newline + indent + "<" + name;
-            for (i=0; i < inNode.attributes.length; i++) {
-                var attrValue = inNode.attributes[i].nodeValue;
-                if (attrValue!="italic" &&
-                        attrValue!="" &&  //stop junk attributes
-                        attrValue!="inherit" && // (mostly IE)
-                        attrValue!=undefined) {
-                    str += " " + inNode.attributes[i].nodeName
-                        + "=\"" + AMescapeValue(inNode.attributes[i].nodeValue) + "\"";
-                }
-            }
-            if (name == "math") str += " xmlns=\"http://www.w3.org/1998/Math/MathML\"";
-            str += ">";
-            for(i=0; i<inNode.childNodes.length; i++) {
-                str += AMnode2string(inNode.childNodes[i], indent+"  ");
-            }
-            if (name != "mo" && name != "mi" && name != "mn") {
-                str += newline + indent;
-            }
-            str += "</" + name + ">";
+        var xml;
+        try {
+            /* Gecko, Webkit, Opera */
+            var serializer = new XMLSerializer();
+            xml = serializer.serializeToString(asciiMathElement);
         }
-        else if (inNode.nodeType == 3) {
-            str += AMescapeValue(inNode.nodeValue);
+        catch (e) {
+            try {
+                /* Internet Explorer */
+                xml = asciiMathElement.xml;
+            }
+            catch (e) {
+                alert("I don't know how to serialize XML in this browser");
+            }
         }
-        return str;
-    };
-
-    var AMescapeValue = function(value) {
-        var str = "";
-        for (i=0; i<value.length; i++) {
-            if (value.charCodeAt(i)<32 || value.charCodeAt(i)>126) str += "&#"+value.charCodeAt(i)+";";
-            else if (value.charAt(i)=="<") str += "&lt;";
-            else if (value.charAt(i)==">") str += "&gt;";
-            else if (value.charAt(i)=="&") str += "&amp;";
-            else str += value.charAt(i);
-        }
-        return str;
+        return xml;
     };
 
     /************************************************************/
@@ -152,7 +129,7 @@ var ASCIIMathInputController = (function() {
 
             /* Maybe insert MathML into the DOM for display */
             if (this.mathJaxRenderingContainerId!=null) {
-                UpConversionAJAXController.replaceContainerContent(jQuery("#" + this.mathJaxRenderingContainerId),
+                UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId),
                     asciiMathElement);
             }
             return mathmlSource;
