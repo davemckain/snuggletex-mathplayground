@@ -13,10 +13,11 @@ All Rights Reserved
 <c:set var="title" value="ASCIIMathML Verified Input Demo" />
 <c:set var="pageId" value="asciiMathInputDemo" />
 <c:set var="headStuff">
-  <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
+  <link rel="stylesheet" type="text/css" href="includes/upconversion-ajax-control.css">
   <script type="text/javascript" src="includes/jquery/jquery-1.5.1.js"></script>
   <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
-  <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
+  <script type="text/javascript" src="includes/UpConversionAJAXController.js"></script>
+  <script type="text/javascript" src="includes/ASCIIMathInputController.js"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -24,15 +25,16 @@ All Rights Reserved
 
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    VerifierController.setVerifierServiceUrl('ASCIIMathUpConversionService');
-    VerifierController.setDelay(500);
+    UpConversionAJAXController.setUpConversionServiceUrl('ASCIIMathUpConversionService');
+    UpConversionAJAXController.setDelay(500);
+    UpConversionAJAXController.setUsingMathJax(true);
 
-    var verifierControl = VerifierController.createVerifierControl();
-    verifierControl.setVerifiedRenderingContainerId('verifiedRendering');
-    verifierControl.setCMathSourceContainerId('cmathSource');
-    verifierControl.setMaximaSourceContainerId('maximaSource');
+    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl();
+    upConversionAJAXControl.setBracketedRenderingContainerId('verifiedRendering');
+    upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
+    upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    var widget = ASCIIMathInputController.createInputWidget('asciiMathInputControl', 'asciiMathOutputControl', verifierControl);
+    var widget = ASCIIMathInputController.createInputWidget('asciiMathInputControl', 'asciiMathOutputControl', upConversionAJAXControl);
     widget.setPMathSourceContainerId('pmathSource');
     widget.setMathJaxRenderingContainerId('mathJaxRendering');
     widget.init();

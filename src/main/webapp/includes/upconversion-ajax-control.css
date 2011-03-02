@@ -1,4 +1,4 @@
-div.asciiMathWidgetStatus {
+div.upConversionAJAXControlStatus {
   width: 20px;
   height: 16px;
   display: block;
@@ -21,9 +21,9 @@ div.error {
   background: url('exclamation.png') no-repeat;
 }
 
-div.asciiMathWidgetMessage {
+div.upConversionAJAXControlMessage {
 }
 
-div.asciiMathWidgetResult {
+div.upConversionAJAXControlResult {
   clear: both;
 }

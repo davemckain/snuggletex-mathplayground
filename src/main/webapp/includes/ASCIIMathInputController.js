@@ -1,26 +1,10 @@
 /*
- * This provides some basic code for managing the ASCIIMathML input widget
- * used in the ASCIIMathML input demo in SnuggleTeX.
- *
- * The general ideas may be useful in other scenarios, so feel free to use
- * and/or build on this as is necessary.
- *
- * NOTE:
- *
- * This code uses the lovely jQuery library, but avoids using the
- * $(...) function just in case your code also uses some other library
- * like prototype that defines its own $(...) function.
- * (In this case, you will still want to read:
- *
- * http://docs.jquery.com/Using_jQuery_with_Other_Libraries
- *
- * to make sure you do whatver is necessary to make sure that both
- * libraries co-exist correctly.)
  *
  * Requirements:
  *
- * ASCIIMathML.js
  * jquery.js (at least version 1.5.0)
+ * ASCIIMathParser.js
+ * UpConversionAJAXController.js
  *
  * Author: David McKain
  *
@@ -35,212 +19,6 @@
 /* (Reset certain defaults chosen by ASCIIMathML) */
 var mathcolor = "";
 var mathfontfamily = "";
-
-/************************************************************/
-
-var VerifierController = (function() {
-
-    var verifierServiceUrl = null; /* Caller must fill in */
-    var delay = 300;
-    var usingMathJax = true;
-
-    var STATUS_WAITING       = 0;
-    var STATUS_SUCCESS       = 1;
-    var STATUS_PARSE_ERROR   = 2;
-    var STATUS_VERIFY_FAILED = 3;
-    var STATUS_UNKNOWN_ERROR = 4;
-
-    /************************************************************/
-
-    var VerifierControl = function() {
-        this.verifiedRenderingContainerId = null;
-        this.cmathSourceContainerId = null;
-        this.maximaSourceContainerId = null;
-        var currentXHR = null;
-        var currentTimeoutId = null;
-        var verifierControl = this;
-
-        this.doVerifyLater = function(verifyInputData) {
-            if (currentTimeoutId!=null) {
-                window.clearTimeout(currentTimeoutId);
-            }
-            else {
-                this.updateVerifierContainer(STATUS_WAITING); /* Show waiting animation */
-            }
-            currentTimeoutId = window.setTimeout(function() {
-                verifierControl.verify(verifyInputData);
-                currentTimeoutId = null;
-            }, delay);
-        };
-
-        this.verify = function(verifyInputData) {
-            if (this.verifiedRenderingContainerId!=null && verifierServiceUrl!=null) {
-                currentXHR = jQuery.ajax({
-                    type: 'POST',
-                    url: verifierServiceUrl,
-                    dataType: 'json',
-                    data: verifyInputData,
-                    success: function(data, textStatus, jqXHR) {
-                        if (currentXHR==jqXHR) {
-                            currentXHR = null;
-                            verifierControl.showVerificationResult(data);
-                        }
-                    }
-                });
-            }
-        };
-
-        this.showVerificationResult = function(jsonData) {
-            if (this.verifiedRenderingContainerId!=null) {
-                var verifiedRenderingContainer = jQuery("#" + this.verifiedRenderingContainerId);
-
-                /* We consider "valid" to mean "getting as far as CMathML" here */
-                var cmath = jsonData['cmath'];
-                if (cmath!=null) {
-                    var bracketed = jsonData['pmathBracketed'];
-                    this.updateVerifierContainer(STATUS_SUCCESS, bracketed);
-                }
-                else if (jsonData['cmathFailures']!=null) {
-                    this.updateVerifierContainer(STATUS_VERIFY_FAILED);
-                }
-                else if (jsonData['errors']!=null) {
-                    var html = '<ul>';
-                    for (var i in jsonData['errors']) {
-                        html += '<li>' + jsonData['errors'][i] + '</li>'
-                    }
-                    html += '</ul>';
-                    this.updateVerifierContainer(STATUS_PARSE_ERROR, null, html);
-                }
-                else {
-                    this.updateVerifierContainer(STATUS_UNKNOWN_ERROR);
-                }
-
-                /* Maybe show CMath source */
-                if (this.cmathSourceContainerId!=null) {
-                    jQuery("#" + this.cmathSourceContainerId).text(cmath || 'Could not generate Content MathML');
-                }
-                /* Maybe show Maxima is we got it */
-                if (this.maximaSourceContainerId!=null) {
-                    jQuery("#" + this.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not generate Maxima syntax');
-                }
-            }
-        };
-
-        this.updateVerifierContainer = function(status, mathElementString, errorContent) {
-            if (this.verifiedRenderingContainerId!=null) {
-                var verifiedRenderingContainer = jQuery("#" + this.verifiedRenderingContainerId);
-                /* Set up children if not done already */
-                if (verifiedRenderingContainer.children().size()==0) {
-                    verifiedRenderingContainer.html("<div class='asciiMathWidgetStatus'></div>"
-                        + "<div class='asciiMathWidgetMessage'></div>"
-                        + "<div class='asciiMathWidgetResult'></div>");
-                }
-                var statusContainer = verifiedRenderingContainer.children().first();
-                var messageContainer = statusContainer.next();
-                var resultContainer = messageContainer.next();
-                switch(status) {
-                    case STATUS_WAITING:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus waiting');
-                        this.showMessage(messageContainer, "Checking...");
-                        this.showMessage(resultContainer, null);
-                        break;
-
-                    case STATUS_SUCCESS:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus success');
-                        this.showMessage(messageContainer, "Your input makes sense. It has been interpreted as:");
-                        this.showXML(resultContainer, mathElementString);
-                        break;
-
-                    case STATUS_PARSE_ERROR:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
-                        this.showMessage(messageContainer, "SnuggleTeX could not parse your input:");
-                        this.showMessage(resultContainer, errorContent);
-                        break;
-
-                    case STATUS_VERIFY_FAILED:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus failure');
-                        this.showMessage(messageContainer, "I could not make sense of your input");
-                        this.showMessage(resultContainer, null);
-                        break;
-
-                    case STATUS_UNKNOWN_ERROR:
-                        statusContainer.attr('class', 'asciiMathWidgetStatus error');
-                        this.showMessage(messageContainer, "Unexpected error");
-                        this.showMessage(resultContainer, null);
-                        break;
-                }
-            }
-
-        };
-
-        this.showMessage = function(containerQuery, html) {
-            VerifierController.replaceContainerContent(containerQuery, html || "\xa0");
-        };
-
-        this.showXML = function(containerQuery, xml) {
-            var content;
-            if (document.adoptNode) {
-                /* Nice browser */
-                var rootElement = jQuery.parseXML(xml).childNodes[0];
-                document.adoptNode(rootElement);
-                content = rootElement;
-            }
-            else {
-                /* Internet Exploder */
-                content = xml;
-            }
-            VerifierController.replaceContainerContent(containerQuery, content);
-        };
-
-    };
-
-    VerifierControl.prototype.setVerifiedRenderingContainerId = function(id) {
-        this.verifiedRenderingContainerId = id;
-    };
-
-    VerifierControl.prototype.setCMathSourceContainerId = function(id) {
-        this.cmathSourceContainerId = id;
-    };
-
-    VerifierControl.prototype.setMaximaSourceContainerId = function(id) {
-        this.maximaSourceContainerId = id;
-    };
-
-    VerifierControl.prototype.verifyLater = function(verifyInputData) {
-        this.doVerifyLater(verifyInputData);
-    };
-
-    return {
-        replaceContainerContent: function(containerQuery, content) {
-            containerQuery.empty();
-            if (content!=null) {
-                containerQuery.append(content);
-
-                /* Maybe schedule MathJax update if this is a MathML Element */
-                if (usingMathJax && (content.nodeType && content.nodeType==1 && content.nodeName=="math")
-                        || (content.substr && content.substr(0,6)=='<math ')) {
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
-                }
-            }
-        },
-
-        createVerifierControl: function() {
-            return new VerifierControl();
-        },
-
-        getVerifierServiceUrl: function() { return verifierServiceUrl },
-        setVerifierServiceUrl: function(url) { verifierServiceUrl = url },
-
-        getDelay: function() { return delay },
-        setDelay: function(newDelay) { delay = newDelay },
-
-        isUsingMathJax: function() { return usingMathJax },
-        setUsingMathJax: function(newUsingMathJax) { usingMathJax = newUsingMathJax }
-    };
-
-})();
-
-/************************************************************/
 
 var ASCIIMathInputController = (function() {
 
@@ -374,7 +152,7 @@ var ASCIIMathInputController = (function() {
 
             /* Maybe insert MathML into the DOM for display */
             if (this.mathJaxRenderingContainerId!=null) {
-                VerifierController.replaceContainerContent(jQuery("#" + this.mathJaxRenderingContainerId),
+                UpConversionAJAXController.replaceContainerContent(jQuery("#" + this.mathJaxRenderingContainerId),
                     asciiMathElement);
             }
             return mathmlSource;

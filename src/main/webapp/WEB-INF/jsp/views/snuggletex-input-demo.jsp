@@ -13,10 +13,10 @@ All Rights Reserved
 <c:set var="title" value="SnuggleTeX Verified Input Demo" />
 <c:set var="pageId" value="snuggleTeXInputDemo" />
 <c:set var="headStuff">
-  <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
+  <link rel="stylesheet" type="text/css" href="includes/upconversion-ajax-control.css">
   <script type="text/javascript" src="includes/jquery/jquery-1.5.1.js"></script>
-  <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
-  <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
+  <script type="text/javascript" src="includes/UpConversionAJAXController.js"></script>
+  <script type="text/javascript" src="includes/SnuggleTeXInputController.js"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -25,15 +25,16 @@ All Rights Reserved
 <!-- TEST -->
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    VerifierController.setVerifierServiceUrl('SnuggleTeXUpConversionService');
-    VerifierController.setDelay(500);
+    UpConversionAJAXController.setUpConversionServiceUrl('SnuggleTeXUpConversionService');
+    UpConversionAJAXController.setDelay(500);
+    UpConversionAJAXController.setUsingMathJax(true);
 
-    var verifierControl = VerifierController.createVerifierControl();
-    verifierControl.setVerifiedRenderingContainerId('verifiedRendering');
-    verifierControl.setCMathSourceContainerId('cmathSource');
-    verifierControl.setMaximaSourceContainerId('maximaSource');
+    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl();
+    upConversionAJAXControl.setBracketedRenderingContainerId('verifiedRendering');
+    upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
+    upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    var widget = SnuggleTeXInputController.createInputWidget('latexInputControl', verifierControl);
+    var widget = SnuggleTeXInputController.createInputWidget('latexInputControl', upConversionAJAXControl);
     widget.init();
   });
 //]]></script>
