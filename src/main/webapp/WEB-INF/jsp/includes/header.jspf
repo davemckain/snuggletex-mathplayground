@@ -1,17 +1,17 @@
 <%--
 
-$Id: header.jspf 1085 2010-12-16 17:20:42Z dmckain $
+$Id$
 
 Copyright (c) 2010, The University of Edinburgh.
 All Rights Reserved
 
 ************************************************************
 
-Base JSP Page Header
-
 Attributes:
 
-title: Optional page title
+title
+pageId
+headStuff (opt)
 
 @author  David McKain
 @version $Revision: 1085 $
@@ -30,18 +30,7 @@ title: Optional page title
     <link rel="stylesheet" type="text/css" href="includes/webapp-base.css" />
     <link rel="stylesheet" type="text/css" href="includes/content-styles.css" />
     <link rel="stylesheet" type="text/css" href="includes/mathplayground-webapp.css" />
-    <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
-    <script type="text/javascript" src="includes/jquery/jquery-1.5.1.js"></script>
-    <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
-    <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
-    <script type="text/javascript" src="http://www2.ph.ed.ac.uk/lib/MathJax/MathJax.js">//<![CDATA[
-      // NB: This type of inline config isn't HTML5 valid
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        extensions: ["mml2jax.js"],
-        jax: ["input/MathML"]
-      });
-    //]]></script>
+    ${headStuff}
   </head>
   <body id="${pageId}">
     <div id="container">
@@ -71,6 +60,7 @@ title: Optional page title
             <div id="navinner">
               <h2>Demos</h2>
               <ul>
+                <li class="asciiMathParserDemo"><a href="ASCIIMathParserDemo.jsp">ASCIIMath Parser Demo</a></li>
                 <li class="asciiMathInputDemo"><a href="ASCIIMathInputDemo">ASCIIMath Verified Input Demo</a></li>
                 <li class="snuggleTeXInputDemo"><a href="SnuggleTeXInputDemo">SnuggleTeX Verified Input Demo</a></li>
               </ul>

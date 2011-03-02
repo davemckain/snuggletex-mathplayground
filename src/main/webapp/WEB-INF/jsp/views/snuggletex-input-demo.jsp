@@ -12,9 +12,17 @@ All Rights Reserved
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="title" value="SnuggleTeX Verified Input Demo" />
 <c:set var="pageId" value="snuggleTeXInputDemo" />
+<c:set var="headStuff">
+  <link rel="stylesheet" type="text/css" href="includes/asciimath-input-widget.css">
+  <script type="text/javascript" src="includes/jquery/jquery-1.5.1.js"></script>
+  <script type="text/javascript" src="includes/ASCIIMathML.js"></script>
+  <script type="text/javascript" src="includes/ASCIIMathInputWidget.js"></script>
+  <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
+</c:set>
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
+<!-- TEST -->
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
     VerifierController.setVerifierServiceUrl('SnuggleTeXUpConversionService');
