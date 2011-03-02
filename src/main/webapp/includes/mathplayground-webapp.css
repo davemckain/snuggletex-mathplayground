@@ -78,7 +78,9 @@
 /************************************************************/
 /* NAVIGATION STUFF */
 
-body#asciiMathInputDemo li.asciiMathInputDemo {
+body#asciiMathParserDemo li.asciiMathParserDemo,
+body#asciiMathInputDemo li.asciiMathInputDemo,
+body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   font-weight: bold;
 }
 
