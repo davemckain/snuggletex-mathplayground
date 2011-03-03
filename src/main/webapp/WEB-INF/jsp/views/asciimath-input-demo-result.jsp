@@ -17,7 +17,7 @@ All Rights Reserved
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
 <h3>ASCIIMath Input</h3>
-<pre class="result">${asciiMathInput}</pre>
+<pre class="result">${fn:escapeXml(asciiMathInput)}</pre>
 
 <h3>Resulting Parallel MathML</h3>
 <pre class="result">${fn:escapeXml(pmathParallel)}</pre>

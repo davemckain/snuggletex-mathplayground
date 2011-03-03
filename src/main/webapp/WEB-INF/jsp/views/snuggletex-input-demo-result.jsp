@@ -17,7 +17,7 @@ All Rights Reserved
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
 <h3>SnuggleTeX Input</h3>
-<pre class="result">${latexMathInput}</pre>
+<pre class="result">${fn:escapeXml(latexMathInput)}</pre>
 
 <c:choose>
   <c:when test="${empty errors}">
