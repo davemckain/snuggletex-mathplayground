@@ -583,9 +583,9 @@ function AMparseSexpr(str) { //parses str and returns [node,tailstr]
       } else {                        // font change command
         if (!isIE && typeof symbol.codes != "undefined") {
           for (i=0; i<result[0].childNodes.length; i++)
-            if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
+            if (result[0].childNodes.item(i).nodeName=="mi" || result[0].nodeName=="mi") {
               st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
-                              result[0].childNodes[i].firstChild.nodeValue);
+                              result[0].childNodes.item(i).firstChild.nodeValue);
               var newst = [];
               for (var j=0; j<st.length; j++)
                 if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
@@ -596,7 +596,7 @@ function AMparseSexpr(str) { //parses str and returns [node,tailstr]
                           appendChild(document.createTextNode(newst));
               else result[0].replaceChild(createMmlNode("mo").
                                appendChild(document.createTextNode(newst)),
-                                           result[0].childNodes[i]);
+                                           result[0].childNodes.item(i));
             }
         }
         node = createMmlNode(symbol.tag,result[0]);
@@ -729,12 +729,12 @@ function AMparseExpr(str,rightbracket) {
   if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
 //    if (AMnestingDepth > 0) AMnestingDepth--;
     var len = newFrag.childNodes.length;
-    if (len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
-      newFrag.childNodes[len-2].nodeName == "mo" &&
-      newFrag.childNodes[len-2].firstChild.nodeValue == ",") { //matrix
-      var right = newFrag.childNodes[len-1].lastChild.firstChild.nodeValue;
+    if (len>0 && newFrag.childNodes.item(len-1).nodeName == "mrow" && len>1 &&
+      newFrag.childNodes.item(len-2).nodeName == "mo" &&
+      newFrag.childNodes.item(len-2).firstChild.nodeValue == ",") { //matrix
+      var right = newFrag.childNodes.item(len-1).lastChild.firstChild.nodeValue;
       if (right==")" || right=="]") {
-        var left = newFrag.childNodes[len-1].firstChild.firstChild.nodeValue;
+        var left = newFrag.childNodes.item(len-1).firstChild.firstChild.nodeValue;
         if (left=="(" && right==")" && symbol.output != "}" || 
             left=="[" && right=="]") {
         var pos = []; // positions of commas
@@ -742,7 +742,7 @@ function AMparseExpr(str,rightbracket) {
         var m = newFrag.childNodes.length;
         for (i=0; matrix && i<m; i=i+2) {
           pos[i] = [];
-          node = newFrag.childNodes[i];
+          node = newFrag.childNodes.item(i);
           if (matrix) matrix = node.nodeName=="mrow" && 
             (i==m-1 || node.nextSibling.nodeName=="mo" && 
             node.nextSibling.firstChild.nodeValue==",")&&
@@ -750,7 +750,7 @@ function AMparseExpr(str,rightbracket) {
             node.lastChild.firstChild.nodeValue==right;
           if (matrix) 
             for (var j=0; j<node.childNodes.length; j++)
-              if (node.childNodes[j].firstChild.nodeValue==",")
+              if (node.childNodes.item(j).firstChild.nodeValue==",")
                 pos[i][pos[i].length]=j;
           if (matrix && i>1) matrix = pos[i].length == pos[i-2].length;
         }
