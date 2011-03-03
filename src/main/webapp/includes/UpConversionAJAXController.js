@@ -122,7 +122,7 @@ var UpConversionAJAXController = (function() {
                 /* We consider "valid" to mean "getting as far as CMathML" here */
                 var cmath = jsonData['cmath'];
                 if (cmath!=null) {
-                    var bracketed = jsonData['pmathBracketed'];
+                    var bracketed = jsonData['pmathBracketed'].replace(/(<math)/, "$1 display='block'");
                     this.updateUpConversionContainer(STATUS_SUCCESS, bracketed);
                 }
                 else if (jsonData['cmathFailures']!=null) {
