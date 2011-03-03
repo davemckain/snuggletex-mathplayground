@@ -27,18 +27,18 @@ headStuff (opt)
     <meta name="author" content="David McKain">
     <meta name="publisher" content="The University of Edinburgh">
     <title>SnuggleTeX Math Playground - <c:out value="${title}" default="Math Playground"/></title>
-    <link rel="stylesheet" type="text/css" href="includes/webapp-base.css" />
-    <link rel="stylesheet" type="text/css" href="includes/content-styles.css" />
-    <link rel="stylesheet" type="text/css" href="includes/mathplayground-webapp.css" />
+    <link rel="stylesheet" type="text/css" href="<c:url value='/includes/webapp-base.css'/>" />
+    <link rel="stylesheet" type="text/css" href="<c:url value='/includes/content-styles.css'/>" />
+    <link rel="stylesheet" type="text/css" href="<c:url value='/includes/mathplayground-webapp.css'/>" />
     ${headStuff}
   </head>
   <body id="${pageId}">
     <div id="container">
       <div id="header">
         <div id="identities">
-          <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="includes/images/ed_logo.gif" alt="University of Edinburgh Logo"/></a></div>
-          <div id="edname"><a href="http://www.ed.ac.uk"><img src="includes/images/uofe2.gif" alt="University of Edinburgh" /></a></div>
-          <div id="schoolname"><a href="/"><img src="includes/images/panda.gif" alt="School of Physics &amp; Astronomy" /></a></div>
+          <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/ed_logo.gif'/>" alt="University of Edinburgh Logo"/></a></div>
+          <div id="edname"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/uofe2.gif'/>" alt="University of Edinburgh" /></a></div>
+          <div id="schoolname"><a href="/"><img src="<c:url value='/includes/images/panda.gif'/>" alt="School of Physics &amp; Astronomy" /></a></div>
         </div>
         <div id="GlobalNav">
           <ul>
@@ -51,7 +51,7 @@ headStuff (opt)
       </div>
       <div id="sectionHeader">
         <div id="sectionHeaderTitle">
-          <a href="./">SnuggleTeX Math Playground</a>
+          <a href="<c:url value='/'/>">SnuggleTeX Math Playground</a>
         </div>
       </div>
       <div id="contentArea">
@@ -60,9 +60,9 @@ headStuff (opt)
             <div id="navinner">
               <h2>Demos</h2>
               <ul>
-                <li class="asciiMathParserDemo"><a href="ASCIIMathParserDemo.jsp">ASCIIMath Parser Demo</a></li>
-                <li class="asciiMathInputDemo"><a href="ASCIIMathInputDemo">ASCIIMath Verified Input Demo</a></li>
-                <li class="snuggleTeXInputDemo"><a href="SnuggleTeXInputDemo">SnuggleTeX Verified Input Demo</a></li>
+                <li class="asciiMathParserDemo"><a href="<c:url value='/asciimath-parser'/>">ASCIIMath Parser Demo</a></li>
+                <li class="asciiMathInputDemo"><a href="<c:url value='/ASCIIMathInputDemo'/>">ASCIIMath Verified Input Demo</a></li>
+                <li class="snuggleTeXInputDemo"><a href="<c:url value='/SnuggleTeXInputDemo'/>">SnuggleTeX Verified Input Demo</a></li>
               </ul>
             </div>
           </div>

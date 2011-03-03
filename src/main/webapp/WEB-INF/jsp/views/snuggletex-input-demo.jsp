@@ -13,10 +13,10 @@ All Rights Reserved
 <c:set var="title" value="SnuggleTeX Verified Input Demo" />
 <c:set var="pageId" value="snuggleTeXInputDemo" />
 <c:set var="headStuff">
-  <link rel="stylesheet" type="text/css" href="includes/upconversion-ajax-control.css">
-  <script type="text/javascript" src="includes/jquery/jquery-1.5.1.js"></script>
-  <script type="text/javascript" src="includes/UpConversionAJAXController.js"></script>
-  <script type="text/javascript" src="includes/SnuggleTeXInputController.js"></script>
+  <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
+  <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='includes/UpConversionAJAXController.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='includes/SnuggleTeXInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
