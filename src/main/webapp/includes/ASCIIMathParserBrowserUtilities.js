@@ -69,7 +69,7 @@ ASCIIMathParserBrowserUtilities = {
 
     indentMathMLString: function(str) {
         var indent = arguments[1] || 2;
-        var newline = "\n";
+        var newline = arguments[2] || "\n";
 
         /* This goes for a simple "split on <" approach, which is fine if the input
          * is assumed to be well-formed XML. It will fall apart otherwise!
@@ -84,7 +84,7 @@ ASCIIMathParserBrowserUtilities = {
         var parts = str.split("<");
         var inTextElement = false;
         var currentIndentLevel = 0;
-        for (i=1; i<parts.length; i++) {
+        for (i=1; i<parts.length; i++) { /* (Starting at 1 since 0 is "bit before <math>" which is empty) */
             var part = parts[i];
             if (part.charAt(0)=='/') { /* </element> */
                 if (!inTextElement) { /* </mrow> et al goes on newline */
@@ -95,7 +95,9 @@ ASCIIMathParserBrowserUtilities = {
                 inTextElement = false;
             }
             else { /* <element>content? */
-                doIndent(++currentIndentLevel);
+                if (i>1) { /* Top-level <math> doesn't need indented */
+                    doIndent(++currentIndentLevel);
+                }
                 result += '<' + part;
                 inTextElement = (part.indexOf(">") < part.length);
             }

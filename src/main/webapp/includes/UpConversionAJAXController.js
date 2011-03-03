@@ -142,11 +142,13 @@ var UpConversionAJAXController = (function() {
 
                 /* Maybe show CMath source */
                 if (this.cmathSourceContainerId!=null) {
-                    jQuery("#" + this.cmathSourceContainerId).text(cmath || 'Could not generate Content MathML');
+                    this.showPreformatted(jQuery("#" + this.cmathSourceContainerId),
+                        cmath || 'Could not generate Content MathML');
                 }
                 /* Maybe show Maxima is we got it */
                 if (this.maximaSourceContainerId!=null) {
-                    jQuery("#" + this.maximaSourceContainerId).text(jsonData['maxima'] || 'Could not generate Maxima syntax');
+                    this.showPreformatted(jQuery("#" + this.maximaSourceContainerId),
+                        jsonData['maxima'] || 'Could not generate Maxima syntax');
                 }
             }
         };
@@ -205,6 +207,10 @@ var UpConversionAJAXController = (function() {
         this.showMathML = function(containerQuery, mathmlString) {
             UpConversionAJAXController.replaceContainerMathMLContent(containerQuery, mathmlString);
         };
+
+        this.showPreformatted = function(containerQuery, text) {
+            UpConversionAJAXController.replaceContainerPreformattedText(containerQuery, text);
+        };
     };
 
     UpConversionAJAXControl.prototype.setBracketedRenderingContainerId = function(id) {
@@ -235,6 +241,13 @@ var UpConversionAJAXController = (function() {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
                 }
             }
+        },
+
+        replaceContainerPreformattedText: function(containerQuery, content) {
+            if (navigator.platform.substr(0,3)=='Win') { /* Convert to Windows line endings first */
+                content = content.replace(/\n/g, "\r\n");
+            }
+            containerQuery.text(content);
         },
 
         replaceContainerMathMLContent: function(containerQuery, mathmlContent) {

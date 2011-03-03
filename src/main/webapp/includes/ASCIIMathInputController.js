@@ -18,25 +18,7 @@
 
 var ASCIIMathInputController = (function() {
 
-    var createXMLDocument = function() {
-        var doc;
-        if (document.implementation && document.implementation.createDocument) {
-            /* Gecko, Webkit, Opera */
-            doc = document.implementation.createDocument("", "", null);
-        }
-        else {
-            try {
-                /* Internet Explorer */
-                doc = new ActiveXObject("Microsoft.XMLDOM");
-            }
-            catch (e) {
-                alert("I don't know how to create a DOM Document in this browser");
-            }
-        }
-        return doc;
-    };
-
-    var asciiMathParser = new ASCIIMathParser(createXMLDocument());
+    var asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
 
     /************************************************************/
     /* ASCIIMath calling helpers */
@@ -55,22 +37,8 @@ var ASCIIMathInputController = (function() {
      * <math> element.
      */
     var extractMathML = function(asciiMathElement) {
-        var xml;
-        try {
-            /* Gecko, Webkit, Opera */
-            var serializer = new XMLSerializer();
-            xml = serializer.serializeToString(asciiMathElement);
-        }
-        catch (e) {
-            try {
-                /* Internet Explorer */
-                xml = asciiMathElement.xml;
-            }
-            catch (e) {
-                alert("I don't know how to serialize XML in this browser");
-            }
-        }
-        return xml;
+        var mathml = ASCIIMathParserBrowserUtilities.serializeXMLNode(asciiMathElement);
+        return ASCIIMathParserBrowserUtilities.indentMathMLString(mathml);
     };
 
     /************************************************************/
@@ -124,7 +92,7 @@ var ASCIIMathInputController = (function() {
 
             /* Maybe update preview mathmlSource box */
             if (this.pmathSourceContainerId!=null) {
-                jQuery("#" + this.pmathSourceContainerId).text(mathmlSource);
+                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource);
             }
 
             /* Maybe insert MathML into the DOM for display */
