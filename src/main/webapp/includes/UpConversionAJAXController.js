@@ -14,6 +14,55 @@
 
 /************************************************************/
 
+/* (Simple jQuery extension to append MathML to a document. This requires
+ * MathJax to work correctly so needs a bit more thought...
+ */
+(function($) {
+    $.fn.appendMathML = function(mathmlContent) {
+        if (mathmlContent!=null) {
+            if (mathmlContent.nodeType) {
+                /* This is (assumed to be a) MathML DOM Element */
+                if (document.adoptNode) {
+                    /* Gecko, Webkit, Opera: we adopt the MathML Element into the
+                     * document and append it as a child */
+                    document.adoptNode(mathmlContent);
+                    this.append(mathmlContent);
+                }
+                else {
+                    /* Internet Explorer: We just append the Element's XML source,
+                     * which is quite easy to extract in this case. */
+                    this.append(mathmlContent.xml);
+                }
+            }
+            else if (typeof mathmlContent=="string") {
+                /* MathML String */
+                if (document.adoptNode) {
+                    /* Gecko, Webkit, Opera: We parse the XML, adopt it and
+                     * append as child. */
+                    var mathElement = $.parseXML(mathmlContent).childNodes[0];
+                    document.adoptNode(mathElement);
+                    this.append(mathElement);
+                }
+                else {
+                    /* Internet Exploder */
+                    this.append(mathmlContent);
+                }
+            }
+            else {
+                throw "Unexpected Math Content: " + (typeof mathmlContent);
+            }
+
+// TODO: Decide whether to have MathJax at this level, or within the Controller
+//            /* Maybe schedule MathJax update */
+//            if (MathJax) {
+//                this.each(function() {
+//                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, this]);
+//               });
+//            }
+        }
+    };
+})(jQuery);
+
 var UpConversionAJAXController = (function() {
 
     var upConversionServiceUrl = null; /* Caller must fill in */
@@ -190,39 +239,8 @@ var UpConversionAJAXController = (function() {
 
         replaceContainerMathMLContent: function(containerQuery, mathmlContent) {
             containerQuery.empty();
+            containerQuery.appendMathML(mathmlContent);
             if (mathmlContent!=null) {
-                if (mathmlContent.nodeType) {
-                    /* This is (assumed to be a) MathML DOM Element */
-                    if (document.adoptNode) {
-                        /* Gecko, Webkit, Opera: we adopt the MathML Element into the
-                         * document and append it as a child */
-                        document.adoptNode(mathmlContent);
-                        containerQuery.append(mathmlContent);
-                    }
-                    else {
-                        /* Internet Explorer: We just append the Element's XML source,
-                         * which is quite easy to extract in this case. */
-                        containerQuery.append(mathmlContent.xml);
-                    }
-                }
-                else if (typeof mathmlContent == "string") {
-                    /* MathML String */
-                    if (document.adoptNode) {
-                        /* Gecko, Webkit, Opera: We parse the XML, adopt it and
-                         * append as child. */
-                        var mathElement = jQuery.parseXML(mathmlContent).childNodes[0];
-                        document.adoptNode(mathElement);
-                        containerQuery.append(mathElement);
-                    }
-                    else {
-                        /* Internet Exploder */
-                        containerQuery.append(mathmlContent);
-                    }
-                }
-                else {
-                    throw "Unexpected Math Content: " + (typeof mathmlContent) + (mathmlContent);
-                }
-
                 /* Maybe schedule MathJax update */
                 if (usingMathJax) {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
