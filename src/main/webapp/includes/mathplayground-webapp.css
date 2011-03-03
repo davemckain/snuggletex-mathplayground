@@ -97,7 +97,7 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   overflow-x: auto;
 }
 
-#maininner h2 {
+#maininner h1 {
   color: #25476c;
   margin: 0 0 0.8em 0;
   padding: 0;
@@ -105,23 +105,19 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   font-size: 160%;
 }
 
+#maininner h2 {
+  color: #25476c;
+  margin: 0.8em 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 130%;
+}
+
 #maininner h3 {
   color: #25476c;
   margin: 1em 0;
   padding: 0;
-  font-size: 130%;
-}
-
-#maininner h3 span.verb {
-  color: #25476c;
-}
-
-#maininner h4 {
-  color: #25476c;
-  text-transform: uppercase;
   font-size: 120%;
-  padding: 0;
-  margin: 0.3em 0;
 }
 
 #maininner a:link {
