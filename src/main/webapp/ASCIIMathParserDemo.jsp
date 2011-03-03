@@ -60,9 +60,10 @@ function serializeXMLNode(node) {
 function runDemo() {
   var asciiMathInput = document.forms[0].asciiMathInput.value;
 
-  var doc = createXMLDocument();
-  var AMParser = MakeASCIIMathParser(doc);
-  var mathElement = AMParser.parseMath(asciiMathInput);
+  var domDocument = createXMLDocument();
+  var asciiMathParser = new ASCIIMathParser(domDocument);
+  var asciiMathParser2 = new ASCIIMathParser(domDocument);
+  var mathElement = asciiMathParser.parseASCIIMathInput(asciiMathInput);
   var mathMLString = serializeXMLNode(mathElement);
 
   alert("MathML from ASCIIMath:\n" + mathMLString);

@@ -37,7 +37,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public Licens
  * new DOM Nodes. The Doucument itself will not be modified.
  * A Microsoft DOM is acceptable.
  */
-function MakeASCIIMathParser(document) {
+function ASCIIMathParser(document) {
 
 /* ASCIIMathML.js BEGINS BELOW.
  *
@@ -800,14 +800,10 @@ function AMparseExpr(str,rightbracket) {
 
 initSymbols();
 
-return {
-
-    /* Parses the given ASCIIMathInput, returning a <math> DOM Element */
-    parseMath: function(asciiMathInput) {
-      var frag = AMparseExpr(asciiMathInput.replace(/^\s+/g,""),false)[0];
-      return createMmlNode("math",frag);
-    }
-
+/* Parses the given ASCIIMathInput, returning a <math> DOM Element */
+this.parseASCIIMathInput = function(asciiMathInput) {
+  var frag = AMparseExpr(asciiMathInput.replace(/^\s+/g,""), false)[0];
+  return createMmlNode("math", frag);
 };
 
 // (end of unindented MakeASCIIMathParser function defined at top of file)
