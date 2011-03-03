@@ -1,6 +1,6 @@
 /* $Id:FullLaTeXInputDemoServlet.java 158 2008-07-31 10:48:14Z davemckain $
  *
- * Copyright (c) 2008-2011, The University of Edinburgh.
+ * Copyright (c) 2011, The University of Edinburgh.
  * All Rights Reserved
  */
 package uk.ac.ed.ph.mathplayground;
@@ -51,6 +51,7 @@ public final class SnuggleTeXInputDemoServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String latexMathInput = request.getParameter("latexMathInput");
         if (latexMathInput==null) {
             logger.warn("No latexInput parameter present");
