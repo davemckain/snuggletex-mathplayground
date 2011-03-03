@@ -78,7 +78,8 @@
 /************************************************************/
 /* NAVIGATION STUFF */
 
-body#asciiMathParserDemo li.asciiMathParserDemo,
+body#home li.home,
+body#asciiMathParser li.asciiMathParser,
 body#asciiMathInputDemo li.asciiMathInputDemo,
 body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   font-weight: bold;

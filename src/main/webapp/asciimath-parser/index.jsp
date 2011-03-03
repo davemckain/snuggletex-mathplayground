@@ -10,8 +10,8 @@ All Rights Reserved
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="title" value="ASCIIMathML Parser Demo" />
-<c:set var="pageId" value="asciiMathParserDemo" />
+<c:set var="title" value="ASCIIMathParser.js" />
+<c:set var="pageId" value="asciiMathParser" />
 <c:set var="headStuff">
   <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParser.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParserBrowserUtilities.js'/>"></script>
@@ -37,6 +37,8 @@ function runDemo() {
 //]]></script>
 
 <h1>ASCIIMathParser.js</h1>
+
+<h2>About</h2>
 
 <p>
   ASCIIMathParser.js is a very simple reduced version of
