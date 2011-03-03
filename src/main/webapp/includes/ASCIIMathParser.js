@@ -1,4 +1,5 @@
-/*
+/* $Id$
+
 ASCIIMathParser.js
 ==================
 
