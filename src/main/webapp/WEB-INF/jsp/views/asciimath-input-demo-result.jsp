@@ -2,7 +2,7 @@
 
 $Id: changeIdentity.jsp 1053 2010-11-16 12:06:55Z dmckain $
 
-Copyright (c) 2010, The University of Edinburgh.
+Copyright (c) 2011, The University of Edinburgh.
 All Rights Reserved
 
 @author  David McKain
