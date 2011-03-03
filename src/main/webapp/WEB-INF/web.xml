@@ -40,19 +40,19 @@ All Rights Reserved
   </servlet>
   <servlet-mapping>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
-    <url-pattern>/ASCIIMathInputDemo</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ASCIIMathUpConversionService</servlet-name>
-    <url-pattern>/ASCIIMathUpConversionService</url-pattern>
+    <url-pattern>/asciimath-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
-    <url-pattern>/SnuggleTeXInputDemo</url-pattern>
+    <url-pattern>/snuggletex-input-demo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ASCIIMathUpConversionService</servlet-name>
+    <url-pattern>/asciimath-upconversion-service</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SnuggleTeXUpConversionService</servlet-name>
-    <url-pattern>/SnuggleTeXUpConversionService</url-pattern>
+    <url-pattern>/snuggletex-upconversion-service</url-pattern>
   </servlet-mapping>
 
   <!-- Custom error page declarations -->

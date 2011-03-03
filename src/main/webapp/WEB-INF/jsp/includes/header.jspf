@@ -61,8 +61,8 @@ headStuff (opt)
               <h2>Demos</h2>
               <ul>
                 <li class="asciiMathParserDemo"><a href="<c:url value='/asciimath-parser'/>">ASCIIMath Parser Demo</a></li>
-                <li class="asciiMathInputDemo"><a href="<c:url value='/ASCIIMathInputDemo'/>">ASCIIMath Verified Input Demo</a></li>
-                <li class="snuggleTeXInputDemo"><a href="<c:url value='/SnuggleTeXInputDemo'/>">SnuggleTeX Verified Input Demo</a></li>
+                <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-input-demo'/>">ASCIIMath Verified Input Demo</a></li>
+                <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-input-demo'/>">SnuggleTeX Verified Input Demo</a></li>
               </ul>
             </div>
           </div>

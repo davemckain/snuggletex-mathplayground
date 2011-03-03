@@ -25,7 +25,7 @@ All Rights Reserved
 <!-- TEST -->
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    UpConversionAJAXController.setUpConversionServiceUrl('SnuggleTeXUpConversionService');
+    UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
     UpConversionAJAXController.setDelay(500);
     UpConversionAJAXController.setUsingMathJax(true);
 
