@@ -70,6 +70,7 @@ headStuff (opt)
 
               <h2>Demos</h2>
               <ul>
+                <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath demo</a></li>
                 <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-input-demo'/>">ASCIIMath AJAX input demo</a></li>
                 <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-input-demo'/>">SnuggleTeX AJAX input demo</a></li>
               </ul>

@@ -55,7 +55,7 @@ All Rights Reserved
 <p>
   Enter some ASCIIMath in the box below:
 </p>
-<form action="ASCIIMathInputDemo" method="post" class="input">
+<form action="asciimath-input-demo" method="post" class="input">
   <div class="inputBox">
     <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
     <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">

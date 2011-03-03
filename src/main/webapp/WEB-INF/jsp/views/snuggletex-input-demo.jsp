@@ -43,7 +43,7 @@ All Rights Reserved
 <p>
   Enter some LaTeX in the box below:
 </p>
-<form action="SnuggleTeXInputDemo" method="post" class="input">
+<form action="snuggletex-input-demo" method="post" class="input">
   <div class="inputBox">
     <input id="latexInputControl" name="latexMathInput" type="text" value="${latexMathInput}">
     <input type="submit" value="Submit">
