@@ -23,6 +23,10 @@ All Rights Reserved
     <listener-class>uk.ac.ed.ph.mathplayground.ContextInitialiser</listener-class>
   </listener>
   <servlet>
+    <servlet-name>ServerSideASCIIMathDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ServerSideASCIIMathDemoServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputDemoServlet</servlet-class>
   </servlet>
@@ -38,6 +42,10 @@ All Rights Reserved
     <servlet-name>SnuggleTeXUpConversionService</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXUpConversionService</servlet-class>
   </servlet>
+  <servlet-mapping>
+    <servlet-name>ServerSideASCIIMathDemoServlet</servlet-name>
+    <url-pattern>/server-side-asciimath-demo</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
     <url-pattern>/asciimath-input-demo</url-pattern>
