@@ -20,3 +20,7 @@ div.failure {
 div.error {
   background: url(images/exclamation.png) no-repeat center left;
 }
+
+div.upConversionAJAXControlResult {
+  font-size: 120%;
+}

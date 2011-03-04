@@ -72,28 +72,29 @@ All Rights Reserved
   </div>
 </div>
 <p>
-  This input widget is configured to treat <b>f</b> and <b>g</b> as functions, 
+  This input widget is configured to treat <b>f</b> and <b>g</b> as functions,
   <b>e</b> as the exponential number, <b>i</b> as the imaginary number and
-  <b>&#x3b3;</b> Euler's constant.
+  <b>&#x3b3;</b> as Euler's constant.
 </p>
 
 <h2>Technical implementation details</h2>
 
 <p>
   The ASCIIMath input syntax is converted to ASCIIMath's version of Presentation MathML
-  via client-side JavaScript while the student types. This live output is shown here:
+  via client-side JavaScript on each keystroke in the input box. This live output is shown here:
 </p>
 <div id="mathJaxRendering" class="rawRendering"></div>
 <p>
-  This raw output is then sent to a simple AJAX web service that runs the SnuggleTeX
-  semantic enrichment process on it to see if it can be converted to Content MathML
-  (and Maxima input syntax). It also converts it to a special "bracketed" version
-  of Presentation MathML, which is shown next to the input box above, using MathJax
-  for rendering so that it works in most modern browsers. This bracketed MathML
-  is useful as it allows the student to check that the input is being
-  interpreted as she intended, giving her the ability to adjust her input by
-  adding extra brackets, or making other changes. The results of this process
-  are sent back to the browser, which updates the page as appropriate.
+  This raw output then sent (after a short delay) to a simple AJAX web service
+  that runs the SnuggleTeX semantic enrichment process on it to see if it can
+  be converted to Content MathML (and Maxima input syntax). It also converts it
+  to a special "bracketed" version of Presentation MathML, which is shown next
+  to the input box above, using MathJax for rendering so that it works in most
+  modern browsers. This bracketed MathML is useful as it allows the student to
+  check that the input is being interpreted as she intended, giving her the
+  ability to adjust her input by adding extra brackets, or making other
+  changes. The results of this process are sent back to the browser, which
+  updates the page as appropriate.
 </p>
 <p>
   MathML experts may be interested in the live information below.

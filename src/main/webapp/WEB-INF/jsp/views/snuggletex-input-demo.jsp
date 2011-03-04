@@ -71,9 +71,9 @@ All Rights Reserved
   </div>
 </div>
 <p>
-  This input widget is configured to treat <b>f</b> and <b>g</b> as functions, 
+  This input widget is configured to treat <b>f</b> and <b>g</b> as functions,
   <b>e</b> as the exponential number, <b>i</b> as the imaginary number and
-  <b>&#x3b3;</b> Euler's constant.
+  <b>&#x3b3;</b> as Euler's constant.
 </p>
 
 <h2>Technical implementation details</h2>
