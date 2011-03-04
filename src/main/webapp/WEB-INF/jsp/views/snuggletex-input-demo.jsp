@@ -27,7 +27,6 @@ All Rights Reserved
   jQuery(document).ready(function() {
     UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
     UpConversionAJAXController.setDelay(500);
-    UpConversionAJAXController.setUsingMathJax(true);
 
     var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl();
     upConversionAJAXControl.setBracketedRenderingContainerId('previewRendering');

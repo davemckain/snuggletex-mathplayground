@@ -67,7 +67,6 @@ var UpConversionAJAXController = (function() {
 
     var upConversionServiceUrl = null; /* Caller must fill in */
     var delay = 300;
-    var usingMathJax = false;
 
     var STATUS_WAITING             = 0;
     var STATUS_SUCCESS             = 1;
@@ -249,12 +248,6 @@ var UpConversionAJAXController = (function() {
             containerQuery.empty();
             if (content!=null) {
                 containerQuery.append(content);
-
-                /* Maybe schedule MathJax update if this is a MathML Element */
-                if (usingMathJax && (content.nodeType && content.nodeType==1 && content.nodeName=="math")
-                        || (content.substr && content.substr(0,6)=='<math ')) {
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
-                }
             }
         },
 
@@ -270,7 +263,7 @@ var UpConversionAJAXController = (function() {
             containerQuery.appendMathML(mathmlContent);
             if (mathmlContent!=null) {
                 /* Maybe schedule MathJax update */
-                if (usingMathJax) {
+                if (MathJax) {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, containerQuery.get(0)]);
                 }
             }
@@ -284,10 +277,7 @@ var UpConversionAJAXController = (function() {
         setUpConversionServiceUrl: function(url) { upConversionServiceUrl = url },
 
         getDelay: function() { return delay },
-        setDelay: function(newDelay) { delay = newDelay },
-
-        isUsingMathJax: function() { return usingMathJax },
-        setUsingMathJax: function(newUsingMathJax) { usingMathJax = newUsingMathJax }
+        setDelay: function(newDelay) { delay = newDelay }
     };
 
 })();
