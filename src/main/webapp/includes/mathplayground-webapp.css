@@ -171,6 +171,7 @@ pre.verbatim, .note, .result {
   padding: 1em;
   color: #25476c;
   overflow: auto;
+  font-size: 90%;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
 }
