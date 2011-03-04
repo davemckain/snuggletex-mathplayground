@@ -35,6 +35,7 @@ public final class SnuggleTeXUpConversionService extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         /* Read input LaTeX */
+        request.setCharacterEncoding("UTF-8");
         String inputLaTeX = IOUtilities.readCharacterStream(request.getReader());
         doService(response, inputLaTeX);
     }

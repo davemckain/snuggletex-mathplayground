@@ -31,6 +31,7 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         /* Read MathML created by ASCIIMathML */
+        request.setCharacterEncoding("UTF-8");
         String asciiMathML = IOUtilities.readCharacterStream(request.getReader());
         doService(response, asciiMathML);
     }
