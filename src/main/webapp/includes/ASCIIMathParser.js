@@ -42,7 +42,11 @@ function ASCIIMathParser(document) {
 
 /* ASCIIMathML.js BEGINS BELOW.
  *
- * All modifications made are shown below on
+ * NOTE: I did a global search and replace to make NodeList traversal
+ * work with the Java DOM, so that childNodes[i] -> childNodes.item(i).
+ * This was done with the regexp s/(childNodes)\[(.+?)\]/$1.item($2)/g
+ *
+ * All other modifications made are shown below on
  * lines starting with
  * '//MOD: '
  */
