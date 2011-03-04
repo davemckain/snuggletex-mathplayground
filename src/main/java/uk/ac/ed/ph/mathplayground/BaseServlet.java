@@ -89,7 +89,7 @@ abstract class BaseServlet extends HttpServlet {
         sourceOptions.setUsingNamedEntities(true);
         
         /* Isolate various annotations from the result */
-        Document pmathDocument = MathMLUtilities.isolateFirstSemanticsBranch(mathElement);
+        Document pmathSemanticDocument = MathMLUtilities.isolateFirstSemanticsBranch(mathElement);
         Document pmathBracketedDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.BRACKETED_PRESENTATION_MATHML_ANNOTATION_NAME);
         Document cmathDocument = MathMLUtilities.isolateAnnotationXML(mathElement, MathMLUpConverter.CONTENT_MATHML_ANNOTATION_NAME);
         String maximaAnnotation = MathMLUtilities.extractAnnotationString(mathElement, MathMLUpConverter.MAXIMA_ANNOTATION_NAME);
@@ -98,8 +98,8 @@ abstract class BaseServlet extends HttpServlet {
         
         /* Build up result */
         maybeAddResult(result, "pmathParallel", mathElement, sourceOptions);
+        maybeAddResult(result, "pmathSemantic", pmathSemanticDocument, sourceOptions);
         maybeAddResult(result, "pmathBracketed", pmathBracketedDocument, serOptions);
-        maybeAddResult(result, "pmath", pmathDocument, sourceOptions);
         maybeAddResult(result, "cmath", cmathDocument, sourceOptions);
         maybeAddResult(result, "maxima", maximaAnnotation);
         maybeAddResult(result, "cmathFailures", contentFailuresAnnotation, sourceOptions);

@@ -1,29 +1,22 @@
-div.upConversionAJAXControlStatus {
-  width: 20px;
-  height: 16px;
-  display: block;
-  float: left;
+div.upConversionAJAXControlMessage {
+  width: auto;
+  text-align: center;
+  display: inline;
+  padding: 0.5em 0 0.5em 20px;
 }
 
 div.waiting {
-  background: url('spinner.gif') no-repeat;
+  background: url(images/spinner.gif) no-repeat center left;
 }
 
 div.success {
-  background: url('accept.png') no-repeat;
+  background: url(images/accept.png) no-repeat center left;
 }
 
 div.failure {
-  background: url('cancel.png') no-repeat;
+  background: url(images/cancel.png) no-repeat center left;
 }
 
 div.error {
-  background: url('exclamation.png') no-repeat;
-}
-
-div.upConversionAJAXControlMessage {
-}
-
-div.upConversionAJAXControlResult {
-  clear: both;
+  background: url(images/exclamation.png) no-repeat center left;
 }

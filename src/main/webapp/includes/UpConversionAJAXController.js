@@ -79,6 +79,8 @@ var UpConversionAJAXController = (function() {
 
     var UpConversionAJAXControl = function() {
         this.bracketedRenderingContainerId = null;
+        this.pmathSemanticSourceContainerId = null;
+        this.pmathBracketedSourceContainerId = null;
         this.cmathSourceContainerId = null;
         this.maximaSourceContainerId = null;
         var currentXHR = null;
@@ -140,12 +142,19 @@ var UpConversionAJAXController = (function() {
                     this.updateUpConversionContainer(STATUS_UNKNOWN_ERROR);
                 }
 
-                /* Maybe show CMath source */
+                /* Maybe show source, if requested */
+                if (this.pmathSemanticSourceContainerId!=null) {
+                    this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId),
+                        jsonData['pmathSemantic'] || 'Could not generate Semantic Presentation MathML');
+                }
+                if (this.pmathBracketedSourceContainerId!=null) {
+                    this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId),
+                        jsonData['pmathBracketed'] || 'Could not generate Bracketed Presentation MathML');
+                }
                 if (this.cmathSourceContainerId!=null) {
                     this.showPreformatted(jQuery("#" + this.cmathSourceContainerId),
                         cmath || 'Could not generate Content MathML');
                 }
-                /* Maybe show Maxima is we got it */
                 if (this.maximaSourceContainerId!=null) {
                     this.showPreformatted(jQuery("#" + this.maximaSourceContainerId),
                         jsonData['maxima'] || 'Could not generate Maxima syntax');
@@ -158,40 +167,38 @@ var UpConversionAJAXController = (function() {
                 var bracketedRenderingContainer = jQuery("#" + this.bracketedRenderingContainerId);
                 /* Set up children if not done already */
                 if (bracketedRenderingContainer.children().size()==0) {
-                    bracketedRenderingContainer.html("<div class='upConversionAJAXControlStatus'></div>"
-                        + "<div class='upConversionAJAXControlMessage'></div>"
+                    bracketedRenderingContainer.html("<div class='upConversionAJAXControlMessage'></div>"
                         + "<div class='upConversionAJAXControlResult'></div>");
                 }
-                var statusContainer = bracketedRenderingContainer.children().first();
-                var messageContainer = statusContainer.next();
+                var messageContainer = bracketedRenderingContainer.children().first();
                 var resultContainer = messageContainer.next();
                 switch(status) {
                     case STATUS_WAITING:
-                        statusContainer.attr('class', 'upConversionAJAXControlStatus waiting');
-                        this.showMessage(messageContainer, "Checking...");
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage waiting');
+                        this.showMessage(messageContainer, "Verifying your input...");
                         this.showMessage(resultContainer, null);
                         break;
 
                     case STATUS_SUCCESS:
-                        statusContainer.attr('class', 'upConversionAJAXControlStatus success');
-                        this.showMessage(messageContainer, "Your input makes sense. It has been interpreted as:");
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage success');
+                        this.showMessage(messageContainer, "I have interpreted your input as:");
                         this.showMathML(resultContainer, mathElementString);
                         break;
 
                     case STATUS_PARSE_ERROR:
-                        statusContainer.attr('class', 'upConversionAJAXControlStatus failure');
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage failure');
                         this.showMessage(messageContainer, "SnuggleTeX could not parse your input:");
                         this.showMessage(resultContainer, errorContent);
                         break;
 
                     case STATUS_UPCONVERSION_FAILED:
-                        statusContainer.attr('class', 'upConversionAJAXControlStatus failure');
-                        this.showMessage(messageContainer, "I could not make sense of your input");
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage failure');
+                        this.showMessage(messageContainer, "Sorry, I could not make sense of your input");
                         this.showMessage(resultContainer, null);
                         break;
 
                     case STATUS_UNKNOWN_ERROR:
-                        statusContainer.attr('class', 'upConversionAJAXControlStatus error');
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage error');
                         this.showMessage(messageContainer, "Unexpected error");
                         this.showMessage(resultContainer, null);
                         break;
@@ -215,6 +222,14 @@ var UpConversionAJAXController = (function() {
 
     UpConversionAJAXControl.prototype.setBracketedRenderingContainerId = function(id) {
         this.bracketedRenderingContainerId = id;
+    };
+
+    UpConversionAJAXControl.prototype.setPMathSemanticSourceContainerId = function(id) {
+        this.pmathSemanticSourceContainerId = id;
+    };
+
+    UpConversionAJAXControl.prototype.setPMathBracketedSourceContainerId = function(id) {
+        this.pmathBracketedSourceContainerId = id;
     };
 
     UpConversionAJAXControl.prototype.setCMathSourceContainerId = function(id) {

@@ -51,7 +51,7 @@ headStuff (opt)
         <div id="identities">
           <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/ed_logo.gif'/>" alt="University of Edinburgh Logo"/></a></div>
           <div id="edname"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/uofe2.gif'/>" alt="University of Edinburgh" /></a></div>
-          <div id="schoolname"><a href="/"><img src="<c:url value='/includes/images/panda.gif'/>" alt="School of Physics &amp; Astronomy" /></a></div>
+          <div id="schoolname"><a href="http://www.ph.ed.ac.uk"><img src="<c:url value='/includes/images/panda.gif'/>" alt="School of Physics &amp; Astronomy" /></a></div>
         </div>
         <div id="GlobalNav">
           <ul>
@@ -83,9 +83,9 @@ headStuff (opt)
 
               <h2>Demos</h2>
               <ul>
-                <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath demo</a></li>
-                <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-input-demo'/>">ASCIIMath AJAX input demo</a></li>
-                <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-input-demo'/>">SnuggleTeX AJAX input demo</a></li>
+                <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath</a></li>
+                <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-input-demo'/>">ASCIIMath student input widget</a></li>
+                <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-input-demo'/>">SnuggleTeX student input widget</a></li>
               </ul>
             </div>
           </div>
