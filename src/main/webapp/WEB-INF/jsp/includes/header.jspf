@@ -14,7 +14,7 @@ pageId
 headStuff (opt)
 
 @author  David McKain
-@version $Revision: 1085 $
+@version $Revision$
 
 --%>
 <%@ page contentType="text/html; charset=UTF-8" session="false" %>

@@ -6,7 +6,7 @@ Copyright (c) 2011, The University of Edinburgh.
 All Rights Reserved
 
 @author  David McKain
-@version $Revision: 1053 $
+@version $Revision$
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

@@ -10,7 +10,7 @@ All Rights Reserved
 Pulls in MathJax and configures it in a safe way for the current browser
 
 @author  David McKain
-@version $Revision: 1085 $
+@version $Revision$
 
 --%>
     <script type="text/javascript" src="http://www2.ph.ed.ac.uk/lib/MathJax/MathJax.js">//<![CDATA[
