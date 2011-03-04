@@ -115,6 +115,9 @@ function runDemo() {
   You then call the <tt>parseASCIIMathInput()</tt> method to parse ASCIIMath input
   strings. A call to this method returns a DOM <tt>Element</tt> Object
   corresponding to the resulting <tt>&lt;math&gt;</tt> element.
+  (Note that the resulting <tt>Element</tt> will belong to the <tt>Document</tt>
+  you passed earlier, but will not be added to its Node hierarchy. You can do this
+  yourself if required.)
 </p>
 <p>
   <strong>Hint:</strong> If you will be using this code within a browser, there
