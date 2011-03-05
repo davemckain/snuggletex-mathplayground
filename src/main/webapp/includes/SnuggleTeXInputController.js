@@ -36,6 +36,11 @@ var SnuggleTeXInputController = (function() {
                 /* Something has changed */
                 lastInput = latexInput;
 
+                /* Nullify blank input to indicate that the display should be empty */
+                if (!latexInput.match(/\S/)) {
+                    latexInput = null;
+                }
+
                 /* Maybe verify the input */
                 if (this.verifierControl!=null) {
                     this.verifierControl.verifyLater(latexInput);

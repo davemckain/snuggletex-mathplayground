@@ -68,11 +68,15 @@ var UpConversionAJAXController = (function() {
     var upConversionServiceUrl = null; /* Caller must fill in */
     var delay = 300;
 
-    var STATUS_WAITING             = 0;
-    var STATUS_SUCCESS             = 1;
-    var STATUS_PARSE_ERROR         = 2;
-    var STATUS_UPCONVERSION_FAILED = 3;
-    var STATUS_UNKNOWN_ERROR       = 4;
+    var STATUS_EMPTY               = 0;
+    var STATUS_WAITING             = 1;
+    var STATUS_SUCCESS             = 2;
+    var STATUS_PARSE_ERROR         = 3;
+    var STATUS_UPCONVERSION_FAILED = 4;
+    var STATUS_UNKNOWN_ERROR       = 5;
+    var STATUS_AJAX_ERROR          = 6;
+
+    var EMPTY_INPUT = "(Empty Input)";
 
     /************************************************************/
 
@@ -84,8 +88,13 @@ var UpConversionAJAXController = (function() {
         this.maximaSourceContainerId = null;
         var currentXHR = null;
         var currentTimeoutId = null;
-        var verifierAJAXControl = this;
+        var thisControl = this;
 
+        /* Schedules verification on the given data after a short delay. Subsequent requests in this
+         * period will win out over this one.
+         *
+         * Use null input to signify "empty input". The UI will be updated accordingly.
+         */
         this.doVerifyLater = function(verifyInputData) {
             if (currentTimeoutId!=null) {
                 window.clearTimeout(currentTimeoutId);
@@ -94,32 +103,43 @@ var UpConversionAJAXController = (function() {
                 this.updateUpConversionContainer(STATUS_WAITING); /* Show waiting animation */
             }
             currentTimeoutId = window.setTimeout(function() {
-                verifierAJAXControl.verify(verifyInputData);
+                thisControl.verify(verifyInputData);
                 currentTimeoutId = null;
             }, delay);
         };
 
+        /* Calls up the AJAX verification service on the given data, causing a UI update once
+         * the results are returned.
+         *
+         * Use null input to signify "empty input". The UI will be updated accordingly instantly.
+         */
         this.verify = function(verifyInputData) {
             if (this.bracketedRenderingContainerId!=null && upConversionServiceUrl!=null) {
-                currentXHR = jQuery.ajax({
-                    type: 'POST',
-                    url: upConversionServiceUrl,
-                    dataType: 'json',
-                    data: verifyInputData,
-                    success: function(data, textStatus, jqXHR) {
-                        if (currentXHR==jqXHR) {
-                            currentXHR = null;
-                            verifierAJAXControl.showVerificationResult(data);
+                if (verifyInputData!=null) {
+                    currentXHR = jQuery.ajax({
+                        type: 'POST',
+                        url: upConversionServiceUrl,
+                        dataType: 'json',
+                        data: verifyInputData,
+                        success: function(data, textStatus, jqXHR) {
+                            if (currentXHR==jqXHR) {
+                                currentXHR = null;
+                                thisControl.showVerificationResult(data);
+                            }
+                        },
+                        error: function(jqXHR, textStatus, error) {
+                            thisControl.updateUpConversionContainer(STATUS_AJAX_ERROR, error);
                         }
-                    }
-                });
+                    });
+                }
+                else {
+                    thisControl.clearVerificationResult();
+                }
             }
         };
 
         this.showVerificationResult = function(jsonData) {
             if (this.bracketedRenderingContainerId!=null) {
-                var bracketedRenderingContainer = jQuery("#" + this.bracketedRenderingContainerId);
-
                 /* We consider "valid" to mean "getting as far as CMathML" here */
                 var cmath = jsonData['cmath'];
                 if (cmath!=null) {
@@ -140,24 +160,41 @@ var UpConversionAJAXController = (function() {
                 else {
                     this.updateUpConversionContainer(STATUS_UNKNOWN_ERROR);
                 }
+            }
+            /* Maybe show various sources, if requested */
+            if (this.pmathSemanticSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId),
+                    jsonData['pmathSemantic'] || 'Could not generate Semantic Presentation MathML');
+            }
+            if (this.pmathBracketedSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId),
+                    jsonData['pmathBracketed'] || 'Could not generate Bracketed Presentation MathML');
+            }
+            if (this.cmathSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.cmathSourceContainerId),
+                    cmath || 'Could not generate Content MathML');
+            }
+            if (this.maximaSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.maximaSourceContainerId),
+                    jsonData['maxima'] || 'Could not generate Maxima syntax');
+            }
+        };
 
-                /* Maybe show source, if requested */
-                if (this.pmathSemanticSourceContainerId!=null) {
-                    this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId),
-                        jsonData['pmathSemantic'] || 'Could not generate Semantic Presentation MathML');
-                }
-                if (this.pmathBracketedSourceContainerId!=null) {
-                    this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId),
-                        jsonData['pmathBracketed'] || 'Could not generate Bracketed Presentation MathML');
-                }
-                if (this.cmathSourceContainerId!=null) {
-                    this.showPreformatted(jQuery("#" + this.cmathSourceContainerId),
-                        cmath || 'Could not generate Content MathML');
-                }
-                if (this.maximaSourceContainerId!=null) {
-                    this.showPreformatted(jQuery("#" + this.maximaSourceContainerId),
-                        jsonData['maxima'] || 'Could not generate Maxima syntax');
-                }
+        this.clearVerificationResult = function() {
+            if (this.bracketedRenderingContainerId!=null) {
+                this.updateUpConversionContainer(STATUS_EMPTY);
+            }
+            if (this.pmathSemanticSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId), EMPTY_INPUT);
+            }
+            if (this.pmathBracketedSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId), EMPTY_INPUT);
+            }
+            if (this.cmathSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.cmathSourceContainerId), EMPTY_INPUT);
+            }
+            if (this.maximaSourceContainerId!=null) {
+                this.showPreformatted(jQuery("#" + this.maximaSourceContainerId), EMPTY_INPUT);
             }
         };
 
@@ -172,6 +209,12 @@ var UpConversionAJAXController = (function() {
                 var messageContainer = bracketedRenderingContainer.children().first();
                 var resultContainer = messageContainer.next();
                 switch(status) {
+                    case STATUS_EMPTY:
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage');
+                        this.showMessage(messageContainer, null);
+                        this.showMessage(resultContainer, null);
+                        break;
+
                     case STATUS_WAITING:
                         messageContainer.attr('class', 'upConversionAJAXControlMessage waiting');
                         this.showMessage(messageContainer, "Verifying your input...");
@@ -200,6 +243,12 @@ var UpConversionAJAXController = (function() {
                         messageContainer.attr('class', 'upConversionAJAXControlMessage error');
                         this.showMessage(messageContainer, "Unexpected error");
                         this.showMessage(resultContainer, null);
+                        break;
+
+                    case STATUS_AJAX_ERROR:
+                        messageContainer.attr('class', 'upConversionAJAXControlMessage error');
+                        this.showMessage(messageContainer, "Communication error");
+                        this.showMessage(resultContainer, errorContent);
                         break;
                 }
             }

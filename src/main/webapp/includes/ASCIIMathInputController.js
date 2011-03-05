@@ -87,18 +87,33 @@ var ASCIIMathInputController = (function() {
          */
         this.updatePreview = function() {
             /* Get ASCIIMathML to generate a <math> element */
-            var asciiMathElement = callASCIIMath(this.getASCIIMathInput());
-            var mathmlSource = extractMathML(asciiMathElement);
+            var asciiMathInput = this.getASCIIMathInput();
+            var mathmlSource = null;
+            if (asciiMathInput.match(/\S/)) {
+                var asciiMathElement = callASCIIMath(this.getASCIIMathInput());
+                mathmlSource = extractMathML(asciiMathElement);
 
-            /* Maybe update preview mathmlSource box */
-            if (this.pmathSourceContainerId!=null) {
-                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource);
+                /* Maybe update preview mathmlSource box */
+                if (this.pmathSourceContainerId!=null) {
+                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource);
+                }
+
+                /* Maybe insert MathML into the DOM for display */
+                if (this.mathJaxRenderingContainerId!=null) {
+                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId),
+                        asciiMathElement);
+                }
             }
+            else {
+                /* Blank input */
+                if (this.pmathSourceContainerId!=null) {
+                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), "(Empty Input)");
+                }
 
-            /* Maybe insert MathML into the DOM for display */
-            if (this.mathJaxRenderingContainerId!=null) {
-                UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId),
-                    asciiMathElement);
+                /* Maybe insert MathML into the DOM for display */
+                if (this.mathJaxRenderingContainerId!=null) {
+                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.mathJaxRenderingContainerId), "(Blank input)");
+                }
             }
             return mathmlSource;
         };
