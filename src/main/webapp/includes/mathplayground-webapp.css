@@ -81,6 +81,7 @@
 body#home li.home,
 body#asciiMathParser li.asciiMathParser,
 body#serverSideasciiMathDemo li.serverSideasciiMathDemo,
+body#asciiMathSimpleInputDemo li.asciiMathSimpleInputDemo,
 body#asciiMathInputDemo li.asciiMathInputDemo,
 body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   font-weight: bold;
@@ -150,7 +151,6 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   color: black;
   padding: 2em;
   text-align: center;
-  x-font-size: larger;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
 }
@@ -172,6 +172,7 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 .inputWidget .inputPanel {
   width: 40%;
   float: left;
+  line-height: 5em;
 }
 
 .inputWidget .previewPanel {

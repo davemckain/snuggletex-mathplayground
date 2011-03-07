@@ -27,6 +27,10 @@ All Rights Reserved
     <servlet-class>uk.ac.ed.ph.mathplayground.ServerSideASCIIMathDemoServlet</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>ASCIIMathSimpleInputDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathSimpleInputDemoServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputDemoServlet</servlet-class>
   </servlet>
@@ -47,12 +51,16 @@ All Rights Reserved
     <url-pattern>/server-side-asciimath-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
+    <servlet-name>ASCIIMathSimpleInputDemoServlet</servlet-name>
+    <url-pattern>/asciimath-simple-input-demo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
-    <url-pattern>/asciimath-input-demo</url-pattern>
+    <url-pattern>/asciimath-student-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
-    <url-pattern>/snuggletex-input-demo</url-pattern>
+    <url-pattern>/snuggletex-student-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ASCIIMathUpConversionService</servlet-name>

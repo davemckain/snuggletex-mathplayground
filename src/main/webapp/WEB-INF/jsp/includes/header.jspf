@@ -84,8 +84,9 @@ headStuff (opt)
               <h2>Demos</h2>
               <ul>
                 <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath</a></li>
-                <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-input-demo'/>">ASCIIMath student input widget</a></li>
-                <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-input-demo'/>">SnuggleTeX student input widget</a></li>
+                <li class="asciiMathSimpleInputDemo"><a href="<c:url value='/asciimath-simple-input-demo'/>">ASCIIMath and MathJax simple input</a></li>
+                <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-student-input-demo'/>">ASCIIMath student input widget</a></li>
+                <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-student-input-demo'/>">SnuggleTeX student input widget</a></li>
               </ul>
             </div>
           </div>
