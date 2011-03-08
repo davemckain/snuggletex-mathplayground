@@ -65,7 +65,7 @@ All Rights Reserved
   as you type.
 <p>
 <p>
-  (Also see the <a href="asciimath-student-input-demo">ASCIIMath student input demo</a>
+  (Also see the <a href="asciimath-semantic-input-demo">ASCIIMath student input demo</a>
   for a more advanced version of this demo that additionally tries to make sense of the input.)
 </p>
 

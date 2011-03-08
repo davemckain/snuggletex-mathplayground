@@ -26,12 +26,12 @@ import org.w3c.dom.Element;
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class ASCIIMathInputDemoServlet extends BaseServlet {
+public final class ASCIIMathSemanticInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
 
     /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(ASCIIMathInputDemoServlet.class);
+    private static Logger logger = LoggerFactory.getLogger(ASCIIMathSemanticInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -40,7 +40,7 @@ public final class ASCIIMathInputDemoServlet extends BaseServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
         request.setAttribute("asciiMathInput", DEFAULT_INPUT);
-        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-semantic-input-demo.jsp").forward(request, response);
     }
     
     /** Handles the posted raw input & PMathML extracted from ASCIIMathML. */
@@ -75,6 +75,6 @@ public final class ASCIIMathInputDemoServlet extends BaseServlet {
         request.setAttribute("pmath", unwrappedMathML.get("pmath"));
         request.setAttribute("cmath", unwrappedMathML.get("cmath"));
         request.setAttribute("maxima", unwrappedMathML.get("maxima"));
-        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-input-demo-result.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-semantic-input-demo-result.jsp").forward(request, response);
     }
 }

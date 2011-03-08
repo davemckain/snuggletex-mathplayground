@@ -67,7 +67,7 @@ All Rights Reserved
 </p>
 <div class="inputBox inputWidget">
   <div class="inputPanel">
-    <form action="asciimath-input-demo" method="post" style="text-align: center">
+    <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
       <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <input type="submit" value="Submit">

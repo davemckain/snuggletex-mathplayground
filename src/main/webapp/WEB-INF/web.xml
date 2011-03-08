@@ -31,16 +31,16 @@ All Rights Reserved
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathSimpleInputDemoServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathInputDemoServlet</servlet-class>
+    <servlet-name>ASCIIMathSemanticInputDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathSemanticInputDemoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>ASCIIMathUpConversionService</servlet-name>
     <servlet-class>uk.ac.ed.ph.mathplayground.ASCIIMathUpConversionService</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
-    <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXInputDemoServlet</servlet-class>
+    <servlet-name>SnuggleTeXSemanticInputDemoServlet</servlet-name>
+    <servlet-class>uk.ac.ed.ph.mathplayground.SnuggleTeXSemanticInputDemoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>SnuggleTeXUpConversionService</servlet-name>
@@ -55,12 +55,12 @@ All Rights Reserved
     <url-pattern>/asciimath-simple-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>ASCIIMathInputDemoServlet</servlet-name>
-    <url-pattern>/asciimath-student-input-demo</url-pattern>
+    <servlet-name>ASCIIMathSemanticInputDemoServlet</servlet-name>
+    <url-pattern>/asciimath-semantic-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>SnuggleTeXInputDemoServlet</servlet-name>
-    <url-pattern>/snuggletex-student-input-demo</url-pattern>
+    <servlet-name>SnuggleTeXSemanticInputDemoServlet</servlet-name>
+    <url-pattern>/snuggletex-semantic-input-demo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ASCIIMathUpConversionService</servlet-name>

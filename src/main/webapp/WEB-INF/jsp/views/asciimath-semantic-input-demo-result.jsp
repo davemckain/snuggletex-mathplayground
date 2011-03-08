@@ -29,7 +29,7 @@ All Rights Reserved
   Algebra System, or something similar...)
 </p>
 <p>
-  <a href="asciimath-input-demo">Reset demo</a>.
+  <a href="asciimath-semantic-input-demo">Reset demo</a>.
 </p>
 
 <h2>ASCIIMath Input</h2>

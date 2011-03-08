@@ -29,7 +29,7 @@ All Rights Reserved
   Algebra System, or something similar...)
 </p>
 <p>
-  <a href="snuggletex-input-demo">Reset demo</a>.
+  <a href="snuggletex-semantic-input-demo">Reset demo</a>.
 </p>
 
 <h2>SnuggleTeX input</h2>

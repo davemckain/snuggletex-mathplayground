@@ -44,7 +44,7 @@ All Rights Reserved
 
 <p>
   This is basically the same as the
-  <a href="asciimath-student-input-demo">ASCIIMath semantic input widget demo</a>,
+  <a href="asciimath-semantic-input-demo">ASCIIMath semantic input widget demo</a>,
   but it uses LaTeX as an input format, which is processed using SnuggleTeX.
 </p>
 <p>
@@ -61,7 +61,7 @@ All Rights Reserved
 </p>
 <div class="inputBox inputWidget">
   <div class="inputPanel">
-    <form action="snuggletex-input-demo" method="post" class="input">
+    <form action="snuggletex-semantic-input-demo" method="post" class="input">
       <input id="latexInputControl" name="latexMathInput" type="text" value="${latexMathInput}">
       <input type="submit" value="Submit">
     </form>

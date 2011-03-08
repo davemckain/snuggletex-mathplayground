@@ -25,17 +25,17 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
- * Version of {@link ASCIIMathInputDemoServlet} that uses SnuggleTeX input instead.
+ * Version of {@link ASCIIMathSemanticInputDemoServlet} that uses SnuggleTeX input instead.
  * 
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class SnuggleTeXInputDemoServlet extends BaseServlet {
+public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
 
     /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(SnuggleTeXInputDemoServlet.class);
+    private static Logger logger = LoggerFactory.getLogger(SnuggleTeXSemanticInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -44,7 +44,7 @@ public final class SnuggleTeXInputDemoServlet extends BaseServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
         request.setAttribute("latexMathInput", DEFAULT_INPUT);
-        request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-input-demo.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-semantic-input-demo.jsp").forward(request, response);
     }
     
     /** Handles the posted raw input & PMathML extracted from ASCIIMathML. */
@@ -86,6 +86,6 @@ public final class SnuggleTeXInputDemoServlet extends BaseServlet {
             }
             request.setAttribute("errors", errors);
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-input-demo-result.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/views/snuggletex-semantic-input-demo-result.jsp").forward(request, response);
     }
 }
