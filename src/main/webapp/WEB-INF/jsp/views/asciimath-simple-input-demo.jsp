@@ -76,7 +76,7 @@ All Rights Reserved
 </p>
 <div class="inputBox inputWidget">
   <div class="inputPanel">
-    <form id="asciiMathInputForm">
+    <form id="asciiMathInputForm" onsubmit="return false">
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}" size="30">
     </form>
   </div>
