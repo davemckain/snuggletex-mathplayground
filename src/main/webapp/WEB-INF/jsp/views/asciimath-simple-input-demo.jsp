@@ -10,7 +10,7 @@ All Rights Reserved
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="title" value="ASCIIMathML simple input demo" />
+<c:set var="title" value="Simple input with ASCIIMath and MathJax" />
 <c:set var="pageId" value="asciiMathSimpleInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
@@ -55,15 +55,18 @@ All Rights Reserved
     });
 //]]></script>
 
-<h1>ASCIIMath simple input demo</h1>
+<h1>Simple input with ASCIIMath and MathJax</h1>
 
 <p>
-  This very simple demo shows ASCIIMath input being converted to MathML while you type, using MathJax to
-  render the MathML in any modern browser.
-</p>
+  This demo lets you enter simple mathematical expressions using
+  <a href="http://www1.chapman.edu/~jipsen/mathml/asciimath.xml">ASCIIMath</a>
+  syntax. Your input is converted to MathML and displayed using
+  <a href="http://www.mathjax.org/">MathJax</a>
+  as you type.
 <p>
-  See the <a href="asciimath-student-input-demo">ASCIIMath student input demo</a> for a more advanced version of
-  this demo that additionally tries to make sense of the input.
+<p>
+  (Also see the <a href="asciimath-student-input-demo">ASCIIMath student input demo</a>
+  for a more advanced version of this demo that additionally tries to make sense of the input.)
 </p>
 
 <h2>Try it</h2>
@@ -73,14 +76,38 @@ All Rights Reserved
 </p>
 <div class="inputBox inputWidget">
   <div class="inputPanel">
-    <form action="asciimath-input-demo" method="post">
+    <form id="asciiMathInputForm">
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}" size="30">
-      <input type="submit" value="Submit">
     </form>
   </div>
   <div class="previewPanel">
     <div id="mathJaxRendering" class="rawRendering"></div>
   </div>
 </div>
+
+<h2>Technical notes</h2>
+
+<p>
+  The interesting aspect of this demo is the marriage of ASCIIMath for input and
+  MathJax for output. The use of MathJax is nice here as it makes this idea
+  work in any modern browser, so has applications for rich text editors and things
+  like that.
+</p>
+<p>
+  This demo is inspired by the
+  <a href="http://www1.chapman.edu/~jipsen/mathml/asciimatheditor.xml">ASCIIMath Editor</a>
+  on the ASCIIMath website. Note that my demo only handles ASCIIMath math expressions
+  (i.e. the bits you would put between `...` in the ASCIIMath Editor demo). It wouldn't be
+  hard to extend this to do that too.
+</p>
+<p>
+  View the page source to see the underlying JavaScript that glues things
+  together.  It uses my cut-down <a
+  href="asciimath-parser">ASCIIMathParser.js</a> to do the actual parsing, but
+  you can do the same thing quite easily with the stock ASCIIMathML.js script
+  as well.  I also used <a href="http://jquery.com/">jQuery</a> for
+  expressiveness and convenience, but this particular demo wouldn't be hard to
+  do without jQuery.
+</p>
 
 <%@ include file="/WEB-INF/jsp/includes/footer.jspf" %>

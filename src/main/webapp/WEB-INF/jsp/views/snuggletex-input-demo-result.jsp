@@ -11,12 +11,12 @@ All Rights Reserved
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="title" value="SnuggleTeX student input widget demo" />
+<c:set var="title" value="SnuggleTeX semantic input widget demo" />
 <c:set var="pageId" value="snuggleTeXInputDemo" />
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
-<h1>SnuggleTeX student input widget demo</h1>
+<h1>SnuggleTeX semantic input widget demo</h1>
 
 <p>
   Here are the results of processing your SnuggleTeX input at the server.

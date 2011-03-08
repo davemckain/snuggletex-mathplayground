@@ -10,7 +10,7 @@ All Rights Reserved
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="title" value="ASCIIMathML student input widget demo" />
+<c:set var="title" value="ASCIIMathML semantic input widget demo" />
 <c:set var="pageId" value="asciiMathInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
@@ -43,7 +43,7 @@ All Rights Reserved
   });
 //]]></script>
 
-<h1>ASCIIMath student input widget demo</h1>
+<h1>ASCIIMath semantic input widget demo</h1>
 
 <p>
   This demo presents a little "widget" for inputting the kind of simple maths
@@ -52,8 +52,14 @@ All Rights Reserved
   useful feedback while the student types. This type of approach might be
   useful in assessment systems.
 </p>
+<p>
+  (This is a more specialised version of the
+  <a href="asciimath-simple-input-demo">ASCIIMath simple input with MathJax</a>
+  demo. That demo focuses only on the input on display of mathematics; this demo
+  additionallly tries to apply semantics to it.)
+</p>
 
-<h2>Try it!</h2>
+<h2>Try it</h2>
 <p>
   Enter some ASCIIMath in the box below. Feedback will be shown while you type
   to the right of the input box. Some additional technical details will appear

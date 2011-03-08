@@ -11,12 +11,12 @@ All Rights Reserved
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="title" value="ASCIIMathML student input widget demo" />
+<c:set var="title" value="ASCIIMathML semantic input widget demo" />
 <c:set var="pageId" value="asciiMathInputDemo" />
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
-<h1>ASCIIMath student input widget demo</h1>
+<h1>ASCIIMath semantic input widget demo</h1>
 
 <p>
   Here are the results of sending the input to server. There's nothing here

@@ -33,9 +33,12 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
     
     public static final String ASCIIMATH_PARSER_JS_LOCATION = "/includes/ASCIIMathParser.js";
     
+    public static final String DEFAULT_INPUT = "2(x-1)";
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        request.setAttribute("latexMathInput", DEFAULT_INPUT);
         request.getRequestDispatcher("/WEB-INF/jsp/views/server-side-asciimath-demo.jsp").forward(request, response);
     }
     

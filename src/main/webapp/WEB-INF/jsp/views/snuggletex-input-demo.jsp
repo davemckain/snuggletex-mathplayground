@@ -10,7 +10,7 @@ All Rights Reserved
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="title" value="SnuggleTeX student input widget demo" />
+<c:set var="title" value="SnuggleTeX semantic input widget demo" />
 <c:set var="pageId" value="snuggleTeXInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
@@ -40,11 +40,11 @@ All Rights Reserved
   });
 //]]></script>
 
-<h1>SnuggleTeX student input widget demo</h1>
+<h1>SnuggleTeX semantic input widget demo</h1>
 
 <p>
   This is basically the same as the
-  <a href="asciimath-input-demo">ASCIIMath student input widget demo</a>,
+  <a href="asciimath-student-input-demo">ASCIIMath semantic input widget demo</a>,
   but it uses LaTeX as an input format, which is processed using SnuggleTeX.
 </p>
 <p>
@@ -53,7 +53,7 @@ All Rights Reserved
   expressions, so can lead to a lot of negative feedback.
 </p>
 
-<h2>Try it!</h2>
+<h2>Try it</h2>
 <p>
   Enter some LaTeX in the box below. Feedback will be shown while you type
   to the right of the input box. Some additional technical details will appear

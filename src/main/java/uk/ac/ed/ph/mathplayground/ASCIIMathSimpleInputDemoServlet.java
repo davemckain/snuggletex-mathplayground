@@ -27,10 +27,12 @@ public final class ASCIIMathSimpleInputDemoServlet extends BaseServlet {
     /** Logger so that we can log what users are trying out to allow us to improve things */
     private static Logger logger = LoggerFactory.getLogger(ASCIIMathSimpleInputDemoServlet.class);
     
+    public static final String DEFAULT_INPUT = "(-b pm sqrt(b^2-4ac))/(2a)";
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        request.setAttribute("asciiMathInput", "2(x-1)");
+        request.setAttribute("asciiMathInput", DEFAULT_INPUT);
         request.getRequestDispatcher("/WEB-INF/jsp/views/asciimath-simple-input-demo.jsp").forward(request, response);
     }
     
