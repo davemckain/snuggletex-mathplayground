@@ -77,11 +77,28 @@ All Rights Reserved
     <div id="previewRendering"></div>
   </div>
 </div>
-<p>
-  This input widget is configured to treat <b>f</b> and <b>g</b> as functions,
-  <b>e</b> as the exponential number, <b>i</b> as the imaginary number and
-  <b>&#x3b3;</b> as Euler's constant.
+
+<h2>Quick input guide</h2>
+
+<ul>
+  <li><b>Numbers:</b> 0, 53, 62.9, ...</li>
+  <li><b>Variables:</b> <tt>x</tt>, <tt>y</tt>, <tt>N</tt>, <tt>i</tt>, <tt>alpha</tt>, <tt>pi</tt>, ...</li>
+  <li><b>Subscripted variables:</b> <tt>x_1</tt>, <tt>n_{i_j}</tt>,  <tt>y_{n,m}</tt> <em>or</em> y_<tt>(n,m)</tt>, ...</li>
+  <li><b>Powers:</b> <tt>x^2</tt>, <tt>e^{i pi}</tt>, ...</li>
+  <li><b>Arithmetic operators:</b> <tt>+</tt>, <tt>-</tt>, <tt>*</tt>, <tt>times</tt>, <tt>/</tt></li>
+  <li><b>Fractions:</b> <tt>1/2</tt>, <tt>(1+x)/(2-y)</tt>
+  <li><b>Implicit multiplcation:</b> <tt>2x</tt>, <tt>5t^2</tt>, <tt>asin(bx)</tt> ...</li>
+  <li><b>Precedence:</b> follows usual rules, use brackets if required</li>
+  <li><b>Brackets:</b> <tt>sin(2t+4)</tt> (often optional, <tt>{...}</tt> as well)</li>
+  <li><b>Elementary functions</b>: <tt>exp</tt>, <tt>log</tt>, <tt>sin</tt>, <tt>cos</tt>, <tt>tan</tt>, <tt>sinh</tt>, ...</li>
+  <li><b>Inverse functions:</b> <tt>sin^-1x</tt>, <tt>coth^-1t</tt>, ...</li>
+  <li><b>Powers of functions:</b> <tt>sin^2x = (sin x)^2</tt>, ...</li>
+  <li><b>Oddities:</b> <tt>sin2x = (sin2)x != sin(2x)</tt> (use brackets here)</li>
+  <li><b>Functions:</b> <tt>f</tt> and <tt>g</tt> are treated as functions</li>
+  <li><b>Special symbols:</b> <tt>e</tt> is the exponential number, <tt>i</tt> is the imaginary number,
+    <tt>&#x3b3;</tt> is Euler's constant.</li>
 </p>
+</ul>
 
 <h2>Technical implementation details</h2>
 
