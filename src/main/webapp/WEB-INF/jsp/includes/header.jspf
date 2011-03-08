@@ -83,10 +83,10 @@ headStuff (opt)
 
               <h2>Demos</h2>
               <ul>
-                <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath</a></li>
                 <li class="asciiMathSimpleInputDemo"><a href="<c:url value='/asciimath-simple-input-demo'/>">Simple input with ASCIIMath and MathJax</a></li>
                 <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-semantic-input-demo'/>">ASCIIMath semantic input widget</a></li>
                 <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-semantic-input-demo'/>">SnuggleTeX semantic input widget</a></li>
+                <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath</a></li>
               </ul>
             </div>
           </div>
