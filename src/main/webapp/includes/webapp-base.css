@@ -216,15 +216,36 @@ a:hover {
   padding: 10px 0;
 }
 
-#footer p {
-  display: block;
-  padding-bottom: 5px;
-  font-size: 85%
+/* (NB: Some of the numbers below will need overridden) */
+#footer-icons {
+  width: 300px;
+  margin: 0;
+  clear: both;
+  float: right;
+  height: 64px;
+}
+
+/* (NB: Some of the numbers below will need overridden) */
+#footer-icons a {
+  display: inline-block;
+  vertical-align: middle;
+  height: 64px;
+  margin-left: 8px;
+}
+
+#footer-icons img {
+  border: none;
 }
 
 #footer-text {
   width: auto;
   float: left;
+}
+
+#footer-text p {
+  display: block;
+  padding-bottom: 5px;
+  font-size: 85%
 }
 
 /* ======================================================================== */

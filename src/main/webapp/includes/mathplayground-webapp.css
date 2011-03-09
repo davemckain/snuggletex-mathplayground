@@ -146,6 +146,10 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 
 /************************************************************/
 
+.tt {
+  font-family: monospace;
+}
+
 .inputBox {
   background: #ffdae0 url(images/pink-gradient.png) repeat-x left top;
   color: black;
@@ -183,4 +187,15 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 
 .rawRendering {
   min-height: 3em;
+}
+
+/************************************************************/
+
+#footer-icons {
+  width: 80px;
+  height: 64px;
+}
+
+#footer-icons a {
+  height: 64px;
 }

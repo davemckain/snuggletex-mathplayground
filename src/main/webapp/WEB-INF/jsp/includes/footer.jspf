@@ -21,6 +21,9 @@ JSP Page Footer
     </div>
     <div id="footer">
       <div id="copyright">
+        <div id="footer-icons">
+          <a href="http://www.w3.org/TR/html5/"><img src="<c:url value='/includes/images/HTML5_Logo_64.png'/>" width="64" height="64" /></a>
+        </div>
         <div id="footer-text">
           <%-- Usual Copyright stuff --%>
           <p>
