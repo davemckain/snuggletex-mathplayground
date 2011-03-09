@@ -16,7 +16,7 @@ All Rights Reserved
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
-<h1>Server-side ASCIIMath input demo</h2>
+<h1>Server-side ASCIIMath input demo</h1>
 
 <p>
   This demo shows my

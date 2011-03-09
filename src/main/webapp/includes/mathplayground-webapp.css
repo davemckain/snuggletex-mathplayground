@@ -146,10 +146,6 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 
 /************************************************************/
 
-.tt {
-  font-family: monospace;
-}
-
 .inputBox {
   background: #ffdae0 url(images/pink-gradient.png) repeat-x left top;
   color: black;

@@ -92,7 +92,7 @@ function runDemo() {
 
 <p>
   You should be able to use this code in any JavaScript engine that has access to an
-  XML DOM (Level 2) <tt>Document</tt> Object. The code handles Microsoft's
+  XML DOM (Level 2) <code>Document</code> Object. The code handles Microsoft's
   (slightly lacking) DOM implementation as well, though I haven't tested across many
   versions of MSXML as yet.
 </p>
@@ -108,22 +108,22 @@ function runDemo() {
 <h2>Usage</h2>
 
 <p>
-  You should create an instance of <tt>ASCIIMathParser</tt>, passing
-  an XML DOM <tt>Document</tt> Object that will be used to create the resulting MathML.
+  You should create an instance of <code>ASCIIMathParser</code>, passing
+  an XML DOM <code>Document</code> Object that will be used to create the resulting MathML.
 </p>
 <p>
-  You then call the <tt>parseASCIIMathInput()</tt> method to parse ASCIIMath input
-  strings. A call to this method returns a DOM <tt>Element</tt> Object
-  corresponding to the resulting <tt>&lt;math&gt;</tt> element.
-  (Note that the resulting <tt>Element</tt> will belong to the <tt>Document</tt>
+  You then call the <code>parseASCIIMathInput()</code> method to parse ASCIIMath input
+  strings. A call to this method returns a DOM <code>Element</code> Object
+  corresponding to the resulting <code>&lt;math&gt;</code> element.
+  (Note that the resulting <code>Element</code> will belong to the <code>Document</code>
   you passed earlier, but will not be added to its Node hierarchy. You can do this
   yourself if required.)
 </p>
 <p>
   <strong>Hint:</strong> If you will be using this code within a browser, there
-  are some methods in the optional <tt>ASCIIMathParserBrowserUtilities.js</tt>
-  file that you can use to create a suitable <tt>Document</tt> and serialize
-  the resulting MathML <tt>Element</tt> to an XML String. See the example below.
+  are some methods in the optional <code>ASCIIMathParserBrowserUtilities.js</code>
+  file that you can use to create a suitable <code>Document</code> and serialize
+  the resulting MathML <code>Element</code> to an XML String. See the example below.
 </p>
 
 <h2>Example</h2>

@@ -82,22 +82,21 @@ All Rights Reserved
 
 <ul>
   <li><b>Numbers:</b> 0, 53, 62.9, ...</li>
-  <li><b>Variables:</b> <tt>x</tt>, <tt>y</tt>, <tt>N</tt>, <tt>i</tt>, <tt>alpha</tt>, <tt>pi</tt>, ...</li>
-  <li><b>Subscripted variables:</b> <tt>x_1</tt>, <tt>n_{i_j}</tt>,  <tt>y_{n,m}</tt> <em>or</em> y_<tt>(n,m)</tt>, ...</li>
-  <li><b>Powers:</b> <tt>x^2</tt>, <tt>e^{i pi}</tt>, ...</li>
-  <li><b>Arithmetic operators:</b> <tt>+</tt>, <tt>-</tt>, <tt>*</tt>, <tt>times</tt>, <tt>/</tt></li>
-  <li><b>Fractions:</b> <tt>1/2</tt>, <tt>(1+x)/(2-y)</tt>
-  <li><b>Implicit multiplcation:</b> <tt>2x</tt>, <tt>5t^2</tt>, <tt>asin(bx)</tt> ...</li>
+  <li><b>Variables:</b> <kbd>x</kbd>, <kbd>y</kbd>, <kbd>N</kbd>, <kbd>i</kbd>, <kbd>alpha</kbd>, <kbd>pi</kbd>, ...</li>
+  <li><b>Subscripted variables:</b> <kbd>x_1</kbd>, <kbd>n_{i_j}</kbd>,  <kbd>y_{n,m}</kbd> <em>or</em> y_<kbd>(n,m)</kbd>, ...</li>
+  <li><b>Powers:</b> <kbd>x^2</kbd>, <kbd>e^{i pi}</kbd>, ...</li>
+  <li><b>Arithmetic operators:</b> <kbd>+</kbd>, <kbd>-</kbd>, <kbd>*</kbd>, <kbd>times</kbd>, <kbd>/</kbd></li>
+  <li><b>Fractions:</b> <kbd>1/2</kbd>, <kbd>(1+x)/(2-y)</kbd>
+  <li><b>Implicit multiplcation:</b> <kbd>2x</kbd>, <kbd>5t^2</kbd>, <kbd>asin(bx)</kbd> ...</li>
   <li><b>Precedence:</b> follows usual rules, use brackets if required</li>
-  <li><b>Brackets:</b> <tt>sin(2t+4)</tt> (often optional, <tt>{...}</tt> as well)</li>
-  <li><b>Elementary functions</b>: <tt>exp</tt>, <tt>log</tt>, <tt>sin</tt>, <tt>cos</tt>, <tt>tan</tt>, <tt>sinh</tt>, ...</li>
-  <li><b>Inverse functions:</b> <tt>sin^-1x</tt>, <tt>coth^-1t</tt>, ...</li>
-  <li><b>Powers of functions:</b> <tt>sin^2x = (sin x)^2</tt>, ...</li>
-  <li><b>Oddities:</b> <tt>sin2x = (sin2)x != sin(2x)</tt> (use brackets here)</li>
-  <li><b>Functions:</b> <tt>f</tt> and <tt>g</tt> are treated as functions</li>
-  <li><b>Special symbols:</b> <tt>e</tt> is the exponential number, <tt>i</tt> is the imaginary number,
-    <tt>&#x3b3;</tt> is Euler's constant.</li>
-</p>
+  <li><b>Brackets:</b> <kbd>sin(2t+4)</kbd> (often optional, <kbd>{...}</kbd> as well)</li>
+  <li><b>Elementary functions</b>: <kbd>exp</kbd>, <kbd>log</kbd>, <kbd>sin</kbd>, <kbd>cos</kbd>, <kbd>tan</kbd>, <kbd>sinh</kbd>, ...</li>
+  <li><b>Inverse functions:</b> <kbd>sin^-1x</kbd>, <kbd>coth^-1t</kbd>, ...</li>
+  <li><b>Powers of functions:</b> <kbd>sin^2x = (sin x)^2</kbd>, ...</li>
+  <li><b>Oddities:</b> <kbd>sin2x = (sin2)x != sin(2x)</kbd> (use brackets here)</li>
+  <li><b>Functions:</b> <kbd>f</kbd> and <kbd>g</kbd> are treated as functions</li>
+  <li><b>Special symbols:</b> <kbd>e</kbd> is the exponential number, <kbd>i</kbd> is the imaginary number,
+    <kbd>&#x3b3;</kbd> is Euler's constant.</li>
 </ul>
 
 <h2>Technical implementation details</h2>
