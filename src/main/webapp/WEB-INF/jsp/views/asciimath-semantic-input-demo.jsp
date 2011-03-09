@@ -13,12 +13,14 @@ All Rights Reserved
 <c:set var="title" value="ASCIIMathML semantic input widget demo" />
 <c:set var="pageId" value="asciiMathInputDemo" />
 <c:set var="headStuff">
-  <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
-  <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/ASCIIMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/ASCIIMathParserBrowserUtilities.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/UpConversionAJAXController.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/ASCIIMathInputController.js'/>"></script>
+  <link rel="stylesheet" type="text/css" href="<c:url value='/includes/upconversion-ajax-control.css'/>">
+  <link rel="stylesheet" type="text/css" href="<c:url value='/includes/jquery/redmond/jquery-ui-1.8.10.custom.css'/>"/>
+  <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-1.5.1.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-ui-1.8.10.custom.min.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/UpConversionAJAXController.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -40,6 +42,25 @@ All Rights Reserved
     widget.setPMathSourceContainerId('pmathSource');
     widget.setMathJaxRenderingContainerId('mathJaxRendering');
     widget.init();
+
+    var button = jQuery("#helpToggle");
+    var buttonPosition = button.position();
+
+    var hintPanel = jQuery("<div></div>").load("hints.html");
+    var dialog = hintPanel.dialog({
+      autoOpen: false,
+      draggable: true,
+      resizable: true,
+      title: 'Input Hints',
+      width: '70%',
+      position: [ buttonPosition.left, buttonPosition.top + 0 ]
+    });
+
+    jQuery("#helpToggle").click(function() {
+      dialog.dialog('open');
+
+      return false;
+    });
   });
 //]]></script>
 
@@ -68,6 +89,7 @@ All Rights Reserved
 <div class="inputBox inputWidget">
   <div class="inputPanel">
     <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
+      <button id="helpToggle">?</button>
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
       <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <input type="submit" value="Submit">
@@ -77,27 +99,6 @@ All Rights Reserved
     <div id="previewRendering"></div>
   </div>
 </div>
-
-<h2>Quick input guide</h2>
-
-<ul>
-  <li><b>Numbers:</b> 0, 53, 62.9, ...</li>
-  <li><b>Variables:</b> <kbd>x</kbd>, <kbd>y</kbd>, <kbd>N</kbd>, <kbd>i</kbd>, <kbd>alpha</kbd>, <kbd>pi</kbd>, ...</li>
-  <li><b>Subscripted variables:</b> <kbd>x_1</kbd>, <kbd>n_{i_j}</kbd>,  <kbd>y_{n,m}</kbd> <em>or</em> y_<kbd>(n,m)</kbd>, ...</li>
-  <li><b>Powers:</b> <kbd>x^2</kbd>, <kbd>e^{i pi}</kbd>, ...</li>
-  <li><b>Arithmetic operators:</b> <kbd>+</kbd>, <kbd>-</kbd>, <kbd>*</kbd>, <kbd>times</kbd>, <kbd>/</kbd></li>
-  <li><b>Fractions:</b> <kbd>1/2</kbd>, <kbd>(1+x)/(2-y)</kbd>
-  <li><b>Implicit multiplcation:</b> <kbd>2x</kbd>, <kbd>5t^2</kbd>, <kbd>asin(bx)</kbd> ...</li>
-  <li><b>Precedence:</b> follows usual rules, use brackets if required</li>
-  <li><b>Brackets:</b> <kbd>sin(2t+4)</kbd> (often optional, <kbd>{...}</kbd> as well)</li>
-  <li><b>Elementary functions</b>: <kbd>exp</kbd>, <kbd>log</kbd>, <kbd>sin</kbd>, <kbd>cos</kbd>, <kbd>tan</kbd>, <kbd>sinh</kbd>, ...</li>
-  <li><b>Inverse functions:</b> <kbd>sin^-1x</kbd>, <kbd>coth^-1t</kbd>, ...</li>
-  <li><b>Powers of functions:</b> <kbd>sin^2x = (sin x)^2</kbd>, ...</li>
-  <li><b>Oddities:</b> <kbd>sin2x = (sin2)x != sin(2x)</kbd> (use brackets here)</li>
-  <li><b>Functions:</b> <kbd>f</kbd> and <kbd>g</kbd> are treated as functions</li>
-  <li><b>Special symbols:</b> <kbd>e</kbd> is the exponential number, <kbd>i</kbd> is the imaginary number,
-    <kbd>&#x3b3;</kbd> is Euler's constant.</li>
-</ul>
 
 <h2>Technical implementation details</h2>
 
