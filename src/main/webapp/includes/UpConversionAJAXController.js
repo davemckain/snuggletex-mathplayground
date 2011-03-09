@@ -28,10 +28,13 @@
                     document.adoptNode(mathmlContent);
                     this.append(mathmlContent);
                 }
-                else {
+                else if (mathmlContent.xml) {
                     /* Internet Explorer: We just append the Element's XML source,
                      * which is quite easy to extract in this case. */
                     this.append(mathmlContent.xml);
+                }
+                else {
+                    throw new Error("Don't know how to append MathML elements into the DOM in this browser");
                 }
             }
             else if (typeof mathmlContent=="string") {
@@ -44,7 +47,7 @@
                     this.append(mathElement);
                 }
                 else {
-                    /* Internet Exploder */
+                    /* Probably Internet Exploder */
                     this.append(mathmlContent);
                 }
             }
