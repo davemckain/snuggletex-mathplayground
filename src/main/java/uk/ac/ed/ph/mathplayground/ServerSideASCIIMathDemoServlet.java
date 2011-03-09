@@ -8,6 +8,8 @@ package uk.ac.ed.ph.mathplayground;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +56,11 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
         /* Call up server-side ASCIIMath parser */
         Reader scriptReader = new InputStreamReader(ensureReadResource(ASCIIMATH_PARSER_JS_LOCATION), "UTF-8");
         ASCIIMathParser asciiMathParser = new ASCIIMathParser(scriptReader);
-        Element mathElement = asciiMathParser.parseASCIIMath(asciiMathInput);
+        
+        Map<String,Object> options = new HashMap<String,Object>();
+        options.put("displayMode", Boolean.TRUE);
+        options.put("addSourceAnnotation", Boolean.TRUE);
+        Element mathElement = asciiMathParser.parseASCIIMath(asciiMathInput, options);
         String mathMLOutput = MathMLUtilities.serializeElement(mathElement, true);
         
         logger.info("ASCIIMathML Input: {}", asciiMathInput);

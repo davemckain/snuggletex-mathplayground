@@ -807,8 +807,28 @@ initSymbols();
 
 /* Parses the given ASCIIMathInput, returning a <math> DOM Element */
 this.parseASCIIMathInput = function(asciiMathInput) {
-  var frag = AMparseExpr(asciiMathInput.replace(/^\s+/g,""), false)[0];
-  return createMmlNode("math", frag);
+  var options = arguments[1] || {};
+
+  /* Call up ASCIIMath to do the actual parsing, generating a document fragment */
+  var content = AMparseExpr(asciiMathInput.replace(/^\s+/g,""), false)[0];
+
+  /* If adding source annotation, then we need to wrap things up appropriately */
+  if (options.addSourceAnnotation) {
+    var semantics = createMmlNode("semantics", content.length==1 ? content : createMmlNode("mrow", content));
+
+    var annotation = createMmlNode("annotation", document.createTextNode(asciiMathInput));
+    annotation.setAttribute("encoding", "ASCIIMathInput");
+    semantics.appendChild(annotation);
+
+    content = semantics;
+  }
+
+  /* Create the containing <math> element */
+  var math = createMmlNode("math", content);
+  if (options.displayMode) {
+    math.setAttribute("display", "block");
+  }
+  return math;
 };
 
 // (end of unindented MakeASCIIMathParser function defined at top of file)

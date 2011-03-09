@@ -8,6 +8,9 @@ package uk.ac.ed.ph.mathplayground;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,8 +31,13 @@ import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 public class ASCIIMathParser {
     
     public static void main(String[] args) throws Exception {
-        ASCIIMathParser t = new ASCIIMathParser(new FileReader("src/main/webapp/includes/ASCIIMathParser.js"));
-        System.out.println(MathMLUtilities.serializeElement(t.parseASCIIMath("1/x")));
+        ASCIIMathParser t = new ASCIIMathParser(new FileReader("tw/includes/ASCIIMathParser.js"));
+        
+        Map<String, Object> opts = new HashMap<String, Object>();
+        opts.put("displayMode", Boolean.TRUE);
+        opts.put("addSourceAnnotation", Boolean.TRUE);
+        System.out.println(MathMLUtilities.serializeElement(t.parseASCIIMath("1+43", opts)));
+        
         System.out.println(MathMLUtilities.serializeElement(t.parseASCIIMath("oo")));
     }
     
@@ -44,6 +52,10 @@ public class ASCIIMathParser {
     }
     
     public Element parseASCIIMath(String asciiMathInput) {
+        return parseASCIIMath(asciiMathInput, null);
+    }
+    
+    public Element parseASCIIMath(String asciiMathInput, Map<String,Object> options) {
         /* Create DOM Document for the parser to use */
         Document document;
         try {
@@ -58,7 +70,13 @@ public class ASCIIMathParser {
             Scriptable newScope = context.newObject(sharedScope);
             
             Scriptable parser = context.newObject(newScope, "ASCIIMathParser", new Object[] { document });
-            Object result = ScriptableObject.callMethod(parser, "parseASCIIMathInput", new Object[] { asciiMathInput });
+            Scriptable optionsJS = context.newObject(newScope);
+            if (options!=null) {
+                for (Entry<String,Object> option : options.entrySet()) {
+                    ScriptableObject.putProperty(optionsJS, option.getKey(), option.getValue());
+                }
+            }
+            Object result = ScriptableObject.callMethod(parser, "parseASCIIMathInput", new Object[] { asciiMathInput, optionsJS });
             
             return (Element) Context.jsToJava(result, Element.class);
         }
