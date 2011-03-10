@@ -107,6 +107,20 @@ abstract class BaseServlet extends HttpServlet {
         return result;
     }
     
+    protected String extractBestUpConversionResult(LinkedHashMap<String, String> unwrappedData) {
+        String result;
+        if (unwrappedData.containsKey("maxima")) {
+            result = "[Maxima] " + unwrappedData.get("maxima");
+        }
+        else if (unwrappedData.containsKey("cmath")) {
+            result = "[Content MathML] " + unwrappedData.get("cmath");
+        }
+        else {
+            result = "[Semantic PMathML] " + unwrappedData.get("pmathSemantic"); 
+        }
+        return result;
+    }
+    
     private void maybeAddResult(Map<String, String> resultBuilder, String key, Document value, SerializationSpecifier serializationSpecifier) {
         if (value!=null) {
             resultBuilder.put(key, MathMLUtilities.serializeDocument(value, serializationSpecifier));

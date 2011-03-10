@@ -7,13 +7,17 @@ package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.snuggletex.internal.util.IOUtilities;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +30,8 @@ import org.w3c.dom.Element;
 public final class ASCIIMathUpConversionService extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
+    
+    private static Logger logger = LoggerFactory.getLogger(ASCIIMathUpConversionService.class);
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -43,10 +49,16 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
         Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathML, getUpConversionOptions());
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
         
+        /* Log what happened */
+        LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
+        String asciiMathInput = MathMLUtilities.extractAnnotationString(mathElement, MathMLUpConverter.ASCIIMATH_INPUT_ANNOTATION_NAME);
+        logger.info("Input: {}, Best output: {}", asciiMathInput, extractBestUpConversionResult(unwrappedMathML));
+        
         /* Create and send JSON Object encapsulating result */
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("asciiMathInput", asciiMathInput);
         jsonObject.put("asciiMathML", asciiMathML);
-        jsonObject.putAll(unwrapMathMLElement(mathElement));
+        jsonObject.putAll(unwrappedMathML);
         sendJSONResponse(response, jsonObject);
-     }
+    }
 }
