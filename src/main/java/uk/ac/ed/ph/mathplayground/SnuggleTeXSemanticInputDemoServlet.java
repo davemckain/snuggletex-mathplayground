@@ -73,7 +73,7 @@ public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
             LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
             logger.info("Final parallel MathML: {}", unwrappedMathML.get("pmathParallel"));
             request.setAttribute("pmathParallel", unwrappedMathML.get("pmathParallel"));
-            request.setAttribute("pmath", unwrappedMathML.get("pmath"));
+            request.setAttribute("pmathSemantic", unwrappedMathML.get("pmathSemantic"));
             request.setAttribute("cmath", unwrappedMathML.get("cmath"));
             request.setAttribute("maxima", unwrappedMathML.get("maxima"));
         }

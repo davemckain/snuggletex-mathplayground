@@ -41,7 +41,7 @@ All Rights Reserved
     <pre class="result">${fn:escapeXml(pmathParallel)}</pre>
 
     <h3>Semantically enriched Presentation MathML</h3>
-    <pre class="result">${fn:escapeXml(pmath)}</pre>
+    <pre class="result">${fn:escapeXml(pmathSemantic)}</pre>
 
     <h3>Content MathML</h3>
     <pre class="result">${fn:escapeXml(cmath)}</pre>
