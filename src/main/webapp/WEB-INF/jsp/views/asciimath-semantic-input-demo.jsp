@@ -38,29 +38,13 @@ All Rights Reserved
     upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
     upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    var widget = ASCIIMathInputController.createInputWidget('asciiMathInputControl', 'asciiMathOutputControl', upConversionAJAXControl);
+    ASCIIMathInputController.setHelpPageURL("hints.html");
+
+    var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', 'asciiMathOutputControl', upConversionAJAXControl);
     widget.setPMathSourceContainerId('pmathSource');
     widget.setMathJaxRenderingContainerId('mathJaxRendering');
+    widget.setHelpButtonId('helpToggle');
     widget.init();
-
-    var button = jQuery("#helpToggle");
-    var buttonPosition = button.position();
-
-    var hintPanel = jQuery("<div></div>").load("hints.html");
-    var dialog = hintPanel.dialog({
-      autoOpen: false,
-      draggable: true,
-      resizable: true,
-      title: 'Input Hints',
-      width: '70%',
-      position: [ buttonPosition.left, buttonPosition.top + 0 ]
-    });
-
-    jQuery("#helpToggle").click(function() {
-      dialog.dialog('open');
-
-      return false;
-    });
   });
 //]]></script>
 
@@ -89,7 +73,7 @@ All Rights Reserved
 <div class="inputBox inputWidget">
   <div class="inputPanel">
     <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
-      <button id="helpToggle">?</button>
+      <a href="javascript://" id="helpToggle"></a>
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
       <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <input type="submit" value="Submit">

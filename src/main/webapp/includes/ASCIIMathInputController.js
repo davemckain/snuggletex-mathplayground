@@ -8,7 +8,7 @@
  *
  * Author: David McKain
  *
- * $Id:web.xml 158 2008-07-31 10:48:14Z davemckain $
+ * $Id$
  *
  * Copyright (c) 2008-2011, The University of Edinburgh
  * All Rights Reserved
@@ -17,6 +17,10 @@
 /************************************************************/
 
 var ASCIIMathInputController = (function() {
+
+    var helpPageUrl = null; /* (Caller should fill this in) */
+
+    var helpDialog = null; /* (Created on first use) */
 
     var asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
 
@@ -43,6 +47,33 @@ var ASCIIMathInputController = (function() {
         return ASCIIMathParserBrowserUtilities.indentMathMLString(mathml);
     };
 
+    var showHelpDialog = function(buttonQuery) {
+        if (helpDialog==null) {
+            var helpPanel = jQuery("<div></div>");
+            if (helpPageUrl!=null) {
+                helpPanel.load(helpPageUrl);
+            }
+            else {
+                helpPanel.html("(No Help URL has been set)");
+            }
+            helpDialog = helpPanel.dialog({
+                autoOpen: false,
+                draggable: true,
+                resizable: true,
+                title: 'Input Hints',
+                width: '70%',
+            });
+        }
+        if (helpDialog.dialog('isOpen')) {
+            helpDialog.dialog('close');
+        }
+        else {
+            var buttonPosition = buttonQuery.position();
+            helpDialog.dialog('option', 'position', [ buttonPosition.left, buttonPosition.top + 70 ]);
+            helpDialog.dialog('open');
+        }
+    };
+
     /************************************************************/
 
     var Widget = function(_asciiMathInputId, _asciiMathOutputId, _verifierControl) {
@@ -51,6 +82,7 @@ var ASCIIMathInputController = (function() {
         this.verifierControl = _verifierControl;
         this.mathJaxRenderingContainerId = null;
         this.pmathSourceContainerId = null;
+        this.helpButtonId = null;
         var lastInput = null;
         var currentXHR = null;
         var currentTimeoutId = null;
@@ -133,6 +165,14 @@ var ASCIIMathInputController = (function() {
                 return true;
             });
 
+            /* Bind help button */
+            if (this.helpButtonId!=null) {
+                var helpButton = jQuery("#" + this.helpButtonId);
+                helpButton.click(function() {
+                    showHelpDialog(jQuery(this));
+                });
+            }
+
             /* Set up initial preview */
             var mathmlSource = widget.updatePreview();
 
@@ -152,77 +192,25 @@ var ASCIIMathInputController = (function() {
         this.doInit();
     };
 
+    Widget.prototype.setHelpButtonId = function(id) {
+        this.helpButtonId = id;
+    };
+
     Widget.prototype.setMathJaxRenderingContainerId = function(id) {
         this.mathJaxRenderingContainerId = id;
-    }
+    };
 
     Widget.prototype.setPMathSourceContainerId = function(id) {
         this.pmathSourceContainerId = id;
-    }
+    };
 
     return {
-        createInputWidget: function(inputId, outputId, verifierControl) {
+        bindInputWidget: function(inputId, outputId, verifierControl) {
             return new Widget(inputId, outputId, verifierControl);
-        }
-    };
+        },
 
-})();
-
-/************************************************************/
-
-var SnuggleTeXInputController = (function() {
-
-    /************************************************************/
-
-    var Widget = function(_snuggleTeXInputControlId, _verifierControl) {
-        this.snuggleTeXInputControlId = _snuggleTeXInputControlId;
-        this.verifierControl = _verifierControl;
-        var lastInput = null;
-        var currentXHR = null;
-        var currentTimeoutId = null;
-        var widget = this;
-
-        this.getLaTeXInput= function() {
-            var inputSelector = jQuery("#" + this.snuggleTeXInputControlId);
-            return inputSelector.get(0).value;
-        };
-
-        this.updatePreviewIfChanged = function() {
-            var latexInput = this.getLaTeXInput();
-            if (lastInput==null || latexInput!=lastInput) {
-                /* Something has changed */
-                lastInput = latexInput;
-
-                /* Maybe verify the input */
-                if (this.verifierControl!=null) {
-                    this.verifierControl.verifyLater(latexInput);
-                }
-            }
-        };
-
-        this.doInit = function() {
-            var inputSelector = jQuery("#" + this.snuggleTeXInputControlId);
-
-            /* Maybe do verification on the initial input */
-            if (this.verifierControl!=null) {
-                this.verifierControl.verifyLater(this.getLaTeXInput());
-            }
-
-            /* Set up handler to update preview when required */
-            inputSelector.bind("change keyup keydown", function() {
-                widget.updatePreviewIfChanged();
-            });
-        };
-    };
-
-    Widget.prototype.init = function() {
-        this.doInit();
-    };
-
-    return {
-        createInputWidget: function(inputId, verifierControl) {
-            return new Widget(inputId, verifierControl);
-        }
+        getHelpPageURL: function() { return helpPageUrl },
+        setHelpPageURL: function(id) { helpPageUrl = id }
     };
 
 })();

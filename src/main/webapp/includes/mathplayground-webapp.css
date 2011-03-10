@@ -185,6 +185,21 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   min-height: 3em;
 }
 
+.inputWidget a {
+  display: block;
+  float: left;
+  line-height: 5em;
+  height: 5em;
+  vertical-align: middle;
+  width: 24px;
+  background: url(images/help.png) center no-repeat;
+}
+
+.inputWidget a:hover {
+  cursor: help;
+  background-color: transparent !important;
+}
+
 /************************************************************/
 
 #footer-icons {
