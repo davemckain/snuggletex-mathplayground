@@ -38,7 +38,7 @@ All Rights Reserved
     upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
     upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    ASCIIMathInputController.setHelpPageURL("hints.html");
+    ASCIIMathInputController.setHelpPageURL("<c:url value='/includes/hints.html'/>");
 
     var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', 'asciiMathOutputControl', upConversionAJAXControl);
     widget.setPMathSourceContainerId('pmathSource');

@@ -202,6 +202,36 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 
 /************************************************************/
 
+table.inputHelp {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 90%;
+}
+
+table.inputHelp th {
+  border: 1px solid #999999;
+  padding: 0.2em 0.5em;
+  background-color: #cad8e5;
+}
+
+table.inputHelp td {
+  color: #999999;
+  border: 1px solid #999999;
+  padding: 0.2em 0.5em;
+}
+
+table.inputHelp kbd {
+  color: black;
+  font-size: 100%;
+  line-height: 100%;
+}
+
+table.inputHelp .longComma {
+  margin-right: 0.5em;
+}
+
+/************************************************************/
+
 #footer-icons {
   width: 80px;
   height: 64px;
