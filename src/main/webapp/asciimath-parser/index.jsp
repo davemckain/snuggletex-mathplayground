@@ -112,15 +112,31 @@ function runDemo() {
   an XML DOM <code>Document</code> Object that will be used to create the resulting MathML.
 </p>
 <p>
-  You then call the <code>parseASCIIMathInput()</code> method to parse ASCIIMath input
-  strings. A call to this method returns a DOM <code>Element</code> Object
+  You then call the <code>parseASCIIMathInput()</code> method, passing the ASCIIMath input
+  string you want to parse. A call to this method returns a DOM <code>Element</code> Object
   corresponding to the resulting <code>&lt;math&gt;</code> element.
   (Note that the resulting <code>Element</code> will belong to the <code>Document</code>
   you passed earlier, but will not be added to its Node hierarchy. You can do this
   yourself if required.)
 </p>
 <p>
-  <strong>Hint:</strong> If you will be using this code within a browser, there
+  The <code>parseASCIIMathInput()</code> method takes an optional second argument that
+  lets you pass additional options. This argument should be an object containing some
+  or all of the following properties:
+</p>
+<ul>
+  <li>
+    <b>displayMode</b> (true|false): If true, a <code>display="block"</code> attribute
+    will be added to the resulting <code>&lt;math&gt;</code> element.</li>
+  <li>
+    <b>addSourceAnnotation</b> (true|false): If true, a MathML
+    <code>&lt;annotation encoding="ASCIIMathInput"&gt;</code>
+    element will be added to the resulting MathML that contains the original ASCIIMath
+    input.
+  </li>
+</ul>
+<p>
+  <strong>Hint:</strong> If you are using this code within a browser, there
   are some methods in the optional <code>ASCIIMathParserBrowserUtilities.js</code>
   file that you can use to create a suitable <code>Document</code> and serialize
   the resulting MathML <code>Element</code> to an XML String. See the example below.
