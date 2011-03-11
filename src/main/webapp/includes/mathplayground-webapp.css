@@ -170,14 +170,20 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
 }
 
 .inputWidget .inputPanel {
-  width: 40%;
+  width: 45%;
   float: left;
   line-height: 5em;
+  text-align: left;
+}
+
+.inputWidget .inputPanel input {
+  margin: 0;
+  padding: 0;
 }
 
 .inputWidget .previewPanel {
   margin-left: 40%;
-  width: 55%;
+  width: 50%;
   text-align: center;
 }
 
@@ -190,8 +196,10 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   float: left;
   line-height: 5em;
   height: 5em;
+  margin: 0;
+  padding: 0;
   vertical-align: middle;
-  width: 24px;
+  width: 18px;
   background: url(images/help.png) center no-repeat;
 }
 

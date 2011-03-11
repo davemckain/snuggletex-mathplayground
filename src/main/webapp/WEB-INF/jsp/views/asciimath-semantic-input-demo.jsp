@@ -71,14 +71,14 @@ All Rights Reserved
   below that may be interesting to some people...
 </p>
 <div class="inputBox inputWidget">
-  <div class="inputPanel">
-    <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
+  <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
+    <div class="inputPanel">
+      <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <a href="javascript://" id="helpToggle"></a>
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
-      <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <input type="submit" value="Submit">
-    </form>
-  </div>
+    </div>
+  </form>
   <div class="previewPanel">
     <div id="previewRendering"></div>
   </div>

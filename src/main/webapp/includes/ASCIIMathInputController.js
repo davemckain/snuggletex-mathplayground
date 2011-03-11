@@ -61,7 +61,7 @@ var ASCIIMathInputController = (function() {
                 draggable: true,
                 resizable: true,
                 title: 'Input Hints',
-                width: '70%',
+                width: '70%'
             });
         }
         if (helpDialog.dialog('isOpen')) {
