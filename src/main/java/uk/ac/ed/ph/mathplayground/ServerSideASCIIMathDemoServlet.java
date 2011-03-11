@@ -5,9 +5,12 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
+import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
+import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
+import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-
-import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
+import org.w3c.dom.Document;
 
 /**
- * FIXME: Document this type!
+ * Simple front-end demo to {@link ASCIIMathParser}
  * 
  * @author  David McKain
  * @version $Revision$
@@ -32,8 +33,6 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
     private static final long serialVersionUID = -8361217845410879232L;
     
     private static Logger logger = LoggerFactory.getLogger(ServerSideASCIIMathDemoServlet.class);
-    
-    public static final String ASCIIMATH_PARSER_JS_LOCATION = "/includes/ASCIIMathParser.js";
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -54,14 +53,16 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
         String asciiMathInput = request.getParameter("asciiMathInput");
         
         /* Call up server-side ASCIIMath parser */
-        Reader scriptReader = new InputStreamReader(ensureReadResource(ASCIIMATH_PARSER_JS_LOCATION), "UTF-8");
-        ASCIIMathParser asciiMathParser = new ASCIIMathParser(scriptReader);
+        ASCIIMathParser asciiMathParser = new ASCIIMathParser();
         
         Map<String,Object> options = new HashMap<String,Object>();
         options.put("displayMode", Boolean.TRUE);
         options.put("addSourceAnnotation", Boolean.TRUE);
-        Element mathElement = asciiMathParser.parseASCIIMath(asciiMathInput, options);
-        String mathMLOutput = MathMLUtilities.serializeElement(mathElement, true);
+        Document mathDocument = asciiMathParser.parseASCIIMath(asciiMathInput, options);
+        SerializationSpecifier serializationOptions = new SerializationOptions();
+        serializationOptions.setIncludingXMLDeclaration(false);
+        serializationOptions.setIndenting(true);
+        String mathMLOutput = MathMLUtilities.serializeDocument(mathDocument, serializationOptions);
         
         logger.info("ASCIIMathML Input: {}", asciiMathInput);
         logger.info("Resulting Output: {}", mathMLOutput);
