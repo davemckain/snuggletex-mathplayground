@@ -81,7 +81,9 @@ All Rights Reserved
     </form>
   </div>
   <div class="previewPanel">
-    <div id="mathJaxRendering" class="rawRendering"></div>
+    <div id="mathJaxRendering" class="rawRendering">
+      <math xmlns="http://www.w3.org/1998/Math/MathML"></math>
+    </div>
   </div>
 </div>
 

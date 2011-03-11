@@ -80,9 +80,15 @@ All Rights Reserved
     </div>
   </form>
   <div class="previewPanel">
-    <div id="previewRendering"></div>
+    <div id="previewRendering">
+    </div>
   </div>
 </div>
+
+<!-- TEMP: The move to MathJax 1.1 seems to barf on IE7 if there are no
+MathML elements in the page when it first loads. This is temporary hack
+until I work out how to do this better -->
+<math xmlns="http://www.w3.org/1998/Math/MathML"></math>
 
 <h2>Technical implementation details</h2>
 

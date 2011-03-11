@@ -67,7 +67,8 @@ All Rights Reserved
     </form>
   </div>
   <div class="previewPanel">
-    <div id="previewRendering"></div>
+    <div id="previewRendering">
+    </div>
   </div>
 </div>
 <p>
@@ -75,6 +76,11 @@ All Rights Reserved
   <b>e</b> as the exponential number, <b>i</b> as the imaginary number and
   <b>&#x3b3;</b> as Euler's constant.
 </p>
+
+<!-- TEMP: The move to MathJax 1.1 seems to barf on IE7 if there are no
+MathML elements in the page when it first loads. This is temporary hack
+until I work out how to do this better -->
+<math xmlns="http://www.w3.org/1998/Math/MathML"></math>
 
 <h2>Technical implementation details</h2>
 
