@@ -22,7 +22,6 @@ All Rights Reserved
     <saxon9.version>9.1.0.8</saxon9.version>
     <slf4j.version>1.5.11</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
-    <rhino.version>1.7R2</rhino.version>
   </properties>
   <dependencies>
     <dependency>
@@ -49,11 +48,6 @@ All Rights Reserved
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
       <version>${json-simple.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>rhino</groupId>
-      <artifactId>js</artifactId>
-      <version>${rhino.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -171,7 +165,7 @@ All Rights Reserved
       </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>2.1</version>
         <configuration>
           <warName>mathplayground</warName>
         </configuration>
