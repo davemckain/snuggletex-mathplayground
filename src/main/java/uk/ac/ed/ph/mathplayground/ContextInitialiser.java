@@ -50,28 +50,27 @@ public final class ContextInitialiser implements ServletContextListener {
         servletContext.setAttribute(STYLESHEET_MANAGER_ATTRIBUTE_NAME, stylesheetManager);
         
         /* Create shared SnuggleEngine, including up-conversion package */
-        SnuggleEngine snuggleEngine = new SnuggleEngine(stylesheetManager);
-        snuggleEngine.addPackage(UpConversionPackageDefinitions.getPackage());
-        servletContext.setAttribute(SNUGGLE_ENGINE_ATTRIBUTE_NAME, snuggleEngine);
+        SnuggleEngine engine = new SnuggleEngine(stylesheetManager);
+        engine.addPackage(UpConversionPackageDefinitions.getPackage());
+        servletContext.setAttribute(SNUGGLE_ENGINE_ATTRIBUTE_NAME, engine);
         
         /* Set up up-conversion options for demos */
         UpConversionOptions ucOpts = new UpConversionOptions();
         ucOpts.setSpecifiedOption(UpConversionOptionDefinitions.ADD_OPTIONS_ANNOTATION_NAME, "true");
         ucOpts.setSpecifiedOption(UpConversionOptionDefinitions.DO_BRACKETED_PRESENTATION_MATHML, "true");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("e"), "exponentialNumber");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("f"), "function");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("g"), "function");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("i"), "imaginaryNumber");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("\\pi"), "constantPi");
-        ucOpts.assumeSymbol(createUpConversionSymbolElement("\\gamma"), "eulerGamma");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "e"), "exponentialNumber");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "f"), "function");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "g"), "function");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "i"), "imaginaryNumber");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "\\pi"), "constantPi");
+        ucOpts.assumeSymbol(createUpConversionSymbolElement(engine, "\\gamma"), "eulerGamma");
         servletContext.setAttribute(UPCONVERSION_OPTIONS_ATTRIBUTE_NAME, ucOpts);
         
         logger.info("Context initialised");
     }
     
-    private Element createUpConversionSymbolElement(String mathInput) {
+    private Element createUpConversionSymbolElement(SnuggleEngine engine, String mathInput) {
         try {
-            SnuggleEngine engine = new SnuggleEngine();
             SnuggleSession session = engine.createSession();
             session.parseInput(new SnuggleInput("$" + mathInput + "$"));
             return (Element) session.buildDOMSubtree().item(0).getFirstChild();
