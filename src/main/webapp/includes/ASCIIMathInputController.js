@@ -80,8 +80,8 @@ var ASCIIMathInputController = (function() {
     var Widget = function(_asciiMathInputId,  _verifierControl) {
         this.asciiMathInputControlId = _asciiMathInputId;
         this.verifierControl = _verifierControl;
-        this.mathJaxRenderingContainerId = null;
-        this.pmathSourceContainerId = null;
+        this.rawRenderingContainerId = null;
+        this.rawSourceContainerId = null;
         this.helpButtonId = null;
         var lastInput = null;
         var currentXHR = null;
@@ -132,16 +132,16 @@ var ASCIIMathInputController = (function() {
                 message = "(Blank input)";
             }
             /* Update preview elements */
-            if (this.mathJaxRenderingContainerId!=null) {
+            if (this.rawRenderingContainerId!=null) {
                 if (mathmlSource!=null) {
-                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId), mathmlSource);
+                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId), mathmlSource);
                 }
                 else {
-                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.mathJaxRenderingContainerId), message);
+                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.rawRenderingContainerId), message);
                 }
             }
-            if (this.pmathSourceContainerId!=null) {
-                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource || message);
+            if (this.rawSourceContainerId!=null) {
+                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.rawSourceContainerId), mathmlSource || message);
             }
             return asciiMathInput;
         };
@@ -174,12 +174,12 @@ var ASCIIMathInputController = (function() {
         this.helpButtonId = id;
     };
 
-    Widget.prototype.setMathJaxRenderingContainerId = function(id) {
-        this.mathJaxRenderingContainerId = id;
+    Widget.prototype.setRawRenderingContainerId = function(id) {
+        this.rawRenderingContainerId = id;
     };
 
-    Widget.prototype.setPMathSourceContainerId = function(id) {
-        this.pmathSourceContainerId = id;
+    Widget.prototype.setRawSourceContainerId = function(id) {
+        this.rawSourceContainerId = id;
     };
 
     return {
