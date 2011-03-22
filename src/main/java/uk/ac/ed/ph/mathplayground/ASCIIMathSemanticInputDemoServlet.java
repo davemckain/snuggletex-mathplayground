@@ -5,10 +5,13 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
+import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,25 +50,26 @@ public final class ASCIIMathSemanticInputDemoServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        /* Get the raw ASCIIMathML input and Presentation MathML created by the ASCIIMathML
-         * JavaScript code.
-         */
+        /* Get the raw ASCIIMathML input sent from the form */
         request.setCharacterEncoding("UTF-8"); /* (Browsers usually don't set this for us) */
         String asciiMathInput = request.getParameter("asciiMathInput");
-        String asciiMathOutput = request.getParameter("asciiMathOutput");
-        if (asciiMathInput==null || asciiMathOutput==null) {
-            logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}, asciiMathOutput={}", asciiMathInput, asciiMathOutput);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not extract data passed by ASCIIMathML");
+        if (asciiMathInput==null) {
+            logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}", asciiMathInput);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request parameter asciiMathInput was not provided");
             return;
         }
-        asciiMathOutput = asciiMathOutput.trim();
         logger.info("ASCIIMathML Input: {}", asciiMathInput);
-        logger.info("Raw ASCIIMathML Output: {}", asciiMathOutput);
         request.setAttribute("asciiMathInput", asciiMathInput);
+
+        /* Parse the incoming ASCIIMath */
+        ASCIIMathParser asciiMathParser = getASCIMathParser();
+        Map<String, Object> parsingOptions = new HashMap<String, Object>();
+        parsingOptions.put(ASCIIMathParser.OPTION_ADD_SOURCE_ANNOTATION, Boolean.TRUE);
+        Document asciiMathMLDocument = asciiMathParser.parseASCIIMath(asciiMathInput, parsingOptions);
         
         /* Do up-conversion and extract wreckage */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
-        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathOutput, getUpConversionOptions());
+        Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathMLDocument, getUpConversionOptions());
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
         
         LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);

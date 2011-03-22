@@ -90,6 +90,7 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
             ASCIIMathParser asciiMathParser = getASCIMathParser();
             Map<String, Object> parsingOptions = new HashMap<String, Object>();
             parsingOptions.put(ASCIIMathParser.OPTION_ADD_SOURCE_ANNOTATION, Boolean.TRUE);
+            parsingOptions.put(ASCIIMathParser.OPTION_DISPLAY_MODE, Boolean.TRUE);
             asciiMathMLDocument = asciiMathParser.parseASCIIMath(input, parsingOptions);
         }
         return asciiMathMLDocument;

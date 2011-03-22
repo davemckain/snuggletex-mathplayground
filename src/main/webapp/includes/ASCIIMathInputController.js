@@ -3,8 +3,8 @@
  * Requirements:
  *
  * jquery.js (at least version 1.5.0)
- * ASCIIMathParser.js
  * UpConversionAJAXController.js
+ * ASCIIMathParser.js (optional - only needed for geek previews)
  *
  * Author: David McKain
  *
@@ -22,28 +22,29 @@ var ASCIIMathInputController = (function() {
 
     var helpDialog = null; /* (Created on first use) */
 
-    var asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
+    /* See if ASCIIMathParser.js was loaded in order to provide live raw
+     * previews ACIIMath input.
+     */
+    var asciiMathParserLoaded = false;
+    var asciiMathParser = null;
+    try {
+        asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
+        asciiMathParserLoaded = true;
+    }
+    catch (e) {
+    }
 
     /************************************************************/
-    /* ASCIIMath calling helpers */
 
     var callASCIIMath = function(mathModeInput) {
         /* Escape use of backquote symbol to prevent exiting math mode */
         mathModeInput = mathModeInput.replace(/`/g, "\\`");
 
-        var math = asciiMathParser.parseASCIIMathInput(mathModeInput, {
+        var mathElement = asciiMathParser.parseASCIIMathInput(mathModeInput, {
             displayMode: true,
             addSourceAnnotation: true
         });
-        return math;
-    };
-
-    /**
-     * Extracts the source MathML contained within the ASCIIMath-generated
-     * <math> element.
-     */
-    var extractMathML = function(asciiMathElement) {
-        var mathml = ASCIIMathParserBrowserUtilities.serializeXMLNode(asciiMathElement);
+        var mathml = ASCIIMathParserBrowserUtilities.serializeXMLNode(mathElement);
         return ASCIIMathParserBrowserUtilities.indentMathMLString(mathml);
     };
 
@@ -76,9 +77,8 @@ var ASCIIMathInputController = (function() {
 
     /************************************************************/
 
-    var Widget = function(_asciiMathInputId, _asciiMathOutputId, _verifierControl) {
+    var Widget = function(_asciiMathInputId,  _verifierControl) {
         this.asciiMathInputControlId = _asciiMathInputId;
-        this.asciiMathOutputControlId = _asciiMathOutputId;
         this.verifierControl = _verifierControl;
         this.mathJaxRenderingContainerId = null;
         this.pmathSourceContainerId = null;
@@ -95,76 +95,58 @@ var ASCIIMathInputController = (function() {
 
         /**
          * Checks the content of the <input/> element having the given asciiMathInputControlId,
-         * and calls {@link #updatePreview} if its contents have changed since the
+         * and calls {@link #updateASCIIMathPreview} if its contents have changed since the
          * last call to this.
          */
         this.updatePreviewIfChanged = function() {
             var asciiMathInput = this.getASCIIMathInput();
             if (lastInput==null || asciiMathInput!=lastInput) {
-                /* Something has changed */
-                lastInput = asciiMathInput;
-
-                /* Update live preview */
-                var mathmlSource = widget.updatePreview();
-
-                /* Maybe verify the input */
-                if (this.verifierControl!=null) {
-                    this.verifierControl.verifyLater(mathmlSource);
-                }
+                this.updatePreview();
             }
         };
 
-        /**
-         * Hacked version of AMdisplay() from ASCIIMathMLeditor.js that allows
-         * us to specify which element to display the resulting MathML
-         * in and where the raw input is going to come from.
-         */
         this.updatePreview = function() {
+            /* Maybe update live preview */
+            var asciiMathInput = widget.updateASCIIMathPreview();
+
+            /* Maybe verify the input */
+            if (this.verifierControl!=null) {
+                this.verifierControl.verifyLater(asciiMathInput);
+            }
+        };
+
+        this.updateASCIIMathPreview = function() {
             /* Get ASCIIMathML to generate a <math> element */
             var asciiMathInput = this.getASCIIMathInput();
             var mathmlSource = null;
+            var message = null;
             if (asciiMathInput.match(/\S/)) {
-                var asciiMathElement = callASCIIMath(this.getASCIIMathInput());
-                mathmlSource = extractMathML(asciiMathElement);
-
-                /* Maybe update preview mathmlSource box */
-                if (this.pmathSourceContainerId!=null) {
-                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource);
+                if (asciiMathParserLoaded) {
+                    mathmlSource = callASCIIMath(this.getASCIIMathInput());
                 }
-
-                /* Maybe insert MathML into the DOM for display */
-                if (this.mathJaxRenderingContainerId!=null) {
-                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId),
-                        asciiMathElement);
+                else {
+                    message = "(ASCIIMathParser.js not loaded)";
                 }
             }
             else {
-                /* Blank input */
-                if (this.pmathSourceContainerId!=null) {
-                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), "(Empty Input)");
+                message = "(Blank input)";
+            }
+            /* Update preview elements */
+            if (this.mathJaxRenderingContainerId!=null) {
+                if (mathmlSource!=null) {
+                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.mathJaxRenderingContainerId), mathmlSource);
                 }
-
-                /* Maybe insert MathML into the DOM for display */
-                if (this.mathJaxRenderingContainerId!=null) {
-                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.mathJaxRenderingContainerId), "(Blank input)");
+                else {
+                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.mathJaxRenderingContainerId), message);
                 }
             }
-            return mathmlSource;
+            if (this.pmathSourceContainerId!=null) {
+                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.pmathSourceContainerId), mathmlSource || message);
+            }
+            return asciiMathInput;
         };
 
         this.doInit = function() {
-            /* Set up submit handler for the form */
-            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
-            inputSelector.closest("form").bind("submit", function(evt) {
-                /* We'll redo the ASCIIMathML process, just in case we want to allow auto-preview to be disabled in future */
-                var asciiMathInput = inputSelector.get(0).value;
-                var asciiMathElement = callASCIIMath(asciiMathInput);
-                var asciiMathSource = extractMathML(asciiMathElement);
-                var mathmlResultControl = document.getElementById(widget.asciiMathOutputControlId);
-                mathmlResultControl.value = asciiMathSource;
-                return true;
-            });
-
             /* Bind help button */
             if (this.helpButtonId!=null) {
                 var helpButton = jQuery("#" + this.helpButtonId);
@@ -173,18 +155,14 @@ var ASCIIMathInputController = (function() {
                 });
             }
 
-            /* Set up initial preview */
-            var mathmlSource = widget.updatePreview();
-
-            /* Maybe do verification on the initial input */
-            if (this.verifierControl!=null) {
-                this.verifierControl.verifyLater(mathmlSource);
-            }
-
             /* Set up handler to update preview when required */
+            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
             inputSelector.bind("change keyup keydown", function() {
                 widget.updatePreviewIfChanged();
             });
+
+            /* Set up initial preview */
+            this.updatePreview();
         };
     };
 
@@ -205,8 +183,8 @@ var ASCIIMathInputController = (function() {
     };
 
     return {
-        bindInputWidget: function(inputId, outputId, verifierControl) {
-            return new Widget(inputId, outputId, verifierControl);
+        bindInputWidget: function(inputId, verifierControl) {
+            return new Widget(inputId, verifierControl);
         },
 
         getHelpPageURL: function() { return helpPageUrl },

@@ -40,7 +40,7 @@ All Rights Reserved
 
     ASCIIMathInputController.setHelpPageURL("<c:url value='/includes/hints.html'/>");
 
-    var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', 'asciiMathOutputControl', upConversionAJAXControl);
+    var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
     widget.setPMathSourceContainerId('pmathSource');
     widget.setMathJaxRenderingContainerId('mathJaxRendering');
     widget.setHelpButtonId('helpToggle');
@@ -73,7 +73,6 @@ All Rights Reserved
 <div class="inputBox inputWidget">
   <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
     <div class="inputPanel">
-      <input id="asciiMathOutputControl" name="asciiMathOutput" type="hidden">
       <a href="javascript://" id="helpToggle"></a>
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
       <input type="submit" value="Submit">
