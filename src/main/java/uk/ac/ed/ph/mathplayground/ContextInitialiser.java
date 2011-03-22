@@ -5,6 +5,7 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
+import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
@@ -37,9 +38,14 @@ public final class ContextInitialiser implements ServletContextListener {
     public static final String STYLESHEET_MANAGER_ATTRIBUTE_NAME = "stylesheetManager";
     public static final String SNUGGLE_ENGINE_ATTRIBUTE_NAME = "snuggleEngine";
     public static final String UPCONVERSION_OPTIONS_ATTRIBUTE_NAME = "upconversionOptions";
+    public static final String ASCIIMATH_PARSER_ATTRIBUTE_NAME = "asciiMathParser";
     
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
+        
+        /* Create shared ASCIIMathParser instance */
+        ASCIIMathParser asciiMathParser = new ASCIIMathParser();
+        servletContext.setAttribute(ASCIIMATH_PARSER_ATTRIBUTE_NAME, asciiMathParser);
         
         /* Create and store StylesheetManager, hard-coded to use Saxon with caching
          * turned on as we're loading via the ClassPath so there's no point trying to turn

@@ -53,7 +53,7 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
         String asciiMathInput = request.getParameter("asciiMathInput");
         
         /* Call up server-side ASCIIMath parser */
-        ASCIIMathParser asciiMathParser = new ASCIIMathParser();
+        ASCIIMathParser asciiMathParser = getASCIMathParser();
         
         Map<String,Object> options = new HashMap<String,Object>();
         options.put("displayMode", Boolean.TRUE);

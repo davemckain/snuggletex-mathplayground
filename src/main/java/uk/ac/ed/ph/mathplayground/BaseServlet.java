@@ -5,6 +5,7 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
+import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
@@ -55,6 +56,10 @@ abstract class BaseServlet extends HttpServlet {
     
     protected StylesheetManager getStylesheetManager() {
         return (StylesheetManager) getServletContext().getAttribute(ContextInitialiser.STYLESHEET_MANAGER_ATTRIBUTE_NAME);
+    }
+    
+    protected ASCIIMathParser getASCIMathParser() {
+        return (ASCIIMathParser) getServletContext().getAttribute(ContextInitialiser.ASCIIMATH_PARSER_ATTRIBUTE_NAME);
     }
     
     protected SnuggleEngine getSnuggleEngine() {
