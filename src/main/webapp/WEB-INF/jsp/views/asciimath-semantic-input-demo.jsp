@@ -28,22 +28,24 @@ All Rights Reserved
 
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/asciimath-upconversion-service"/>');
-    UpConversionAJAXController.setDelay(500);
+    MathJax.Hub.Queue(function() {
+      UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/asciimath-upconversion-service"/>');
+      UpConversionAJAXController.setDelay(500);
 
-    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
-    upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
-    upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
-    upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
-    upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
+      var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
+      upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
+      upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
+      upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
+      upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    ASCIIMathInputController.setHelpPageURL("<c:url value='/includes/hints.html'/>");
+      ASCIIMathInputController.setHelpPageURL("<c:url value='/includes/hints.html'/>");
 
-    var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
-    widget.setRawSourceContainerId('rawSource');
-    widget.setRawRenderingContainerId('rawRendering');
-    widget.setHelpButtonId('helpToggle');
-    widget.init();
+      var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
+      widget.setRawSourceContainerId('rawSource');
+      widget.setRawRenderingContainerId('rawRendering');
+      widget.setHelpButtonId('helpToggle');
+      widget.init();
+    });
   });
 //]]></script>
 
@@ -92,7 +94,7 @@ All Rights Reserved
   via client-side JavaScript on each keystroke in the input box. This live output is shown here:
 </p>
 <div id="rawRendering" class="rawRendering">
-  <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn></math>
+  <math xmlns="http://www.w3.org/1998/Math/MathML"></math>
 </div>
 <p>
   This raw output then sent (after a short delay) to a simple AJAX web service

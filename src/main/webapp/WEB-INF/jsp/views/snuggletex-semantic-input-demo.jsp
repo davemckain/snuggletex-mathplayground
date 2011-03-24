@@ -25,17 +25,19 @@ All Rights Reserved
 <!-- TEST -->
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
-    UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
-    UpConversionAJAXController.setDelay(500);
+    MathJax.Hub.Queue(function() {
+      UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
+      UpConversionAJAXController.setDelay(500);
 
-    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
-    upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
-    upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
-    upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
-    upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
+      var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
+      upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
+      upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
+      upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
+      upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-    var widget = SnuggleTeXInputController.createInputWidget('latexInputControl', upConversionAJAXControl);
-    widget.init();
+      var widget = SnuggleTeXInputController.createInputWidget('latexInputControl', upConversionAJAXControl);
+      widget.init();
+    });
   });
 //]]></script>
 
