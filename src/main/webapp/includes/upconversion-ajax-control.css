@@ -21,6 +21,9 @@ div.error {
   background: url(images/exclamation.png) no-repeat center left;
 }
 
-div.upConversionAJAXControlResult {
+div.upConversionAJAXControlError {
+}
+
+div.upConversionAJAXControlPreview {
   font-size: 120%;
 }

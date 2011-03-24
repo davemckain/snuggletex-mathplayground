@@ -101,6 +101,7 @@ var ASCIIMathInputController = (function() {
         this.updatePreviewIfChanged = function() {
             var asciiMathInput = this.getASCIIMathInput();
             if (lastInput==null || asciiMathInput!=lastInput) {
+                lastInput = asciiMathInput;
                 this.updatePreview();
             }
         };
@@ -137,7 +138,8 @@ var ASCIIMathInputController = (function() {
                     UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId), mathmlSource);
                 }
                 else {
-                    UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.rawRenderingContainerId), message);
+                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId),
+                    "<math><mtext>" + message + "</mtext></math>");
                 }
             }
             if (this.rawSourceContainerId!=null) {
@@ -183,8 +185,14 @@ var ASCIIMathInputController = (function() {
     };
 
     return {
-        bindInputWidget: function(inputId, verifierControl) {
-            return new Widget(inputId, verifierControl);
+        bindInputWidget: function(asciiMathInputId, verifierControl) {
+            if (asciiMathInputId==null) {
+                throw new Error("asciiMathInputId must not be null");
+            }
+            if (verifierControl==null) {
+                throw new Error("verifierControl must not be null");
+            }
+            return new Widget(asciiMathInputId, verifierControl);
         },
 
         getHelpPageURL: function() { return helpPageUrl },

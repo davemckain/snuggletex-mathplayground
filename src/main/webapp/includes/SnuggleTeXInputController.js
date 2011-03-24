@@ -68,8 +68,14 @@ var SnuggleTeXInputController = (function() {
     };
 
     return {
-        createInputWidget: function(inputId, verifierControl) {
-            return new Widget(inputId, verifierControl);
+        createInputWidget: function(snuggleTeXInputControlId, verifierControl) {
+            if (snuggleTeXInputControlId==null) {
+                throw new Error("snuggleTeXInputControlId must not be null");
+            }
+            if (verifierControl==null) {
+                throw new Error("verifierControl must not be null");
+            }
+            return new Widget(snuggleTeXInputControlId, verifierControl);
         }
     };
 

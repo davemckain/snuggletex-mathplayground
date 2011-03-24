@@ -28,8 +28,7 @@ All Rights Reserved
     UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
     UpConversionAJAXController.setDelay(500);
 
-    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl();
-    upConversionAJAXControl.setBracketedRenderingContainerId('previewRendering');
+    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
     upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
     upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
     upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
@@ -67,7 +66,9 @@ All Rights Reserved
     </form>
   </div>
   <div class="previewPanel">
+    <div id="previewMessages"></div>
     <div id="previewRendering">
+      <math xmlns="http://www.w3.org/1998/Math/MathML"></math>
     </div>
   </div>
 </div>
@@ -76,11 +77,6 @@ All Rights Reserved
   <b>e</b> as the exponential number, <b>i</b> as the imaginary number and
   <b>&#x3b3;</b> as Euler's constant.
 </p>
-
-<!-- TEMP: The move to MathJax 1.1 seems to barf on IE7 if there are no
-MathML elements in the page when it first loads. This is temporary hack
-until I work out how to do this better -->
-<math xmlns="http://www.w3.org/1998/Math/MathML"></math>
 
 <h2>Technical implementation details</h2>
 

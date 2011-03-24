@@ -31,8 +31,7 @@ All Rights Reserved
     UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/asciimath-upconversion-service"/>');
     UpConversionAJAXController.setDelay(500);
 
-    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl();
-    upConversionAJAXControl.setBracketedRenderingContainerId('previewRendering');
+    var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
     upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
     upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
     upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
@@ -79,15 +78,12 @@ All Rights Reserved
     </div>
   </form>
   <div class="previewPanel">
+    <div id="previewMessages"></div>
     <div id="previewRendering">
+      <math xmlns="http://www.w3.org/1998/Math/MathML"></math>
     </div>
   </div>
 </div>
-
-<!-- TEMP: The move to MathJax 1.1 seems to barf on IE7 if there are no
-MathML elements in the page when it first loads. This is temporary hack
-until I work out how to do this better -->
-<math xmlns="http://www.w3.org/1998/Math/MathML"></math>
 
 <h2>Technical implementation details</h2>
 
@@ -95,7 +91,9 @@ until I work out how to do this better -->
   The ASCIIMath input syntax is converted to ASCIIMath's version of Presentation MathML
   via client-side JavaScript on each keystroke in the input box. This live output is shown here:
 </p>
-<div id="rawRendering" class="rawRendering"></div>
+<div id="rawRendering" class="rawRendering">
+  <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn></math>
+</div>
 <p>
   This raw output then sent (after a short delay) to a simple AJAX web service
   that runs the SnuggleTeX semantic enrichment process on it to see if it can
