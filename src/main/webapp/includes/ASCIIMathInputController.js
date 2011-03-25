@@ -37,9 +37,6 @@ var ASCIIMathInputController = (function() {
     /************************************************************/
 
     var callASCIIMath = function(mathModeInput) {
-        /* Escape use of backquote symbol to prevent exiting math mode */
-        mathModeInput = mathModeInput.replace(/`/g, "\\`");
-
         var mathElement = asciiMathParser.parseASCIIMathInput(mathModeInput, {
             displayMode: true,
             addSourceAnnotation: true
