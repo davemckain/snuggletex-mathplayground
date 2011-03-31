@@ -15,39 +15,37 @@ All Rights Reserved
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
 
-<h1>SnuggleTeX Math Playground</h1>
-
-<h2>About</h2>
+<h1>Math Playground Home</h1>
 
 <p>
-  The SnuggleTeX Math Playground is a small and somewhat random showcase
-  of demos and code snippets relating to "maths on the web".
+  The SnuggleTeX Math Playground is a slightly random showcase
+  of demos, experiments and code snippets relating to "maths on the web".
 </p>
 <p>
-  It is primarily intended to be an incubation area to try out and share
-  new ideas that might be used in other projects, and which might be of
-  interest to others working in similar areas.
+  It is primarily intended to be an incubation area to try out and share new
+  ideas that might be useful in other projects, such as:
 </p>
-
-<h2>Current Beneficiary Projects</h2>
-
-<p>
-  Many of the ideas being explored are intended to benefit an existing
-  project. Some current projects and investigative themes are:
-</p>
-
 <ul>
   <li>
-    <a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX</a>:
-    Improvements to the "up-conversion" or "semantic enrichment" ideas,
-    as well as updating its web output templates to accommodate recent
-    significant advances like MathJax.
+    <a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX</a>
+    (The MathPlayground showcases some improvements to the "up-conversion" or
+    "semantic enrichment" ideas, as well as updating its web output templates
+    to accommodate recent significant advances like MathJax. These new ideas
+    are scheduled to appear in SnuggleTeX 1.3.)
   </li>
   <li>
-    <a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine</a>:
-    Widening browser support and improving the process for inputting and making
-    sense of simple mathematical expressions.
+    <a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine</a>
+    (We hope to widen browser support and improving the process for inputting
+    and making sense of simple mathematical expressions.)
   </li>
 </ul>
+<p>
+  Hopefully some of the ideas and sketches demonstrated here might also be useful
+  to other people and other projects, which I would be interested to learn about.
+</p>
+<p>
+  Please contact me (<a href="http://www2.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>)
+  for more information.
+</p>
 
 <%@ include file="/WEB-INF/jsp/includes/footer.jspf" %>

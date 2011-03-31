@@ -144,6 +144,12 @@ body#snuggleTeXInputDemo li.snuggleTeXInputDemo {
   margin: 1em 0;
 }
 
+span.extlink {
+  padding-right: 12px;
+  margin-left: 2px;
+  background: url(images/extlink.png) no-repeat center left;
+}
+
 /************************************************************/
 
 .inputBox {

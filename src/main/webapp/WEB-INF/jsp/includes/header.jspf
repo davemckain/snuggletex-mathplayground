@@ -73,7 +73,7 @@ headStuff (opt)
             <div id="navinner">
               <h2>About</h2>
               <ul>
-                <li class="home"><a href="<c:url value='/'/>">Home</a></li>
+                <li class="home"><a href="<c:url value='/'/>">Math Playground Home</a></li>
               </ul>
 
               <h2>Software</h2>
@@ -87,6 +87,12 @@ headStuff (opt)
                 <li class="asciiMathInputDemo"><a href="<c:url value='/asciimath-semantic-input-demo'/>">ASCIIMath semantic input widget</a></li>
                 <li class="snuggleTeXInputDemo"><a href="<c:url value='/snuggletex-semantic-input-demo'/>">SnuggleTeX semantic input widget</a></li>
                 <li class="serverSideasciiMathDemo"><a href="<c:url value='/server-side-asciimath-demo'/>">Server-side ASCIIMath</a></li>
+              </ul>
+
+              <h2>Related Projects</h2>
+              <ul>
+                <li><a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX<span class="extlink">&#160;</span></a></li>
+                <li><a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine<span class="extlink">&#160;</span></a></li>
               </ul>
             </div>
           </div>
