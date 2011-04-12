@@ -8,7 +8,6 @@ package uk.ac.ed.ph.mathplayground;
 import uk.ac.ed.ph.snuggletex.DOMOutputOptions;
 import uk.ac.ed.ph.snuggletex.InputError;
 import uk.ac.ed.ph.snuggletex.SnuggleSimpleMathRunner;
-import uk.ac.ed.ph.snuggletex.internal.util.IOUtilities;
 import uk.ac.ed.ph.snuggletex.upconversion.UpConvertingPostProcessor;
 import uk.ac.ed.ph.snuggletex.utilities.MessageFormatter;
 
@@ -41,7 +40,7 @@ public final class SnuggleTeXUpConversionService extends BaseServlet {
             throws IOException {
         /* Read input LaTeX */
         request.setCharacterEncoding("UTF-8");
-        String inputLaTeX = IOUtilities.readCharacterStream(request.getReader());
+        String inputLaTeX = request.getParameter("input");
         doService(response, inputLaTeX);
     }
     

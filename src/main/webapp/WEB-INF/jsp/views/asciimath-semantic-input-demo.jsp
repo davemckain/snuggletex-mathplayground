@@ -38,8 +38,6 @@ All Rights Reserved
       upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
       upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-      ASCIIMathInputController.setHelpPageURL("<c:url value='/includes/hints.html'/>");
-
       var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
       widget.setRawSourceContainerId('rawSource');
       widget.setRawRenderingContainerId('rawRendering');
@@ -74,7 +72,7 @@ All Rights Reserved
 <div class="inputBox inputWidget">
   <form action="asciimath-semantic-input-demo" method="post" style="text-align: center">
     <div class="inputPanel">
-      <a href="javascript://" id="helpToggle"></a>
+      <a href="<c:url value='/includes/hints.html'/>" target="_blank" id="helpToggle"></a>
       <input id="asciiMathInputControl" name="asciiMathInput" type="text" value="${asciiMathInput}">
       <input type="submit" value="Submit">
     </div>

@@ -6,7 +6,6 @@
 package uk.ac.ed.ph.mathplayground;
 
 import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
-import uk.ac.ed.ph.snuggletex.internal.util.IOUtilities;
 import uk.ac.ed.ph.snuggletex.internal.util.XMLUtilities;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
@@ -48,10 +47,10 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
             throws IOException {
         /* We'll read data in as UTF-8 */
         request.setCharacterEncoding("UTF-8");
-        String input = IOUtilities.readCharacterStream(request.getReader());
+        String input = request.getParameter("input");
         
         /* Parse the input */
-        Document asciiMathMLDocument = parsePOSTData(input);
+        Document asciiMathMLDocument = parseInput(input);
         
         /* Do up-conversion */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
@@ -72,7 +71,7 @@ public final class ASCIIMathUpConversionService extends BaseServlet {
         sendJSONResponse(response, jsonObject);
     }
     
-    private Document parsePOSTData(String input) throws IOException {
+    private Document parseInput(String input) throws IOException {
         Document asciiMathMLDocument = null;
         if (input.startsWith("<")) {
             /* The client probably sent MathML created by ASCIIMathML. Let's invoke XML parser to

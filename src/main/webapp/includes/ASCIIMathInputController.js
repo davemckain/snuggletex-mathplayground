@@ -18,8 +18,6 @@
 
 var ASCIIMathInputController = (function() {
 
-    var helpPageUrl = null; /* (Caller should fill this in) */
-
     var helpDialog = null; /* (Created on first use) */
 
     /* See if ASCIIMathParser.js was loaded in order to provide live raw
@@ -45,15 +43,10 @@ var ASCIIMathInputController = (function() {
         return ASCIIMathParserBrowserUtilities.indentMathMLString(mathml);
     };
 
-    var showHelpDialog = function(buttonQuery) {
+    var showHelpDialog = function(helpAElement) {
         if (helpDialog==null) {
-            var helpPanel = jQuery("<div></div>");
-            if (helpPageUrl!=null) {
-                helpPanel.load(helpPageUrl);
-            }
-            else {
-                helpPanel.html("(No Help URL has been set)");
-            }
+            var helpPanel = jQuery('<div></div>');
+            helpPanel.load(helpAElement.href);
             helpDialog = helpPanel.dialog({
                 autoOpen: false,
                 draggable: true,
@@ -66,7 +59,7 @@ var ASCIIMathInputController = (function() {
             helpDialog.dialog('close');
         }
         else {
-            var buttonPosition = buttonQuery.position();
+            var buttonPosition = jQuery(helpAElement).position();
             helpDialog.dialog('option', 'position', [ buttonPosition.left, buttonPosition.top + 70 ]);
             helpDialog.dialog('open');
         }
@@ -150,7 +143,8 @@ var ASCIIMathInputController = (function() {
             if (this.helpButtonId!=null) {
                 var helpButton = jQuery("#" + this.helpButtonId);
                 helpButton.click(function() {
-                    showHelpDialog(jQuery(this));
+                    showHelpDialog(this);
+                    return false;
                 });
             }
 
@@ -190,10 +184,7 @@ var ASCIIMathInputController = (function() {
                 throw new Error("verifierControl must not be null");
             }
             return new Widget(asciiMathInputId, verifierControl);
-        },
-
-        getHelpPageURL: function() { return helpPageUrl },
-        setHelpPageURL: function(id) { helpPageUrl = id }
+        }
     };
 
 })();

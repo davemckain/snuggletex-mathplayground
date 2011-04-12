@@ -74,7 +74,7 @@ var UpConversionAJAXController = (function() {
                         type: 'POST',
                         url: upConversionServiceUrl,
                         dataType: 'json',
-                        data: verifyInputData,
+                        data: {input: verifyInputData },
                         success: function(data, textStatus, jqXHR) {
                             if (currentXHR==jqXHR) {
                                 currentXHR = null;
@@ -170,7 +170,7 @@ var UpConversionAJAXController = (function() {
                     bracketedRenderingContainer.hide();
                     statusContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage');
-                    this.showMessage(statusContainer, '\xa0;');
+                    this.showMessage(statusContainer, '\xa0');
                     break;
 
                 case STATUS_WAITING_CLIENT:
