@@ -43,68 +43,72 @@ var UpConversionAJAXController = (function() {
         var currentTimeoutId = null;
         var thisControl = this;
 
-        /* Schedules verification on the given data after a short delay. Subsequent requests in this
-         * period will win out over this one.
+        /* Schedules verification on the given data after a short delay
+         * that batches requests together for efficiency.
          *
-         * Use null input to signify "empty input". The UI will be updated accordingly.
+         * Use null or blank input to signify "empty input". The UI will be updated accordingly.
          */
-        this.doVerifyLater = function(verifyInputData) {
-            if (currentTimeoutId!=null) {
-                window.clearTimeout(currentTimeoutId);
+        this._verifyLater = function(verifyInputData) {
+            if (upConversionServiceUrl==null) {
+                throw new Error("upConversionServiceUrl is null - no verification can be done");
+            }
+            this._resetTimeout();
+            if (verifyInputData!=null && verifyInputData.length>0) {
+                this._updateUpConversionContainer(STATUS_WAITING_SERVER);
+                currentTimeoutId = window.setTimeout(function() {
+                    thisControl._callVerifier(verifyInputData);
+                    currentTimeoutId = null;
+                }, delay);
             }
             else {
-                this.updateUpConversionContainer(STATUS_WAITING_CLIENT); /* Show waiting animation */
+                this._clearVerificationResult();
             }
-            currentTimeoutId = window.setTimeout(function() {
-                thisControl.verify(verifyInputData);
+        };
+
+        this._clear = function() {
+            this._resetTimeout();
+            this._clearVerificationResult();
+        };
+
+        this._resetTimeout = function() {
+            if (currentTimeoutId!=null) {
+                window.clearTimeout(currentTimeoutId);
                 currentTimeoutId = null;
-            }, delay);
+            }
         };
 
         /* Calls up the AJAX verification service on the given data, causing a UI update once
          * the results are returned.
          *
-         * Use null input to signify "empty input". The UI will be updated accordingly instantly.
+         * Use null input to signify "empty input". The UI will be updated instantly.
          */
-        this.verify = function(verifyInputData) {
-            if (upConversionServiceUrl!=null) {
-                if (verifyInputData!=null && verifyInputData.length>0) {
-                    this.updateUpConversionContainer(STATUS_WAITING_SERVER);
-                    currentXHR = jQuery.ajax({
-                        type: 'POST',
-                        url: upConversionServiceUrl,
-                        dataType: 'json',
-                        data: {input: verifyInputData },
-                        success: function(data, textStatus, jqXHR) {
-                            if (currentXHR==jqXHR) {
-                                currentXHR = null;
-                                thisControl.showVerificationResult(data);
-                            }
-                        },
-                        error: function(jqXHR, textStatus, error) {
-                            thisControl.updateUpConversionContainer(STATUS_AJAX_ERROR, error);
-                        }
-                    });
+        this._callVerifier = function(verifyInputData) {
+            currentXHR = jQuery.ajax({
+                type: 'POST',
+                url: upConversionServiceUrl,
+                dataType: 'json',
+                data: {input: verifyInputData },
+                success: function(data, textStatus, jqXHR) {
+                    if (currentXHR==jqXHR) {
+                        currentXHR = null;
+                        thisControl._showVerificationResult(data);
+                    }
+                },
+                error: function(jqXHR, textStatus, error) {
+                    thisControl._updateUpConversionContainer(STATUS_AJAX_ERROR, error);
                 }
-                else {
-                    currentXHR = null;
-                    thisControl.clearVerificationResult();
-                }
-            }
-            else {
-                throw new Error("upConversionServiceUrl is null - no verification can be done");
-            }
+            });
         };
 
-        this.showVerificationResult = function(jsonData) {
+        this._showVerificationResult = function(jsonData) {
             /* We consider "valid" to mean "getting as far as CMathML" here */
             var cmath = jsonData['cmath'];
             if (cmath!=null) {
                 var bracketedMathML = jsonData['pmathBracketed'];
-                this.updateUpConversionContainer(STATUS_SUCCESS, bracketedMathML);
+                this._updateUpConversionContainer(STATUS_SUCCESS, bracketedMathML);
             }
             else if (jsonData['cmathFailures']!=null) {
-                this.updateUpConversionContainer(STATUS_UPCONVERSION_FAILED);
+                this._updateUpConversionContainer(STATUS_UPCONVERSION_FAILED);
             }
             else if (jsonData['errors']!=null) {
                 var html = '<ul>';
@@ -112,48 +116,48 @@ var UpConversionAJAXController = (function() {
                     html += '<li>' + jsonData['errors'][i] + '</li>'
                 }
                 html += '</ul>';
-                this.updateUpConversionContainer(STATUS_PARSE_ERROR, null, html);
+                this._updateUpConversionContainer(STATUS_PARSE_ERROR, null, html);
             }
             else {
-                this.updateUpConversionContainer(STATUS_UNKNOWN_ERROR);
+                this._updateUpConversionContainer(STATUS_UNKNOWN_ERROR);
             }
 
             /* Maybe show various sources, if requested */
             if (this.pmathSemanticSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId),
+                this._showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId),
                     jsonData['pmathSemantic'] || 'Could not generate Semantic Presentation MathML');
             }
             if (this.pmathBracketedSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId),
+                this._showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId),
                     jsonData['pmathBracketed'] || 'Could not generate Bracketed Presentation MathML');
             }
             if (this.cmathSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.cmathSourceContainerId),
+                this._showPreformatted(jQuery("#" + this.cmathSourceContainerId),
                     cmath || 'Could not generate Content MathML');
             }
             if (this.maximaSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.maximaSourceContainerId),
+                this._showPreformatted(jQuery("#" + this.maximaSourceContainerId),
                     jsonData['maxima'] || 'Could not generate Maxima syntax');
             }
         };
 
-        this.clearVerificationResult = function() {
-            this.updateUpConversionContainer(STATUS_EMPTY);
+        this._clearVerificationResult = function() {
+            this._updateUpConversionContainer(STATUS_EMPTY);
             if (this.pmathSemanticSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId), EMPTY_INPUT);
+                this._showPreformatted(jQuery("#" + this.pmathSemanticSourceContainerId), EMPTY_INPUT);
             }
             if (this.pmathBracketedSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId), EMPTY_INPUT);
+                this._showPreformatted(jQuery("#" + this.pmathBracketedSourceContainerId), EMPTY_INPUT);
             }
             if (this.cmathSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.cmathSourceContainerId), EMPTY_INPUT);
+                this._showPreformatted(jQuery("#" + this.cmathSourceContainerId), EMPTY_INPUT);
             }
             if (this.maximaSourceContainerId!=null) {
-                this.showPreformatted(jQuery("#" + this.maximaSourceContainerId), EMPTY_INPUT);
+                this._showPreformatted(jQuery("#" + this.maximaSourceContainerId), EMPTY_INPUT);
             }
         };
 
-        this.updateUpConversionContainer = function(status, mathElementString, errorContent) {
+        this._updateUpConversionContainer = function(status, mathElementString, errorContent) {
             var bracketedRenderingContainer = jQuery("#" + this.bracketedRenderingContainerId);
             var messageContainer = jQuery("#" + this.messageContainerId);
             /* Set up if not done already */
@@ -170,7 +174,7 @@ var UpConversionAJAXController = (function() {
                     bracketedRenderingContainer.hide();
                     statusContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage');
-                    this.showMessage(statusContainer, '\xa0');
+                    this._showMessage(statusContainer, '\xa0');
                     break;
 
                 case STATUS_WAITING_CLIENT:
@@ -178,15 +182,15 @@ var UpConversionAJAXController = (function() {
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage waiting');
-                    this.showMessage(statusContainer, 'Verifying your input...');
+                    this._showMessage(statusContainer, 'Verifying your input...');
                     statusContainer.show();
                     break;
 
                 case STATUS_SUCCESS:
                     errorContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage success');
-                    this.showMessage(statusContainer, 'I have interpreted your input as:');
-                    this.showMathML(bracketedRenderingContainer, mathElementString);
+                    this._showMessage(statusContainer, 'I have interpreted your input as:');
+                    this._showMathML(bracketedRenderingContainer, mathElementString);
                     statusContainer.show();
                     bracketedRenderingContainer.show();
                     break;
@@ -194,8 +198,8 @@ var UpConversionAJAXController = (function() {
                 case STATUS_PARSE_ERROR:
                     bracketedRenderingContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage failure');
-                    this.showMessage(statusContainer, 'SnuggleTeX could not parse your input:');
-                    this.showMessage(errorContainer, errorContent);
+                    this._showMessage(statusContainer, 'SnuggleTeX could not parse your input:');
+                    this._showMessage(errorContainer, errorContent);
                     statusContainer.show();
                     errorContainer.show();
                     break;
@@ -204,8 +208,8 @@ var UpConversionAJAXController = (function() {
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage failure');
-                    this.showMessage(statusContainer, 'Sorry, I could not make sense of your input');
-                    this.showMessage(errorContainer, null);
+                    this._showMessage(statusContainer, 'Sorry, I could not make sense of your input');
+                    this._showMessage(errorContainer, null);
                     statusContainer.show();
                     break;
 
@@ -213,31 +217,31 @@ var UpConversionAJAXController = (function() {
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage error');
-                    this.showMessage(statusContainer, 'Unexpected error');
-                    this.showMessage(errorContainer, null);
+                    this._showMessage(statusContainer, 'Unexpected error');
+                    this._showMessage(errorContainer, null);
                     statusContainer.show();
                     break;
 
                 case STATUS_AJAX_ERROR:
                     bracketedRenderingContainer.hide();
                     statusContainer.attr('class', 'upConversionAJAXControlMessage error');
-                    this.showMessage(statusContainer, 'Communication error');
-                    this.showMessage(errorContainer, errorContent);
+                    this._showMessage(statusContainer, 'Communication error');
+                    this._showMessage(errorContainer, errorContent);
                     statusContainer.show();
                     errorContainer.show();
                     break;
             }
         };
 
-        this.showMessage = function(containerQuery, html) {
+        this._showMessage = function(containerQuery, html) {
             UpConversionAJAXController.replaceContainerContent(containerQuery, html || "\xa0");
         };
 
-        this.showMathML = function(containerQuery, mathmlString) {
+        this._showMathML = function(containerQuery, mathmlString) {
             UpConversionAJAXController.replaceContainerMathMLContent(containerQuery, mathmlString);
         };
 
-        this.showPreformatted = function(containerQuery, text) {
+        this._showPreformatted = function(containerQuery, text) {
             UpConversionAJAXController.replaceContainerPreformattedText(containerQuery, text);
         };
     };
@@ -258,8 +262,16 @@ var UpConversionAJAXController = (function() {
         this.maximaSourceContainerId = id;
     };
 
+    UpConversionAJAXControl.prototype.showVerificationResult = function(jsonData) {
+        this._showVerificationResult(jsonData);
+    };
+
     UpConversionAJAXControl.prototype.verifyLater = function(verifyInputData) {
-        this.doVerifyLater(verifyInputData);
+        this._verifyLater(verifyInputData);
+    };
+
+    UpConversionAJAXControl.prototype.clear = function() {
+        this._clear();
     };
 
     return {

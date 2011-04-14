@@ -78,37 +78,73 @@ var ASCIIMathInputController = (function() {
         var currentTimeoutId = null;
         var widget = this;
 
-        this.getASCIIMathInput= function() {
+        /* Binds event handlers to the input widget to make it responsd to user input */
+        this._init = function() {
+            /* Bind help button */
+            if (this.helpButtonId!=null) {
+                var helpButton = jQuery("#" + this.helpButtonId);
+                helpButton.click(function() {
+                    showHelpDialog(this);
+                    return false;
+                });
+            }
+
+            /* Set up handler to update preview when required */
+            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
+            inputSelector.bind("change keyup keydown", function() {
+                widget._userInputChanged();
+            });
+        };
+
+        /**
+         * Called after the user causes a change in input. This checks the input
+         * to see if it is different from the last input and, if so, schedules
+         * verification.
+         */
+        this._userInputChanged = function() {
+            var asciiMathInput = this._getASCIIMathInput();
+            if (lastInput==null || asciiMathInput!=lastInput) {
+                lastInput = asciiMathInput;
+                this._processInput(asciiMathInput);
+            }
+        };
+
+        this._getASCIIMathInput = function() {
             var inputSelector = jQuery("#" + this.asciiMathInputControlId);
             return inputSelector.get(0).value;
         };
 
-        /**
-         * Checks the content of the <input/> element having the given asciiMathInputControlId,
-         * and calls {@link #updateASCIIMathPreview} if its contents have changed since the
-         * last call to this.
-         */
-        this.updatePreviewIfChanged = function() {
-            var asciiMathInput = this.getASCIIMathInput();
-            if (lastInput==null || asciiMathInput!=lastInput) {
-                lastInput = asciiMathInput;
-                this.updatePreview();
-            }
+        this._setASCIIMathInput = function(asciiMathInput) {
+            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
+            inputSelector.get(0).value = asciiMathInput || '';
+            lastInput = asciiMathInput;
+            this._processInput(asciiMathInput);
         };
 
-        this.updatePreview = function() {
-            /* Maybe update live preview */
-            var asciiMathInput = widget.updateASCIIMathPreview();
+        this._show = function(asciiMathInput, jsonData) {
+            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
+            inputSelector.get(0).value = asciiMathInput || '';
+            lastInput = asciiMathInput;
+            this.verifierControl.showVerificationResult(jsonData);
+        };
 
-            /* Maybe verify the input */
+        this._processInput = function(asciiMathInput) {
+            /* Update live ASCIIMath preview (if used) */
+            var asciiMathInput = widget._updateASCIIMathPreview(asciiMathInput);
+
+            /* Call up verifier (if used) */
             if (this.verifierControl!=null) {
-                this.verifierControl.verifyLater(asciiMathInput);
+                if (asciiMathInput!=null && asciiMathInput.length>0) {
+                    this.verifierControl.verifyLater(asciiMathInput);
+                }
+                else {
+                    this.verifierControl.clear();
+                }
             }
         };
 
-        this.updateASCIIMathPreview = function() {
+        this._updateASCIIMathPreview = function(asciiMathInput) {
             /* Get ASCIIMathML to generate a <math> element */
-            var asciiMathInput = this.getASCIIMathInput();
             var mathmlSource = null;
             var message = null;
             if (asciiMathInput.match(/\S/)) {
@@ -138,29 +174,6 @@ var ASCIIMathInputController = (function() {
             return asciiMathInput;
         };
 
-        this.doInit = function() {
-            /* Bind help button */
-            if (this.helpButtonId!=null) {
-                var helpButton = jQuery("#" + this.helpButtonId);
-                helpButton.click(function() {
-                    showHelpDialog(this);
-                    return false;
-                });
-            }
-
-            /* Set up handler to update preview when required */
-            var inputSelector = jQuery("#" + this.asciiMathInputControlId);
-            inputSelector.bind("change keyup keydown", function() {
-                widget.updatePreviewIfChanged();
-            });
-
-            /* Set up initial preview */
-            this.updatePreview();
-        };
-    };
-
-    Widget.prototype.init = function() {
-        this.doInit();
     };
 
     Widget.prototype.setHelpButtonId = function(id) {
@@ -173,6 +186,30 @@ var ASCIIMathInputController = (function() {
 
     Widget.prototype.setRawSourceContainerId = function(id) {
         this.rawSourceContainerId = id;
+    };
+
+    Widget.prototype.init = function() {
+        this._init();
+    };
+
+    Widget.prototype.syncWithInput = function() {
+        this._processInput(this._getASCIIMathInput());
+    };
+
+    Widget.prototype.getASCIIMathInput = function() {
+        return this._getASCIIMathInput();
+    };
+
+    Widget.prototype.setASCIIMathInput = function(asciiMathInput) {
+        this._setASCIIMathInput(asciiMathInput);
+    };
+
+    Widget.prototype.show = function(asciiMathInput, jsonData) {
+        this._show(asciiMathInput, jsonData);
+    };
+
+    Widget.prototype.reset = function() {
+        this._setASCIIMathInput(null);
     };
 
     return {

@@ -43,6 +43,12 @@ All Rights Reserved
       widget.setRawRenderingContainerId('rawRendering');
       widget.setHelpButtonId('helpToggle');
       widget.init();
+      widget.syncWithInput();
+      //widget.setASCIIMathInput('2y-1');
+      //widget.show('2x-1', {
+      //  cmath: '<math xmlns="http://www.w3.org/1998/Math/MathML"><ci>x</ci></math>',
+      //  pmathBracketed: '<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math>'
+      //});
     });
   });
 //]]></script>
