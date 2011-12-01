@@ -31,7 +31,7 @@ All Rights Reserved
             var asciiMathInput = inputQuery.get(0).value;
 
             /* Call up parser */
-            var math = asciiMathParser.parseASCIIMathInput(asciiMathInput.replace(/`/g, "\\`"));
+            var math = asciiMathParser.parseASCIIMathInput(asciiMathInput);
             math.setAttribute("display", "block");
 
             /* Update display */
