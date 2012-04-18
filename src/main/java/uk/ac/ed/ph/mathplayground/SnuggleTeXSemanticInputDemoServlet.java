@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
- * Version of {@link ASCIIMathSemanticInputDemoServlet} that uses SnuggleTeX input instead.
+ * Version of {@link AsciiMathSemanticInputDemoServlet} that uses SnuggleTeX input instead.
  * 
  * @author  David McKain
  * @version $Revision:158 $
@@ -33,9 +33,7 @@ import org.w3c.dom.Element;
 public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
-
-    /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(SnuggleTeXSemanticInputDemoServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(SnuggleTeXSemanticInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -54,7 +52,7 @@ public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
         request.setCharacterEncoding("UTF-8");
         String latexMathInput = request.getParameter("latexMathInput");
         if (latexMathInput==null) {
-            logger.warn("No latexInput parameter present");
+            logger.warn("No latexMathInput parameter present");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -70,7 +68,7 @@ public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
         Element mathElement = runner.doMathInput(latexMathInput, domOptions);
         if (mathElement!=null) {
             /* Successful parse, so unwrap MathML */
-            LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
+            LinkedHashMap<String, String> unwrappedMathML = unwrapMathmlElement(mathElement);
             logger.info("Final parallel MathML: {}", unwrappedMathML.get("pmathParallel"));
             request.setAttribute("pmathParallel", unwrappedMathML.get("pmathParallel"));
             request.setAttribute("pmathSemantic", unwrappedMathML.get("pmathSemantic"));

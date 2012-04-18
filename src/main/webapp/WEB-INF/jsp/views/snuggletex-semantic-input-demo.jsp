@@ -15,7 +15,7 @@ All Rights Reserved
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
   <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/UpConversionAJAXController.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='includes/UpConversionAjaxController.js'/>"></script>
   <script type="text/javascript" src="<c:url value='includes/SnuggleTeXInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
@@ -26,10 +26,10 @@ All Rights Reserved
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
     MathJax.Hub.Queue(function() {
-      UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
-      UpConversionAJAXController.setDelay(500);
+      UpConversionAjaxController.setUpConversionServiceUrl('<c:url value="/snuggletex-upconversion-service"/>');
+      UpConversionAjaxController.setDelay(500);
 
-      var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
+      var upConversionAJAXControl = UpConversionAjaxController.createUpConversionAjaxControl('previewMessages', 'previewRendering');
       upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
       upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
       upConversionAJAXControl.setCMathSourceContainerId('cmathSource');

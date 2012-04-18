@@ -5,13 +5,12 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParserOptions;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,12 +28,10 @@ import org.w3c.dom.Element;
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class ASCIIMathSemanticInputDemoServlet extends BaseServlet {
+public final class AsciiMathSemanticInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
-
-    /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(ASCIIMathSemanticInputDemoServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(AsciiMathSemanticInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -54,7 +51,7 @@ public final class ASCIIMathSemanticInputDemoServlet extends BaseServlet {
         request.setCharacterEncoding("UTF-8"); /* (Browsers usually don't set this for us) */
         String asciiMathInput = request.getParameter("asciiMathInput");
         if (asciiMathInput==null) {
-            logger.warn("Could not extract data from ASCIIMath: asciiMathInput={}", asciiMathInput);
+            logger.warn("No asciiMathInput request parameter specified");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request parameter asciiMathInput was not provided");
             return;
         }
@@ -62,17 +59,17 @@ public final class ASCIIMathSemanticInputDemoServlet extends BaseServlet {
         request.setAttribute("asciiMathInput", asciiMathInput);
 
         /* Parse the incoming ASCIIMath */
-        ASCIIMathParser asciiMathParser = getASCIMathParser();
-        Map<String, Object> parsingOptions = new HashMap<String, Object>();
-        parsingOptions.put(ASCIIMathParser.OPTION_ADD_SOURCE_ANNOTATION, Boolean.TRUE);
-        Document asciiMathMLDocument = asciiMathParser.parseASCIIMath(asciiMathInput, parsingOptions);
+        AsciiMathParser asciiMathParser = getAsciiMathParser();
+        AsciiMathParserOptions asciiMathParserOptions = new AsciiMathParserOptions();
+        asciiMathParserOptions.setAddSourceAnnotation(true);
+        Document asciiMathMLDocument = asciiMathParser.parseAsciiMath(asciiMathInput, asciiMathParserOptions);
         
         /* Do up-conversion and extract wreckage */
         MathMLUpConverter upConverter = new MathMLUpConverter(getStylesheetManager());
         Document upConvertedMathDocument = upConverter.upConvertASCIIMathML(asciiMathMLDocument, getUpConversionOptions());
         Element mathElement = upConvertedMathDocument.getDocumentElement(); /* NB: Document is <math/> here */
         
-        LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
+        LinkedHashMap<String, String> unwrappedMathML = unwrapMathmlElement(mathElement);
 
         logger.info("Final parallel MathML: {}", unwrappedMathML.get("pmathParallel"));
         request.setAttribute("pmathParallel", unwrappedMathML.get("pmathParallel"));

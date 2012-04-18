@@ -20,7 +20,7 @@ All Rights Reserved
 
 <p>
   This demo shows my
-  <a href="asciimath-parser">ASCIIMathParser.js</a>
+  <a href="asciimath-parser">AsciiMathParser.js</a>
   running outside its traditional browser environment.
 </p>
 
@@ -47,7 +47,7 @@ All Rights Reserved
 <p>
   There is not much to this demo at all. The ASCIIMath input you enter is sent
   to a Java servlet. This runs the
-  <a href="asciimath-parser">ASCIIMathParser.js</a> on it,
+  <a href="asciimath-parser">AsciiMathParser.js</a> on it,
   using the <a href="http://www.mozilla.org/rhino/">Rhino JavaScript</a> engine,
   and the resulting MathML is sent back to be flashed in front of your eyes. There
   is <strong>no</strong> JavaScript running in the browser here at all.

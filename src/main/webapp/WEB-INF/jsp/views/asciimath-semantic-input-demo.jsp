@@ -17,10 +17,10 @@ All Rights Reserved
   <link rel="stylesheet" type="text/css" href="<c:url value='/includes/jquery/redmond/jquery-ui-1.8.10.custom.css'/>"/>
   <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-1.5.1.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-ui-1.8.10.custom.min.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathParserBrowserUtilities.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/UpConversionAJAXController.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/ASCIIMathInputController.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/UpConversionAjaxController.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/includes/AsciiMathInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -29,16 +29,16 @@ All Rights Reserved
 <script type="text/javascript">//<![CDATA[
   jQuery(document).ready(function() {
     MathJax.Hub.Queue(function() {
-      UpConversionAJAXController.setUpConversionServiceUrl('<c:url value="/asciimath-upconversion-service"/>');
-      UpConversionAJAXController.setDelay(500);
+      UpConversionAjaxController.setUpConversionServiceUrl('<c:url value="/asciimath-upconversion-service"/>');
+      UpConversionAjaxController.setDelay(500);
 
-      var upConversionAJAXControl = UpConversionAJAXController.createUpConversionAJAXControl('previewMessages', 'previewRendering');
+      var upConversionAJAXControl = UpConversionAjaxController.createUpConversionAjaxControl('previewMessages', 'previewRendering');
       upConversionAJAXControl.setPMathSemanticSourceContainerId('pmathSemanticSource');
       upConversionAJAXControl.setPMathBracketedSourceContainerId('pmathBracketedSource');
       upConversionAJAXControl.setCMathSourceContainerId('cmathSource');
       upConversionAJAXControl.setMaximaSourceContainerId('maximaSource');
 
-      var widget = ASCIIMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
+      var widget = AsciiMathInputController.bindInputWidget('asciiMathInputControl', upConversionAJAXControl);
       widget.setRawSourceContainerId('rawSource');
       widget.setRawRenderingContainerId('rawRendering');
       widget.setHelpButtonId('helpToggle');

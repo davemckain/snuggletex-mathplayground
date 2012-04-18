@@ -3,8 +3,8 @@
  * Requirements:
  *
  * jquery.js (at least version 1.5.0)
- * UpConversionAJAXController.js
- * ASCIIMathParser.js (optional - only needed for geek previews)
+ * UpConversionAjaxController.js
+ * AsciiMathParser.js (optional - only needed for geek previews)
  *
  * Author: David McKain
  *
@@ -16,17 +16,17 @@
 
 /************************************************************/
 
-var ASCIIMathInputController = (function() {
+var AsciiMathInputController = (function() {
 
     var helpDialog = null; /* (Created on first use) */
 
-    /* See if ASCIIMathParser.js was loaded in order to provide live raw
+    /* See if AsciiMathParser.js was loaded in order to provide live raw
      * previews ACIIMath input.
      */
     var asciiMathParserLoaded = false;
     var asciiMathParser = null;
     try {
-        asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
+        asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXMLDocument());
         asciiMathParserLoaded = true;
     }
     catch (e) {
@@ -35,12 +35,12 @@ var ASCIIMathInputController = (function() {
     /************************************************************/
 
     var callASCIIMath = function(mathModeInput) {
-        var mathElement = asciiMathParser.parseASCIIMathInput(mathModeInput, {
+        var mathElement = asciiMathParser.parseAsciiMathInput(mathModeInput, {
             displayMode: true,
             addSourceAnnotation: true
         });
-        var mathml = ASCIIMathParserBrowserUtilities.serializeXMLNode(mathElement);
-        return ASCIIMathParserBrowserUtilities.indentMathMLString(mathml);
+        var mathml = AsciiMathParserBrowserUtilities.serializeXMLNode(mathElement);
+        return AsciiMathParserBrowserUtilities.indentMathMLString(mathml);
     };
 
     var showHelpDialog = function(helpAElement) {
@@ -152,7 +152,7 @@ var ASCIIMathInputController = (function() {
                     mathmlSource = callASCIIMath(this.getASCIIMathInput());
                 }
                 else {
-                    message = "(ASCIIMathParser.js not loaded)";
+                    message = "(AsciiMathParser.js not loaded)";
                 }
             }
             else {
@@ -161,15 +161,15 @@ var ASCIIMathInputController = (function() {
             /* Update preview elements */
             if (this.rawRenderingContainerId!=null) {
                 if (mathmlSource!=null) {
-                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId), mathmlSource);
+                    UpConversionAjaxController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId), mathmlSource);
                 }
                 else {
-                    UpConversionAJAXController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId),
+                    UpConversionAjaxController.replaceContainerMathMLContent(jQuery("#" + this.rawRenderingContainerId),
                     "<math><mtext>" + message + "</mtext></math>");
                 }
             }
             if (this.rawSourceContainerId!=null) {
-                UpConversionAJAXController.replaceContainerPreformattedText(jQuery("#" + this.rawSourceContainerId), mathmlSource || message);
+                UpConversionAjaxController.replaceContainerPreformattedText(jQuery("#" + this.rawSourceContainerId), mathmlSource || message);
             }
             return asciiMathInput;
         };

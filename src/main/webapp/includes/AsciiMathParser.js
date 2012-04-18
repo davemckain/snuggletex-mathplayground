@@ -1,6 +1,24 @@
-/* $Id$
+/*
 
-ASCIIMathParser.js
+Copyright (c) 2011-2012, The University of Edinburgh
+All Rights Reserved
+
+This file is part of AsciiMathParser.
+
+AsciiMathParser is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+AsciiMathParser is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License (at
+http://www.gnu.org/licences/lgpl.html) for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with AsciiMathParser. If not, see <http://www.gnu.org/licenses/lgpl.html>.
+
+AsciiMathParser.js
 ==================
 
 This is a modified and cut-down version of ASCIIMathML.js v2.1
@@ -14,23 +32,9 @@ The only requirement is that you can provide a DOM Document Object
 when creating a parser. (Microsoft's implementation of Document is fine
 too.)
 
----------------------------------------------------------------
-
-Copyright (c) 2011, The University of Edinburgh
-
-This programme is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at
-your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-(at http://www.gnu.org/licences/lgpl.html) for more details.
-
----------------------------------------------------------------
-
 */
+
+/************************************************************************/
 
 /* This creates a new Object that you can use to parse ASCIIMath input.
  *
@@ -38,7 +42,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
  * new DOM Nodes. The Doucument itself will not be modified.
  * A Microsoft DOM is acceptable.
  */
-function ASCIIMathParser(document) {
+function AsciiMathParser(document) {
 
 /* ASCIIMathML.js BEGINS BELOW.
  *
@@ -81,7 +85,7 @@ Extensive clean-up and improvements by Paulo Soares, Oct 2007.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at
+the Free Software Foundation; either version 3 of the License, or (at
 your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT 
@@ -808,7 +812,7 @@ function AMparseExpr(str,rightbracket) {
 initSymbols();
 
 /* Parses the given ASCIIMathInput, returning a <math> DOM Element */
-this.parseASCIIMathInput = function(asciiMathInput) {
+this.parseAsciiMathInput = function(asciiMathInput) {
   var options = arguments[1] || {};
 
   /* Call up ASCIIMath to do the actual parsing, generating a document fragment */
@@ -833,5 +837,5 @@ this.parseASCIIMathInput = function(asciiMathInput) {
   return math;
 };
 
-// (end of unindented MakeASCIIMathParser function defined at top of file)
+// (end of unindented constructor defined at top of file)
 };

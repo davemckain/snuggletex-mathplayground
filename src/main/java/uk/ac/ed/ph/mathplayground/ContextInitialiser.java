@@ -5,7 +5,7 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParser;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.SnuggleInput;
 import uk.ac.ed.ph.snuggletex.SnuggleSession;
@@ -43,8 +43,8 @@ public final class ContextInitialiser implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
         
-        /* Create shared ASCIIMathParser instance */
-        ASCIIMathParser asciiMathParser = new ASCIIMathParser();
+        /* Create shared AsciiMathParser instance */
+        AsciiMathParser asciiMathParser = new AsciiMathParser();
         servletContext.setAttribute(ASCIIMATH_PARSER_ATTRIBUTE_NAME, asciiMathParser);
         
         /* Create and store StylesheetManager, hard-coded to use Saxon with caching

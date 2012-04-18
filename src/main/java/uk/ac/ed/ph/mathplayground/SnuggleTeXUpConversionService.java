@@ -32,8 +32,7 @@ import org.w3c.dom.Element;
 public final class SnuggleTeXUpConversionService extends BaseServlet {
     
     private static final long serialVersionUID = 2261754980279697343L;
-    
-    private static Logger logger = LoggerFactory.getLogger(SnuggleTeXUpConversionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SnuggleTeXUpConversionService.class);
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -60,9 +59,9 @@ public final class SnuggleTeXUpConversionService extends BaseServlet {
         String bestOutput;
         if (mathElement!=null) {
             /* Unwrap parallel MathML */
-            LinkedHashMap<String, String> unwrappedMathML = unwrapMathMLElement(mathElement);
-            bestOutput = extractBestUpConversionResult(unwrappedMathML);
-            jsonObject.putAll(unwrappedMathML);
+            LinkedHashMap<String, String> unwrappedMathml = unwrapMathmlElement(mathElement);
+            bestOutput = extractBestUpConversionResult(unwrappedMathml);
+            jsonObject.putAll(unwrappedMathml);
         }
         else {
             /* Parse/building errors */
@@ -78,6 +77,6 @@ public final class SnuggleTeXUpConversionService extends BaseServlet {
         logger.info("Input: {}, Best output: {}", inputMathModeLaTeX, bestOutput);
         
         /* Send response */
-        sendJSONResponse(response, jsonObject);
+        sendJsonResponse(response, jsonObject);
     }
 }

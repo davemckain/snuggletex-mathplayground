@@ -20,12 +20,10 @@ import org.slf4j.LoggerFactory;
  * @author  David McKain
  * @version $Revision:158 $
  */
-public final class ASCIIMathSimpleInputDemoServlet extends BaseServlet {
+public final class AsciiMathSimpleInputDemoServlet extends BaseServlet {
     
     private static final long serialVersionUID = 4887360456110333274L;
-
-    /** Logger so that we can log what users are trying out to allow us to improve things */
-    private static Logger logger = LoggerFactory.getLogger(ASCIIMathSimpleInputDemoServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(AsciiMathSimpleInputDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "(-b pm sqrt(b^2-4ac))/(2a)";
     

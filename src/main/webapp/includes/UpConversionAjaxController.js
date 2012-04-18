@@ -14,7 +14,7 @@
 
 /************************************************************/
 
-var UpConversionAJAXController = (function() {
+var UpConversionAjaxController = (function() {
 
     var upConversionServiceUrl = null; /* Caller must fill in */
     var delay = 500;
@@ -32,7 +32,7 @@ var UpConversionAJAXController = (function() {
 
     /************************************************************/
 
-    var UpConversionAJAXControl = function(_messageContainerId, _bracketedRenderingContainerId) {
+    var UpConversionAjaxControl = function(_messageContainerId, _bracketedRenderingContainerId) {
         this.messageContainerId = _messageContainerId;
         this.bracketedRenderingContainerId = _bracketedRenderingContainerId;
         this.pmathSemanticSourceContainerId = null;
@@ -234,43 +234,43 @@ var UpConversionAJAXController = (function() {
         };
 
         this._showMessage = function(containerQuery, html) {
-            UpConversionAJAXController.replaceContainerContent(containerQuery, html || "\xa0");
+            UpConversionAjaxController.replaceContainerContent(containerQuery, html || "\xa0");
         };
 
         this._showMathML = function(containerQuery, mathmlString) {
-            UpConversionAJAXController.replaceContainerMathMLContent(containerQuery, mathmlString);
+            UpConversionAjaxController.replaceContainerMathMLContent(containerQuery, mathmlString);
         };
 
         this._showPreformatted = function(containerQuery, text) {
-            UpConversionAJAXController.replaceContainerPreformattedText(containerQuery, text);
+            UpConversionAjaxController.replaceContainerPreformattedText(containerQuery, text);
         };
     };
 
-    UpConversionAJAXControl.prototype.setPMathSemanticSourceContainerId = function(id) {
+    UpConversionAjaxControl.prototype.setPMathSemanticSourceContainerId = function(id) {
         this.pmathSemanticSourceContainerId = id;
     };
 
-    UpConversionAJAXControl.prototype.setPMathBracketedSourceContainerId = function(id) {
+    UpConversionAjaxControl.prototype.setPMathBracketedSourceContainerId = function(id) {
         this.pmathBracketedSourceContainerId = id;
     };
 
-    UpConversionAJAXControl.prototype.setCMathSourceContainerId = function(id) {
+    UpConversionAjaxControl.prototype.setCMathSourceContainerId = function(id) {
         this.cmathSourceContainerId = id;
     };
 
-    UpConversionAJAXControl.prototype.setMaximaSourceContainerId = function(id) {
+    UpConversionAjaxControl.prototype.setMaximaSourceContainerId = function(id) {
         this.maximaSourceContainerId = id;
     };
 
-    UpConversionAJAXControl.prototype.showVerificationResult = function(jsonData) {
+    UpConversionAjaxControl.prototype.showVerificationResult = function(jsonData) {
         this._showVerificationResult(jsonData);
     };
 
-    UpConversionAJAXControl.prototype.verifyLater = function(verifyInputData) {
+    UpConversionAjaxControl.prototype.verifyLater = function(verifyInputData) {
         this._verifyLater(verifyInputData);
     };
 
-    UpConversionAJAXControl.prototype.clear = function() {
+    UpConversionAjaxControl.prototype.clear = function() {
         this._clear();
     };
 
@@ -301,14 +301,14 @@ var UpConversionAJAXController = (function() {
             });
         },
 
-        createUpConversionAJAXControl: function(messageContainerId, bracketedRenderingContainerId) {
+        createUpConversionAjaxControl: function(messageContainerId, bracketedRenderingContainerId) {
             if (messageContainerId==null) {
                 throw new Error("messageContainerId must not be null");
             }
             if (bracketedRenderingContainerId==null) {
                 throw new Error("bracketedRenderingContainerId must not be null");
             }
-            return new UpConversionAJAXControl(messageContainerId, bracketedRenderingContainerId);
+            return new UpConversionAjaxControl(messageContainerId, bracketedRenderingContainerId);
         },
 
         getUpConversionServiceUrl: function() { return upConversionServiceUrl },

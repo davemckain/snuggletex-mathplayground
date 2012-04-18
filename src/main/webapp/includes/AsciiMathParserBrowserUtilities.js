@@ -1,14 +1,14 @@
 /* $Id$
 
-ASCIIMathParserBrowserUtilities.js
+AsciiMathParserBrowserUtilities.js
 ==================================
 
 This contains some helper functions that might be useful if you
-want to use ASCIIMathParser.js in a browser.
+want to use AsciiMathParser.js in a browser.
 
 Requirements:
 
-ASCIIMathParser.js
+AsciiMathParser.js
 
 ---------------------------------------------------------------
 
@@ -28,7 +28,7 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 
 */
 
-ASCIIMathParserBrowserUtilities = {
+AsciiMathParserBrowserUtilities = {
 
     createXMLDocument: function() {
         var doc;

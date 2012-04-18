@@ -3,7 +3,7 @@
  * Requirements:
  *
  * jquery.js (at least version 1.5.0)
- * UpConversionAJAXController.js
+ * UpConversionAjaxController.js
  *
  * Author: David McKain
  *

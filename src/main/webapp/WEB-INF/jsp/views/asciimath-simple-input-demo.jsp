@@ -15,8 +15,8 @@ All Rights Reserved
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
   <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/ASCIIMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/ASCIIMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='includes/AsciiMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='includes/AsciiMathParserBrowserUtilities.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -24,14 +24,14 @@ All Rights Reserved
 
 <script type="text/javascript">//<![CDATA[
     jQuery(document).ready(function() {
-        var asciiMathParser = new ASCIIMathParser(ASCIIMathParserBrowserUtilities.createXMLDocument());
+        var asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXMLDocument());
         var renderingQuery = jQuery("#mathJaxRendering");
         var inputQuery = jQuery("#asciiMathInputControl");
         var updatePreview = function() {
             var asciiMathInput = inputQuery.get(0).value;
 
             /* Call up parser */
-            var math = asciiMathParser.parseASCIIMathInput(asciiMathInput);
+            var math = asciiMathParser.parseAsciiMathInput(asciiMathInput);
             math.setAttribute("display", "block");
 
             /* Update display */
@@ -105,7 +105,7 @@ All Rights Reserved
 <p>
   View the page source to see the underlying JavaScript that glues things
   together.  It uses my cut-down <a
-  href="asciimath-parser">ASCIIMathParser.js</a> to do the actual parsing, but
+  href="asciimath-parser">AsciiMathParser.js</a> to do the actual parsing, but
   you can do the same thing quite easily with the stock ASCIIMathML.js script
   as well.  I also used <a href="http://jquery.com/">jQuery</a> for
   expressiveness and convenience, but this particular demo wouldn't be hard to

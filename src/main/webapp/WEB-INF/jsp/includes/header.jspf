@@ -78,7 +78,7 @@ headStuff (opt)
 
               <h2>Software</h2>
               <ul>
-                <li class="asciiMathParser"><a href="<c:url value='/asciimath-parser'/>">ASCIIMathParser.js</a></li>
+                <li class="asciiMathParser"><a href="<c:url value='/asciimath-parser'/>">AsciiMathParser.js</a></li>
               </ul>
 
               <h2>Demos</h2>

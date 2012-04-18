@@ -5,14 +5,13 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParserOptions;
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.utilities.MathMLUtilities;
 import uk.ac.ed.ph.snuggletex.utilities.SerializationOptions;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
- * Simple front-end demo to {@link ASCIIMathParser}
+ * Simple front-end demo to {@link AsciiMathParser}
  * 
  * @author  David McKain
  * @version $Revision$
  */
-public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
+public final class ServerSideAsciiMathDemoServlet extends BaseServlet {
 
     private static final long serialVersionUID = -8361217845410879232L;
-    
-    private static Logger logger = LoggerFactory.getLogger(ServerSideASCIIMathDemoServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerSideAsciiMathDemoServlet.class);
     
     public static final String DEFAULT_INPUT = "2(x-1)";
     
@@ -53,12 +51,11 @@ public final class ServerSideASCIIMathDemoServlet extends BaseServlet {
         String asciiMathInput = request.getParameter("asciiMathInput");
         
         /* Call up server-side ASCIIMath parser */
-        ASCIIMathParser asciiMathParser = getASCIMathParser();
-        
-        Map<String,Object> options = new HashMap<String,Object>();
-        options.put("displayMode", Boolean.TRUE);
-        options.put("addSourceAnnotation", Boolean.TRUE);
-        Document mathDocument = asciiMathParser.parseASCIIMath(asciiMathInput, options);
+        AsciiMathParser asciiMathParser = getAsciiMathParser();
+        AsciiMathParserOptions options = new AsciiMathParserOptions();
+        options.setDisplayMode(true);
+        options.setAddSourceAnnotation(true);
+        Document mathDocument = asciiMathParser.parseAsciiMath(asciiMathInput, options);
         SerializationSpecifier serializationOptions = new SerializationOptions();
         serializationOptions.setIncludingXMLDeclaration(false);
         serializationOptions.setIndenting(true);

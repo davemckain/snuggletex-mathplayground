@@ -5,7 +5,7 @@
  */
 package uk.ac.ed.ph.mathplayground;
 
-import uk.ac.ed.ph.asciimath.parser.ASCIIMathParser;
+import uk.ac.ed.ph.asciimath.parser.AsciiMathParser;
 import uk.ac.ed.ph.snuggletex.SerializationSpecifier;
 import uk.ac.ed.ph.snuggletex.SnuggleEngine;
 import uk.ac.ed.ph.snuggletex.upconversion.MathMLUpConverter;
@@ -58,8 +58,8 @@ abstract class BaseServlet extends HttpServlet {
         return (StylesheetManager) getServletContext().getAttribute(ContextInitialiser.STYLESHEET_MANAGER_ATTRIBUTE_NAME);
     }
     
-    protected ASCIIMathParser getASCIMathParser() {
-        return (ASCIIMathParser) getServletContext().getAttribute(ContextInitialiser.ASCIIMATH_PARSER_ATTRIBUTE_NAME);
+    protected AsciiMathParser getAsciiMathParser() {
+        return (AsciiMathParser) getServletContext().getAttribute(ContextInitialiser.ASCIIMATH_PARSER_ATTRIBUTE_NAME);
     }
     
     protected SnuggleEngine getSnuggleEngine() {
@@ -72,7 +72,7 @@ abstract class BaseServlet extends HttpServlet {
     
     //-----------------------------------------------------------------------
     
-    protected void sendJSONResponse(HttpServletResponse response, JSONObject jsonObject) throws IOException {
+    protected void sendJsonResponse(HttpServletResponse response, JSONObject jsonObject) throws IOException {
         response.setContentType("text/json; charset=UTF-8");
         PrintWriter responseWriter = response.getWriter();
         responseWriter.append(jsonObject.toJSONString());
@@ -81,7 +81,7 @@ abstract class BaseServlet extends HttpServlet {
     
     //-----------------------------------------------------------------------
     
-    protected LinkedHashMap<String, String> unwrapMathMLElement(Element mathElement) {
+    protected LinkedHashMap<String, String> unwrapMathmlElement(Element mathElement) {
         LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
         
         /* These options are used to serialize MathML that might get used, i.e. no entities */
