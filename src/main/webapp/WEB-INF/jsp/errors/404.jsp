@@ -12,7 +12,7 @@ All Rights Reserved
 
 <h1>404 Not Found</h1>
 <p class="error">
-  The requested resource at <tt>${pageContext.errorData.requestURI}</tt> could not be found.
+  The requested resource at <code>${pageContext.errorData.requestURI}</code> could not be found.
 </p>
 
 <h1>Help!?</h1>

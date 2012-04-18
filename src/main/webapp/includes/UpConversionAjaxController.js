@@ -113,7 +113,7 @@ var UpConversionAjaxController = (function() {
             else if (jsonData['errors']!=null) {
                 var html = '<ul>';
                 for (var i in jsonData['errors']) {
-                    html += '<li>' + jsonData['errors'][i] + '</li>'
+                    html += '<li>' + jsonData['errors'][i] + '</li>';
                 }
                 html += '</ul>';
                 this._updateUpConversionContainer(STATUS_PARSE_ERROR, null, html);
@@ -311,11 +311,11 @@ var UpConversionAjaxController = (function() {
             return new UpConversionAjaxControl(messageContainerId, bracketedRenderingContainerId);
         },
 
-        getUpConversionServiceUrl: function() { return upConversionServiceUrl },
-        setUpConversionServiceUrl: function(url) { upConversionServiceUrl = url },
+        getUpConversionServiceUrl: function() { return upConversionServiceUrl; },
+        setUpConversionServiceUrl: function(url) { upConversionServiceUrl = url; },
 
-        getDelay: function() { return delay },
-        setDelay: function(newDelay) { delay = newDelay }
+        getDelay: function() { return delay; },
+        setDelay: function(newDelay) { delay = newDelay; }
     };
 
 })();

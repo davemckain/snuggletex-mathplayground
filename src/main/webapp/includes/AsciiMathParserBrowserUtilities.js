@@ -84,6 +84,7 @@ AsciiMathParserBrowserUtilities = {
         var parts = str.split("<");
         var inTextElement = false;
         var currentIndentLevel = 0;
+        var i;
         for (i=1; i<parts.length; i++) { /* (Starting at 1 since 0 is "bit before <math>" which is empty) */
             var part = parts[i];
             if (part.charAt(0)=='/') { /* </element> */
@@ -104,4 +105,4 @@ AsciiMathParserBrowserUtilities = {
         }
         return result;
     }
-}
+};
