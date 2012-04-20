@@ -14,7 +14,7 @@ All Rights Reserved
 <c:set var="pageId" value="snuggleTeXInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
-  <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="<c:url value='includes/UpConversionAjaxController.js'/>"></script>
   <script type="text/javascript" src="<c:url value='includes/SnuggleTeXInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>

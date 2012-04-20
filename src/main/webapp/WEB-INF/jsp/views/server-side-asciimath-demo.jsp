@@ -2,6 +2,11 @@
 
 $Id$
 
+Attributes (after POST):
+
+asciiMathInput
+mathmlOutput
+
 Copyright (c) 2011, The University of Edinburgh.
 All Rights Reserved
 
@@ -36,10 +41,10 @@ All Rights Reserved
   </div>
 </form>
 
-<c:if test="${!empty mathMLOutput}">
+<c:if test="${!empty mathmlOutput}">
   <h2>MathML output (from server)</h2>
 
-  <pre class="result">${fn:escapeXml(mathMLOutput)}</pre>
+  <pre class="result">${fn:escapeXml(mathmlOutput)}</pre>
 </c:if>
 
 <h2>Technical notes</h2>

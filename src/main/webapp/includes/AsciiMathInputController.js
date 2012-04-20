@@ -26,7 +26,7 @@ var AsciiMathInputController = (function() {
     var asciiMathParserLoaded = false;
     var asciiMathParser = null;
     try {
-        asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXMLDocument());
+        asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXmlDocument());
         asciiMathParserLoaded = true;
     }
     catch (e) {
@@ -34,13 +34,13 @@ var AsciiMathInputController = (function() {
 
     /************************************************************/
 
-    var callASCIIMath = function(mathModeInput) {
+    var callAsciiMath = function(mathModeInput) {
         var mathElement = asciiMathParser.parseAsciiMathInput(mathModeInput, {
             displayMode: true,
             addSourceAnnotation: true
         });
-        var mathml = AsciiMathParserBrowserUtilities.serializeXMLNode(mathElement);
-        return AsciiMathParserBrowserUtilities.indentMathMLString(mathml);
+        var mathml = AsciiMathParserBrowserUtilities.serializeXmlNode(mathElement);
+        return AsciiMathParserBrowserUtilities.indentMathmlString(mathml);
     };
 
     var showHelpDialog = function(helpAElement) {
@@ -102,19 +102,19 @@ var AsciiMathInputController = (function() {
          * verification.
          */
         this._userInputChanged = function() {
-            var asciiMathInput = this._getASCIIMathInput();
+            var asciiMathInput = this._getAsciiMathInput();
             if (lastInput==null || asciiMathInput!=lastInput) {
                 lastInput = asciiMathInput;
                 this._processInput(asciiMathInput);
             }
         };
 
-        this._getASCIIMathInput = function() {
+        this._getAsciiMathInput = function() {
             var inputSelector = jQuery("#" + this.asciiMathInputControlId);
             return inputSelector.get(0).value;
         };
 
-        this._setASCIIMathInput = function(asciiMathInput) {
+        this._setAsciiMathInput = function(asciiMathInput) {
             var inputSelector = jQuery("#" + this.asciiMathInputControlId);
             inputSelector.get(0).value = asciiMathInput || '';
             lastInput = asciiMathInput;
@@ -130,7 +130,7 @@ var AsciiMathInputController = (function() {
 
         this._processInput = function(asciiMathInput) {
             /* Update live ASCIIMath preview (if used) */
-            var asciiMathInput = widget._updateASCIIMathPreview(asciiMathInput);
+            var asciiMathInput = widget._updateAsciiMathPreview(asciiMathInput);
 
             /* Call up verifier (if used) */
             if (this.verifierControl!=null) {
@@ -143,13 +143,13 @@ var AsciiMathInputController = (function() {
             }
         };
 
-        this._updateASCIIMathPreview = function(asciiMathInput) {
+        this._updateAsciiMathPreview = function(asciiMathInput) {
             /* Get ASCIIMathML to generate a <math> element */
             var mathmlSource = null;
             var message = null;
             if (asciiMathInput.match(/\S/)) {
                 if (asciiMathParserLoaded) {
-                    mathmlSource = callASCIIMath(this.getASCIIMathInput());
+                    mathmlSource = callAsciiMath(this.getAsciiMathInput());
                 }
                 else {
                     message = "(AsciiMathParser.js not loaded)";
@@ -193,15 +193,15 @@ var AsciiMathInputController = (function() {
     };
 
     Widget.prototype.syncWithInput = function() {
-        this._processInput(this._getASCIIMathInput());
+        this._processInput(this._getAsciiMathInput());
     };
 
-    Widget.prototype.getASCIIMathInput = function() {
-        return this._getASCIIMathInput();
+    Widget.prototype.getAsciiMathInput = function() {
+        return this._getAsciiMathInput();
     };
 
-    Widget.prototype.setASCIIMathInput = function(asciiMathInput) {
-        this._setASCIIMathInput(asciiMathInput);
+    Widget.prototype.setAsciiMathInput = function(asciiMathInput) {
+        this._setAsciiMathInput(asciiMathInput);
     };
 
     Widget.prototype.show = function(asciiMathInput, jsonData) {
@@ -209,7 +209,7 @@ var AsciiMathInputController = (function() {
     };
 
     Widget.prototype.reset = function() {
-        this._setASCIIMathInput(null);
+        this._setAsciiMathInput(null);
     };
 
     return {

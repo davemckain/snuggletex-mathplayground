@@ -1,4 +1,22 @@
-/* $Id$
+/*
+
+Copyright (c) 2011-2012, The University of Edinburgh
+All Rights Reserved
+
+This file is part of AsciiMathParser.js
+
+AsciiMathParser.js is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+AsciiMathParser.js is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License (at
+http://www.gnu.org/licences/lgpl.html) for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with AsciiMathParser. If not, see <http://www.gnu.org/licenses/lgpl.html>.
 
 AsciiMathParserBrowserUtilities.js
 ==================================
@@ -6,31 +24,15 @@ AsciiMathParserBrowserUtilities.js
 This contains some helper functions that might be useful if you
 want to use AsciiMathParser.js in a browser.
 
-Requirements:
+Dependencies:
 
 AsciiMathParser.js
-
----------------------------------------------------------------
-
-Copyright (c) 2011, The University of Edinburgh
-
-This programme is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at
-your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-(at http://www.gnu.org/licences/lgpl.html) for more details.
-
----------------------------------------------------------------
 
 */
 
 AsciiMathParserBrowserUtilities = {
 
-    createXMLDocument: function() {
+    createXmlDocument: function() {
         var doc;
         if (document.implementation && document.implementation.createDocument) {
             /* Gecko, Webkit, Opera */
@@ -48,7 +50,7 @@ AsciiMathParserBrowserUtilities = {
         return doc;
     },
 
-    serializeXMLNode: function(node) {
+    serializeXmlNode: function(node) {
         var xml;
         try {
             /* Gecko, Webkit, Opera */
@@ -67,7 +69,7 @@ AsciiMathParserBrowserUtilities = {
         return xml;
     },
 
-    indentMathMLString: function(str) {
+    indentMathmlString: function(str) {
         var indent = arguments[1] || 2;
         var newline = arguments[2] || "\n";
 
@@ -84,7 +86,6 @@ AsciiMathParserBrowserUtilities = {
         var parts = str.split("<");
         var inTextElement = false;
         var currentIndentLevel = 0;
-        var i;
         for (i=1; i<parts.length; i++) { /* (Starting at 1 since 0 is "bit before <math>" which is empty) */
             var part = parts[i];
             if (part.charAt(0)=='/') { /* </element> */
@@ -105,4 +106,4 @@ AsciiMathParserBrowserUtilities = {
         }
         return result;
     }
-};
+}

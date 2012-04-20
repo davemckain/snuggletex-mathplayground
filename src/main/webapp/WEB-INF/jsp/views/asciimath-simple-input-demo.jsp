@@ -14,9 +14,9 @@ All Rights Reserved
 <c:set var="pageId" value="asciiMathSimpleInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='includes/upconversion-ajax-control.css'/>">
-  <script type="text/javascript" src="<c:url value='includes/jquery/jquery-1.5.1.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/AsciiMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='includes/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='lib/AsciiMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='lib/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>
 </c:set>
 
@@ -24,7 +24,7 @@ All Rights Reserved
 
 <script type="text/javascript">//<![CDATA[
     jQuery(document).ready(function() {
-        var asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXMLDocument());
+        var asciiMathParser = new AsciiMathParser(AsciiMathParserBrowserUtilities.createXmlDocument());
         var renderingQuery = jQuery("#mathJaxRendering");
         var inputQuery = jQuery("#asciiMathInputControl");
         var updatePreview = function() {

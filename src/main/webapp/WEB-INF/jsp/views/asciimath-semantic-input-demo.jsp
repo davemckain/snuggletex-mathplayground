@@ -14,11 +14,11 @@ All Rights Reserved
 <c:set var="pageId" value="asciiMathInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='/includes/upconversion-ajax-control.css'/>">
-  <link rel="stylesheet" type="text/css" href="<c:url value='/includes/jquery/redmond/jquery-ui-1.8.10.custom.css'/>"/>
-  <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-1.5.1.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/jquery/jquery-ui-1.8.10.custom.min.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/redmond/jquery-ui.css'/>"/>
+  <script type="text/javascript" src="<c:url value='/lib/AsciiMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/lib/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
   <script type="text/javascript" src="<c:url value='/includes/UpConversionAjaxController.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/includes/AsciiMathInputController.js'/>"></script>
   <%@ include file="/WEB-INF/jsp/includes/mathjax.jspf" %>

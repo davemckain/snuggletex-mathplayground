@@ -13,8 +13,8 @@ All Rights Reserved
 <c:set var="title" value="AsciiMathParser.js" />
 <c:set var="pageId" value="asciiMathParser" />
 <c:set var="headStuff">
-  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParser.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/includes/AsciiMathParserBrowserUtilities.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/lib/AsciiMathParser.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/lib/AsciiMathParserBrowserUtilities.js'/>"></script>
 </c:set>
 
 <%@ include file="/WEB-INF/jsp/includes/header.jspf" %>
@@ -24,11 +24,11 @@ All Rights Reserved
 function runDemo() {
     var asciiMathInput = document.forms[0].asciiMathInput.value;
 
-    var domDocument = AsciiMathParserBrowserUtilities.createXMLDocument();
+    var domDocument = AsciiMathParserBrowserUtilities.createXmlDocument();
     var asciiMathParser = new AsciiMathParser(domDocument);
     var mathElement = asciiMathParser.parseAsciiMathInput(asciiMathInput);
-    var mathMLString = AsciiMathParserBrowserUtilities.serializeXMLNode(mathElement);
-    var indented = AsciiMathParserBrowserUtilities.indentMathMLString(mathMLString);
+    var mathMLString = AsciiMathParserBrowserUtilities.serializeXmlNode(mathElement);
+    var indented = AsciiMathParserBrowserUtilities.indentMathmlString(mathMLString);
 
     alert("MathML from AsciiMathParser is:\n" + indented);
     return false;
@@ -80,8 +80,8 @@ function runDemo() {
 <h2>Download</h2>
 
 <ul>
-  <li><a href="<c:url value='/includes/AsciiMathParser.js'/>">AsciiMathParser.js</a> (the core parsing code)</li>
-  <li><a href="<c:url value='/includes/AsciiMathParserBrowserUtilities.js'/>">AsciiMathParserBrowserUtilities.js</a> (optional extras that may be useful for browser-based work)</li>
+  <li><a href="<c:url value='/lib/AsciiMathParser.js'/>">AsciiMathParser.js</a> (the core parsing code)</li>
+  <li><a href="<c:url value='/lib/AsciiMathParserBrowserUtilities.js'/>">AsciiMathParserBrowserUtilities.js</a> (optional extras that may be useful for browser-based work)</li>
 </ul>
 
 <p>

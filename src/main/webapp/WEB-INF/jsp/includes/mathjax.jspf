@@ -25,4 +25,4 @@ Pulls in MathJax and configures it in a safe way for the current browser
         }
       });
     </script>
-    <script type="text/javascript" src="http://www2.ph.ed.ac.uk/lib/mathjax/1.1-latest/MathJax.js?config=MML_HTMLorMML-full"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML-full"></script>

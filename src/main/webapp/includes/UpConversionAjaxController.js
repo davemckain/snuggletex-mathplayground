@@ -39,7 +39,7 @@ var UpConversionAjaxController = (function() {
         this.pmathBracketedSourceContainerId = null;
         this.cmathSourceContainerId = null;
         this.maximaSourceContainerId = null;
-        var currentXHR = null;
+        var currentXhr = null;
         var currentTimeoutId = null;
         var thisControl = this;
 
@@ -83,18 +83,18 @@ var UpConversionAjaxController = (function() {
          * Use null input to signify "empty input". The UI will be updated instantly.
          */
         this._callVerifier = function(verifyInputData) {
-            currentXHR = jQuery.ajax({
+            currentXhr = jQuery.ajax({
                 type: 'POST',
                 url: upConversionServiceUrl,
                 dataType: 'json',
                 data: {input: verifyInputData },
-                success: function(data, textStatus, jqXHR) {
-                    if (currentXHR==jqXHR) {
-                        currentXHR = null;
+                success: function(data, textStatus, jqXhr) {
+                    if (currentXhr==jqXhr) {
+                        currentXhr = null;
                         thisControl._showVerificationResult(data);
                     }
                 },
-                error: function(jqXHR, textStatus, error) {
+                error: function(jqXhr, textStatus, error) {
                     thisControl._updateUpConversionContainer(STATUS_AJAX_ERROR, error);
                 }
             });

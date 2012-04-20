@@ -31,7 +31,7 @@ headStuff (opt)
     <link rel="stylesheet" type="text/css" href="<c:url value='/includes/content-styles.css'/>" />
     <link rel="stylesheet" type="text/css" href="<c:url value='/includes/mathplayground-webapp.css'/>" />
     ${headStuff}
-    <script type="text/javascript">//<![CDATA[
+    <script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1936964-8']);
@@ -93,6 +93,7 @@ headStuff (opt)
               <ul>
                 <li><a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX<span class="extlink">&#160;</span></a></li>
                 <li><a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine<span class="extlink">&#160;</span></a></li>
+                <li><a href="http://www2.ph.ed.ac.uk/qtiworks">QTI Works<span class="extlink">&#160;</span></a></li>
               </ul>
             </div>
           </div>

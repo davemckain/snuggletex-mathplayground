@@ -59,13 +59,13 @@ public final class ServerSideAsciiMathDemoServlet extends BaseServlet {
         SerializationSpecifier serializationOptions = new SerializationOptions();
         serializationOptions.setIncludingXMLDeclaration(false);
         serializationOptions.setIndenting(true);
-        String mathMLOutput = MathMLUtilities.serializeDocument(mathDocument, serializationOptions);
+        String mathmlOutput = MathMLUtilities.serializeDocument(mathDocument, serializationOptions);
         
         logger.info("ASCIIMathML Input: {}", asciiMathInput);
-        logger.info("Resulting Output: {}", mathMLOutput);
+        logger.info("Resulting Output: {}", mathmlOutput);
         
         request.setAttribute("asciiMathInput", asciiMathInput);
-        request.setAttribute("mathMLOutput", mathMLOutput);
+        request.setAttribute("mathmlOutput", mathmlOutput);
         request.getRequestDispatcher("/WEB-INF/jsp/views/server-side-asciimath-demo.jsp").forward(request, response);
     }
 
