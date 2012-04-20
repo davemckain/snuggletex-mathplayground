@@ -14,7 +14,7 @@ All Rights Reserved
 <c:set var="pageId" value="asciiMathInputDemo" />
 <c:set var="headStuff">
   <link rel="stylesheet" type="text/css" href="<c:url value='/includes/upconversion-ajax-control.css'/>">
-  <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/redmond/jquery-ui.css'/>"/>
+  <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/redmond/jquery-ui.css">
   <script type="text/javascript" src="<c:url value='/lib/AsciiMathParser.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/lib/AsciiMathParserBrowserUtilities.js'/>"></script>
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
