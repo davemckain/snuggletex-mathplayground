@@ -40,6 +40,7 @@ public final class ContextInitialiser implements ServletContextListener {
     public static final String UPCONVERSION_OPTIONS_ATTRIBUTE_NAME = "upconversionOptions";
     public static final String ASCIIMATH_PARSER_ATTRIBUTE_NAME = "asciiMathParser";
     
+    @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
         
@@ -86,6 +87,7 @@ public final class ContextInitialiser implements ServletContextListener {
         }
     }
     
+    @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         logger.info("Context destroyed");
     }
