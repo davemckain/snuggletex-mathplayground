@@ -1,4 +1,4 @@
-div.upConversionAJAXControlMessage {
+div.upConversionAjaxControlMessage {
   width: auto;
   text-align: center;
   display: inline;
@@ -21,9 +21,9 @@ div.error {
   background: url(images/exclamation.png) no-repeat center left;
 }
 
-div.upConversionAJAXControlError {
+div.upConversionAjaxControlError {
 }
 
-div.upConversionAJAXControlPreview {
+div.upConversionAjaxControlPreview {
   font-size: 120%;
 }

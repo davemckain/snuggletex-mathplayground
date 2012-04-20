@@ -162,9 +162,9 @@ var UpConversionAjaxController = (function() {
             var messageContainer = jQuery("#" + this.messageContainerId);
             /* Set up if not done already */
             if (messageContainer.children().size()==0) {
-                messageContainer.html("<div class='upConversionAJAXControlMessage'></div>"
-                    + "<div class='upConversionAJAXControlError'></div>");
-                bracketedRenderingContainer.attr('class', 'upConversionAJAXControlPreview');
+                messageContainer.html("<div class='upConversionAjaxControlMessage'></div>"
+                    + "<div class='upConversionAjaxControlError'></div>");
+                bracketedRenderingContainer.attr('class', 'upConversionAjaxControlPreview');
             }
             var statusContainer = messageContainer.children().first();
             var errorContainer = statusContainer.next();
@@ -173,7 +173,7 @@ var UpConversionAjaxController = (function() {
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
                     statusContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage');
                     this._showMessage(statusContainer, '\xa0');
                     break;
 
@@ -181,14 +181,14 @@ var UpConversionAjaxController = (function() {
                 case STATUS_WAITING_SERVER:
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage waiting');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage waiting');
                     this._showMessage(statusContainer, 'Verifying your input...');
                     statusContainer.show();
                     break;
 
                 case STATUS_SUCCESS:
                     errorContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage success');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage success');
                     this._showMessage(statusContainer, 'I have interpreted your input as:');
                     this._showMathML(bracketedRenderingContainer, mathElementString);
                     statusContainer.show();
@@ -197,7 +197,7 @@ var UpConversionAjaxController = (function() {
 
                 case STATUS_PARSE_ERROR:
                     bracketedRenderingContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage failure');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage failure');
                     this._showMessage(statusContainer, 'SnuggleTeX could not parse your input:');
                     this._showMessage(errorContainer, errorContent);
                     statusContainer.show();
@@ -207,7 +207,7 @@ var UpConversionAjaxController = (function() {
                 case STATUS_UPCONVERSION_FAILED:
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage failure');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage failure');
                     this._showMessage(statusContainer, 'Sorry, I could not make sense of your input');
                     this._showMessage(errorContainer, null);
                     statusContainer.show();
@@ -216,7 +216,7 @@ var UpConversionAjaxController = (function() {
                 case STATUS_UNKNOWN_ERROR:
                     errorContainer.hide();
                     bracketedRenderingContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage error');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage error');
                     this._showMessage(statusContainer, 'Unexpected error');
                     this._showMessage(errorContainer, null);
                     statusContainer.show();
@@ -224,7 +224,7 @@ var UpConversionAjaxController = (function() {
 
                 case STATUS_AJAX_ERROR:
                     bracketedRenderingContainer.hide();
-                    statusContainer.attr('class', 'upConversionAJAXControlMessage error');
+                    statusContainer.attr('class', 'upConversionAjaxControlMessage error');
                     this._showMessage(statusContainer, 'Communication error');
                     this._showMessage(errorContainer, errorContent);
                     statusContainer.show();
