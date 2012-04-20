@@ -25,8 +25,7 @@ import org.w3c.dom.Element;
  * Servlet demonstrating the up-conversion process on MathML generated
  * dynamically in the browser by ASCIIMathML.
  * 
- * @author  David McKain
- * @version $Revision:158 $
+ * @author David McKain
  */
 public final class AsciiMathSemanticInputDemoServlet extends BaseServlet {
     

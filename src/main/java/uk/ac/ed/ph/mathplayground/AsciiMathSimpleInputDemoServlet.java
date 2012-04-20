@@ -15,10 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FIXME: Document this type!
+ * Servlet for the "Simple ASCIIMath input" demo
  * 
- * @author  David McKain
- * @version $Revision:158 $
+ * @author David McKain
  */
 public final class AsciiMathSimpleInputDemoServlet extends BaseServlet {
     

@@ -28,8 +28,7 @@ import org.w3c.dom.Element;
  * Fairly typical {@link ServletContextListener} that just sets up a few shared resources
  * and sticks them in the {@link ServletContext} for access by servlets.
  *
- * @author  David McKain
- * @version $Revision$
+ * @author David McKain
  */
 public final class ContextInitialiser implements ServletContextListener {
     

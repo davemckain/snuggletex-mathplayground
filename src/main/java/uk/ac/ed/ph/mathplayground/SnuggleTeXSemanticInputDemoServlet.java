@@ -27,8 +27,7 @@ import org.w3c.dom.Element;
 /**
  * Version of {@link AsciiMathSemanticInputDemoServlet} that uses SnuggleTeX input instead.
  * 
- * @author  David McKain
- * @version $Revision:158 $
+ * @author David McKain
  */
 public final class SnuggleTeXSemanticInputDemoServlet extends BaseServlet {
     

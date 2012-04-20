@@ -31,8 +31,7 @@ import org.w3c.dom.Element;
 /**
  * Trivial base class for servlets in the demo webapp
  *
- * @author  David McKain
- * @version $Revision$
+ * @author David McKain
  */
 abstract class BaseServlet extends HttpServlet {
     

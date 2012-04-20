@@ -24,8 +24,7 @@ import org.w3c.dom.Document;
 /**
  * Simple front-end demo to {@link AsciiMathParser}
  * 
- * @author  David McKain
- * @version $Revision$
+ * @author David McKain
  */
 public final class ServerSideAsciiMathDemoServlet extends BaseServlet {
 

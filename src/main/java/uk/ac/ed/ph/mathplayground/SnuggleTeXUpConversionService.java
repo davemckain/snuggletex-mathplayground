@@ -24,10 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
- * FIXME: Document this type!
+ * Servlet for the "SnuggleTeX semantic input widget" demo
  * 
- * @author  David McKain
- * @version $Revision:158 $
+ * @author David McKain
  */
 public final class SnuggleTeXUpConversionService extends BaseServlet {
     
