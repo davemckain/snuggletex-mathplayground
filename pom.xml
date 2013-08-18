@@ -20,8 +20,8 @@ All Rights Reserved
     <jstl.version>1.2</jstl.version>
     <json-simple.version>1.1.1</json-simple.version>
     <saxon9.version>9.1.0.8</saxon9.version>
-    <slf4j.version>1.6.4</slf4j.version>
-    <log4j.version>1.2.16</log4j.version>
+    <slf4j.version>1.7.5</slf4j.version>
+    <logback.version>1.0.13</logback.version>
   </properties>
   <dependencies>
     <dependency>
@@ -50,16 +50,9 @@ All Rights Reserved
       <version>${slf4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
-      <scope>runtime</scope>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>

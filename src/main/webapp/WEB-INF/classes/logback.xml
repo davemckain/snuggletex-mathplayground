@@ -1,0 +1,21 @@
+<configuration debug="false">
+
+  <!-- Log most events to custom file -->
+  <appender name="FILE"  class="ch.qos.logback.core.FileAppender">
+    <file>${catalina.home}/logs/mathplayground.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%-5level %date %thread [%logger{0}/%line#%method\(\)] - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Custom loggers to allow fine-grained logging level selection -->
+  <!--
+  <logger name="uk.ac.ed.ph.mathplayground" level="debug"/>
+  -->
+
+  <!-- Root logger -->
+  <root level="info">
+    <appender-ref ref="FILE"/>
+  </root>
+
+</configuration>
