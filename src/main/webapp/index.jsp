@@ -18,11 +18,11 @@ All Rights Reserved
 <h1>Math Playground Home</h1>
 
 <p>
-  The SnuggleTeX Math Playground is a slightly random showcase
+  The SnuggleTeX Math Playground was a slightly random showcase
   of demos, experiments and code snippets relating to "maths on the web".
 </p>
 <p>
-  It is primarily intended to be an incubation area to try out and share new
+  It was primarily intended to be an incubation area to try out and share new
   ideas that might be useful in other projects, such as:
 </p>
 <ul>
@@ -34,14 +34,13 @@ All Rights Reserved
     are scheduled to appear in SnuggleTeX 1.3.)
   </li>
   <li>
-    <a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine</a>
-    (We hope to widen browser support and improving the process for inputting
-    and making sense of simple mathematical expressions.)
+    <a href="https://webapps.ph.ed.ac.uk/qtiworks/">QTIWorks</a>
+    (The MathPlayground was used to develop the process for inputting
+    and making sense of simple mathematical expressions in QTIWorks.)
   </li>
 </ul>
 <p>
-  Hopefully some of the ideas and sketches demonstrated here might also be useful
-  to other people and other projects, which I would be interested to learn about.
+  <strong>This is now very out of date and has not been updated since 2011!</strong>.
 </p>
 <p>
   Please contact me (<a href="http://www2.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>)

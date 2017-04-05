@@ -92,8 +92,7 @@ headStuff (opt)
               <h2>Related Projects</h2>
               <ul>
                 <li><a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX<span class="extlink">&#160;</span></a></li>
-                <li><a href="http://www2.ph.ed.ac.uk/MathAssessEngine">MathAssessEngine<span class="extlink">&#160;</span></a></li>
-                <li><a href="http://www2.ph.ed.ac.uk/qtiworks">QTI Works<span class="extlink">&#160;</span></a></li>
+                <li><a href="https://webapps.ph.ed.ac.uk/qtiworks/">QTI Works<span class="extlink">&#160;</span></a></li>
               </ul>
             </div>
           </div>

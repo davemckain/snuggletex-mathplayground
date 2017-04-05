@@ -12,7 +12,6 @@ JSP Page Footer
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<jsp:useBean id="now" class="java.util.Date"/>
 
             </div>
           </div>
@@ -29,7 +28,7 @@ JSP Page Footer
           <p>
             SnuggleTeX Math Playground
             <br />
-            Copyright &#xa9; <fmt:formatDate value="${now}" type="date" pattern="yyyy"/>
+            Copyright &#xa9; 2011
             <a href="http://www.ph.ed.ac.uk">The School of Physics and Astronomy</a>,
             <a href="http://www.ed.ac.uk">The University of Edinburgh</a>.
             <br />
