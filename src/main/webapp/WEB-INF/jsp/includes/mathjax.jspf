@@ -13,16 +13,4 @@ Pulls in MathJax and configures it in a safe way for the current browser
 @version $Revision$
 
 --%>
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        MMLorHTML: {
-          prefer: {
-            Firefox: "MML",
-            MSIE:    "HTML",
-            Opera:   "HTML",
-            other:   "HTML"
-          }
-        }
-      });
-    </script>
-    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML-full"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=MML_HTMLorMML"></script>
