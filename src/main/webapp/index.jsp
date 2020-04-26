@@ -27,7 +27,7 @@ All Rights Reserved
 </p>
 <ul>
   <li>
-    <a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX</a>
+    <a href="https://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX</a>
     (The MathPlayground showcases some improvements to the "up-conversion" or
     "semantic enrichment" ideas, as well as updating its web output templates
     to accommodate recent significant advances like MathJax. These new ideas
@@ -43,7 +43,7 @@ All Rights Reserved
   <strong>This is now very out of date and has not been updated since 2011!</strong>.
 </p>
 <p>
-  Please contact me (<a href="http://www2.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>)
+  Please contact me (<a href="https://www.ph.ed.ac.uk/people/david-mckain">David McKain</a>)
   for more information.
 </p>
 

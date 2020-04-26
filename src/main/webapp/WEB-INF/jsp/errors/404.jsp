@@ -24,7 +24,7 @@ All Rights Reserved
   </li>
   <li>
     Please contact
-    <a href="http://www.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>
+    <a href="https://www.ph.ed.ac.uk/people/david-mckain">David McKain</a>
     if you need any further information.
   </li>
 </ul>
