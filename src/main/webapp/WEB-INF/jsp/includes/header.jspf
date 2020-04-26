@@ -36,17 +36,12 @@ headStuff (opt)
     <div id="container">
       <div id="header">
         <div id="identities">
-          <div id="edlogo"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/ed_logo.gif'/>" alt="University of Edinburgh Logo"/></a></div>
-          <div id="edname"><a href="http://www.ed.ac.uk"><img src="<c:url value='/includes/images/uofe2.gif'/>" alt="University of Edinburgh" /></a></div>
-          <div id="schoolname"><a href="http://www.ph.ed.ac.uk"><img src="<c:url value='/includes/images/panda.gif'/>" alt="School of Physics &amp; Astronomy" /></a></div>
-        </div>
-        <div id="GlobalNav">
-          <ul>
-            <li class="active"><a href="http://www2.ph.ed.ac.uk/elearning/" class="active"><span>e-Learning</span></a></li>
-          </ul>
+          <div id="edlogo"><a href="https://www.ed.ac.uk"><img src="<c:url value='/includes/images/ed_logo.gif'/>" alt="University of Edinburgh Logo"/></a></div>
+          <div id="edname"><a href="https://www.ed.ac.uk"><img src="<c:url value='/includes/images/uofe2.gif'/>" alt="University of Edinburgh" /></a></div>
+          <div id="schoolname"><a href="https://www.ph.ed.ac.uk"><img src="<c:url value='/includes/images/panda.gif'/>" alt="School of Physics &amp; Astronomy" /></a></div>
         </div>
         <div id="utility">
-          <a class="utilContact" href="http://www2.ph.ed.ac.uk/elearning/contacts/#dmckain">Contact us</a>
+          <a class="utilContact" href="https://www.ph.ed.ac.uk/people/david-mckain">Contact us</a>
         </div>
       </div>
       <div id="sectionHeader">
@@ -78,8 +73,8 @@ headStuff (opt)
 
               <h2>Related Projects</h2>
               <ul>
-                <li><a href="http://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX<span class="extlink">&#160;</span></a></li>
-                <li><a href="https://webapps.ph.ed.ac.uk/qtiworks/">QTI Works<span class="extlink">&#160;</span></a></li>
+                <li><a href="https://www2.ph.ed.ac.uk/snuggletex/">SnuggleTeX<span class="extlink">&#160;</span></a></li>
+                <li><a href="https://webapps.ph.ed.ac.uk/qtiworks/">QTIWorks<span class="extlink">&#160;</span></a></li>
               </ul>
             </div>
           </div>

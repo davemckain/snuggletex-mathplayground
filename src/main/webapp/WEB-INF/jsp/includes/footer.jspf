@@ -21,7 +21,7 @@ JSP Page Footer
     <div id="footer">
       <div id="copyright">
         <div id="footer-icons">
-          <a href="http://www.w3.org/TR/html5/"><img src="<c:url value='/includes/images/HTML5_Logo_64.png'/>" width="64" height="64" /></a>
+          <a href="http://www.w3.org/TR/html5/"><img src="<c:url value='/includes/images/HTML5_Logo_64.png'/>" width="64" height="64" alt="HTML5 icon" /></a>
         </div>
         <div id="footer-text">
           <%-- Usual Copyright stuff --%>
@@ -29,11 +29,11 @@ JSP Page Footer
             SnuggleTeX Math Playground
             <br />
             Copyright &#xa9; 2011
-            <a href="http://www.ph.ed.ac.uk">The School of Physics and Astronomy</a>,
-            <a href="http://www.ed.ac.uk">The University of Edinburgh</a>.
+            <a href="https://www.ph.ed.ac.uk">The School of Physics and Astronomy</a>,
+            <a href="https://www.ed.ac.uk">The University of Edinburgh</a>.
             <br />
             For more information, contact
-            <a href="http://www.ph.ed.ac.uk/elearning/contacts/#dmckain">David McKain</a>.
+            <a href="https://www.ph.ed.ac.uk/people/david-mckain">David McKain</a>.
           </p>
           <p>
             The University of Edinburgh is a charitable body, registered in Scotland,
