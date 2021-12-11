@@ -20,8 +20,8 @@ All Rights Reserved
     <jstl.version>1.2</jstl.version>
     <json-simple.version>1.1.1</json-simple.version>
     <saxon9.version>9.1.0.8</saxon9.version>
-    <slf4j.version>1.7.5</slf4j.version>
-    <logback.version>1.0.13</logback.version>
+    <slf4j.version>1.7.32</slf4j.version>
+    <logback.version>1.2.7</logback.version>
   </properties>
   <dependencies>
     <dependency>
