@@ -85,8 +85,15 @@ All Rights Reserved
       <version>${jstl.version}</version>
     </dependency>
   </dependencies>
-  <!-- TEMPORARY! Snuggletex is still hosted in the following repo -->
   <repositories>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <!-- TEMPORARY! Snuggletex is still hosted in the following repo -->
     <repository>
       <id>www2.ph.ed.ac.uk</id>
       <url>https://www2.ph.ed.ac.uk/maven2</url>
