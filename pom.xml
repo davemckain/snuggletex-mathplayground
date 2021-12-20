@@ -13,8 +13,9 @@ All Rights Reserved
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <snuggletex.version>1.3-SNAPSHOT</snuggletex.version>
-    <asciimath-parser.version>1.0</asciimath-parser.version>
+    <asciimath-parser.version>1.1-SNAPSHOT</asciimath-parser.version>
     <servlet-api.version>2.5</servlet-api.version>
     <jsp-api.version>2.1</jsp-api.version>
     <jstl.version>1.2</jstl.version>
@@ -84,6 +85,7 @@ All Rights Reserved
       <version>${jstl.version}</version>
     </dependency>
   </dependencies>
+  <!-- TEMPORARY! Snuggletex is still hosted in the following repo -->
   <repositories>
     <repository>
       <id>www2.ph.ed.ac.uk</id>
@@ -97,9 +99,10 @@ All Rights Reserved
     </repository>
   </repositories>
   <description>
-    Web application demonstrating experiments and fun applications of using
+    Legacy web application demonstrating experiments and fun applications of using
     SnuggleTeX and related technologies for "maths on the web"
   </description>
+  <url>https://github.com/davemckain/snuggletex-mathplayground</url>
   <inceptionYear>2008</inceptionYear>
   <organization>
     <name>The University of Edinburgh</name>
@@ -107,7 +110,7 @@ All Rights Reserved
   </organization>
   <licenses>
     <license>
-      <name>BSD License (3 clause)</name>
+      <name>BSD-3-Clause</name><!-- See: https://spdx.org/licenses/ -->
       <url>LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
@@ -127,43 +130,38 @@ All Rights Reserved
       <timezone>0</timezone>
     </developer>
   </developers>
+  <scm>
+    <url>https://github.com/davemckain/snuggletex-mathplayground</url>
+    <connection>scm:git:git://github.com:davemckain/snuggletex-mathplayground.git</connection>
+    <developerConnection>scm:git:ssh://github.com:davemckain/snuggletex-mathplayground.git</developerConnection>
+  </scm>
   <distributionManagement>
-    <!-- (This is not intended for general use!) -->
-    <repository>
-      <id>www2.ph.ed.ac.uk</id>
-      <url>file:///Disk/apps-team/repositories/maven2</url>
-    </repository>
     <snapshotRepository>
-      <id>www2.ph.ed.ac.uk</id>
-      <url>file:///Disk/apps-team/repositories/maven2</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.7.0</version><!-- NB: This is the latest version supported by Maven on SL7 -->
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <encoding>UTF-8</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-         <groupId>org.codehaus.mojo</groupId>
-         <artifactId>findbugs-maven-plugin</artifactId>
-         <version>2.4.0</version>
+        <version>3.1.0</version><!-- NB: This is the latest version supported by Maven on SL7 -->
       </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>3.2.3</version><!-- NB: This is the latest version supported by Maven on SL7 -->
         <configuration>
           <warName>mathplayground</warName>
         </configuration>
